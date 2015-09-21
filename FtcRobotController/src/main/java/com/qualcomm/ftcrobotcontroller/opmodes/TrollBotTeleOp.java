@@ -28,6 +28,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.text.SimpleDateFormat;
@@ -38,23 +39,32 @@ import java.util.Date;
  * <p>
  *Enables control of the robot via the gamepad
  */
-public class TankMode extends OpMode {
+public class TrollBotTeleOp extends OpMode {
     DcMotor motorBL;
     DcMotor motorBR;
     DcMotor motorFL;
     DcMotor motorFR;
+	DcMotor motorPulley;
+	Servo clawLeft;
+	Servo clawRight;
+	final static double CLAW_LEFT_OPEN  = 0.20;
+	final static double CLAW_LEFT_CLOSED  = 0.7;
+	final static double CLAW_RIGHT_OPEN  = 0.20;
+	final static double CLAW_RIGHT_CLOSED  = 0.7;
 
-    public TankMode() {}
+    public TrollBotTeleOp() {}
     /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
-    @Override
-    public void init() {
-        motorBL = hardwareMap.dcMotor.get("motor_1");
-        motorBR = hardwareMap.dcMotor.get("motor_2");
-        motorFR = hardwareMap.dcMotor.get("motor_3");
-        motorFL = hardwareMap.dcMotor.get("motor_4");
+		* Code to run when the op mode is first enabled goes here
+		* @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+				*/
+		@Override
+		public void init() {
+			motorBL = hardwareMap.dcMotor.get("motor_1");
+			motorBR = hardwareMap.dcMotor.get("motor_2");
+			motorFR = hardwareMap.dcMotor.get("motor_3");
+			motorFL = hardwareMap.dcMotor.get("motor_4");
+		clawLeft = hardwareMap.servo.get("servo_1");
+		clawRight = hardwareMap.servo.get("servo_2");
     }
 
     /*
@@ -68,7 +78,11 @@ public class TankMode extends OpMode {
 		float x1 = gamepad1.left_stick_x;
 		float x2 = gamepad1.right_stick_x;
 		float y2 = gamepad1.left_stick_y;
-		if(y1 > 0.1 || y1 < -0.1 || x1 > 0.1 || x1 < -0.1 || y2 > 0.1 || y2 < -0.1) //checks if sticks are being moved
+		float trigL = gamepad1.left_trigger;
+		float trigR = gamepad1.right_trigger;
+		boolean bumpL = gamepad1.left_bumper;
+		boolean bumpR = gamepad1.right_bumper;
+		/*if(y1 > 0.1 || y1 < -0.1 || x1 > 0.1 || x1 < -0.1 || y2 > 0.1 || y2 < -0.1) //checks if sticks are being moved
 		{
 			if(y1 > 0.1 || y1 < -0.1) // Up/Down
 			{
@@ -91,28 +105,56 @@ public class TankMode extends OpMode {
 				motorFR.setPower(y2); //pos
 				motorBR.setPower(y2); //pos
 			{
+		}*/
+		if(trigL > 0.5)
+		{
+			clawLeft.setPosition(CLAW_LEFT_CLOSED);
+			clawRight.setPosition(CLAW_RIGHT_CLOSED);
 		}
+		else if (trigR > 0.5)
+		{
+			clawLeft.setPosition(CLAW_LEFT_OPEN);
+			clawRight.setPosition(CLAW_RIGHT_OPEN);
+		}
+		if(Math.abs(y1) > 0.1 && Math.abs(y2) > 0.1) {
+			motorBL.setPower(y1);
+			motorBR.setPower(y2);
+			motorFL.setPower(y1);
+			motorBL.setPower(y2);
+		}
+		else if(Math.abs(y1) > 0.1)
+		{
+			motorBL.setPower(y1);
+			motorFL.setPower(y1);
+			motorBR.setPower(0);
+			motorFR.setPower(0);
+		}
+		else if(Math.abs(y2) > 0.1)
+		{
+			motorBR.setPower(y2);
+			motorFR.setPower(y2);
+			motorBL.setPower(0);
+			motorFL.setPower(0);
+		}
+
 		else //individual motor control
 		{
-			float trigL = gamepad1.left_trigger;
-			float trigR = gamepad1.right_trigger;
-			boolean bumpL = gamepad1.left_bumper;
-			boolean bumpR = gamepad1.right_bumper;
-			if(trigL > 0.1 || trigL < -0.1 || trigR > 0.1 || trigR < -0.1 || bumpR || bumpL)
+
+			if(trigL > 0.1 || trigR > 0.1 || bumpR || bumpL)
 			{
-				if(trigL) //motorBL control
+				if(bumpL) //motorBL control
 				{
 					motorBL.setPower(1.0);
 				}
-				if(trigR) //motorBR control
+				if(bumpR) //motorBR control
 				{
 					motorBR.setPower(1.0);
 				}
-				if(bumpR > 0.1) //motorFR control
+				if(trigR > 0.1) //motorFR control
 				{
 					motorFR.setPower(1.0);
 				}
-				if{bumpL > 0.1) //motorFL control
+				if{trigL > 0.1) //motorFL control
 				{
 					motorFL.setPower(1.0);
 				}

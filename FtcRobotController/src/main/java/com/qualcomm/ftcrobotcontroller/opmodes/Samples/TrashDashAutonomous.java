@@ -38,31 +38,93 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 /**
  * A simple example of a linear op mode that will approach an IR beacon
  */
-public class LinearIrExample extends LinearOpMode {
+public class TrashDashAutonomous extends LinearOpMode {
 
-  final static double MOTOR_POWER = 0.15; // Higher values will cause the robot to move faster
-  final static double HOLD_IR_SIGNAL_STRENGTH = 0.20; // Higher values will cause the robot to follow closer
+  DcMotor motorBL;
+  DcMotor motorBR;
+  DcMotor motorFL;
+  DcMotor motorFR;
+  DcMotor motorPulley;
+  Servo clawLeft;
+  Servo clawRight;
+  final static double CLAW_LEFT_OPEN  = 0.20;
+  final static double CLAW_LEFT_CLOSED  = 0.7;
+  final static double CLAW_RIGHT_OPEN  = 0.20;
+  final static double CLAW_RIGHT_CLOSED  = 0.7;
 
-  DcMotor motorRight;
-  DcMotor motorLeft;
+  public static void move(int ms, double speed) {
+      //double encoder = ms * 280 / (3 * 3.14);
+      motorBL.setPower(speed);
+      motorBR.setPower(speed);
+      motorFL.setPower(speed);
+      motorFR.setPower(speed);
+      sleep(ms);
+      stop();
+  }
+  public static void stop() {
+      motorBL.setPower(0);
+      motorBR.setPower(0);
+      motorFL.setPower(0);
+      motorFR.setPower(0);
+      sleep(100);
+  }
+  public static void left(int ms, double speed) {
+      motorBR.setPower(speed);
+      motorFR.setPower(speed);
+      motorBL.setPower(0);
+      motorFL.setPower(0);
+      sleep(ms);
+      stop();
+  }
+  public static void right(int ms, double speed) {
+      motorBR.setPower(0);
+      motorFR.setPower(0);
+      motorBL.setPower(speed);
+      motorFL.setPower(speed);
+      sleep(ms);
+      stop();
+  }
+    public static void openClaw(int ms /* wait for claw to move */) {
+        clawLeft.setPosition(CLAW_LEFT_OPEN);
+        clawRight.setPosition(CLAW_RIGHT_OPEN);
+        sleep(ms);
+    }
+    public static void closeClaw(int ms) {
+        clawLeft.setPosition(CLAW_LEFT_CLOSED);
+        clawRight.setPosition(CLAW_RIGHT_CLOSED);
+        sleep(ms);
+    }
 
-  IrSeekerSensor irSeeker;
 
   @Override
   public void runOpMode() throws InterruptedException {
 
     // set up the hardware devices we are going to use
-    irSeeker = hardwareMap.irSeekerSensor.get("ir_seeker");
-    motorLeft = hardwareMap.dcMotor.get("motor_1");
-    motorRight = hardwareMap.dcMotor.get("motor_2");
+    motorBL = hardwareMap.dcMotor.get("motor_1");
+    motorBR = hardwareMap.dcMotor.get("motor_2");
+    motorFR = hardwareMap.dcMotor.get("motor_3");
+    motorFL = hardwareMap.dcMotor.get("motor_4");
+    motorPulley = hardwareMap.dcMotor.get("motor_5");
+    clawLeft = hardwareMap.servo.get("servo_1");
+    clawRight = hardwareMap.servo.get("servo_2");
 
-    motorLeft.setDirection(DcMotor.Direction.REVERSE);
+
 
     // wait for the start button to be pressed
-    waitForStart();
-
+      waitForStart();
+      {
+          openClaw(0);
+          move(1000,1);
+          closeClaw(1000);
+          move(1000,-1);
+          right(250,1);
+          move(1000,1);
+          openClaw(500);
+          move(1000,-1);
+          right(250,-1);
+      }
     // wait for the IR Seeker to detect a signal
-    while (!irSeeker.signalDetected()) {
+    /*while (!irSeeker.signalDetected()) {
       sleep(1000);
     }
 
@@ -92,6 +154,6 @@ public class LinearIrExample extends LinearOpMode {
 
     // stop the motors
     motorRight.setPower(0);
-    motorLeft.setPower(0);
+    motorLeft.setPower(0);*/
   }
 }
