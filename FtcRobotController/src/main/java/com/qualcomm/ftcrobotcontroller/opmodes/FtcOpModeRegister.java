@@ -54,7 +54,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      *
      * If two or more op modes are registered with the same name, the app will display an error.
      */
-	manager.register("TrollBotTeleOp", TrollBotTeleOp.class);
+
 
     /*
      * The following op modes are example op modes provided by QualComm.
@@ -69,9 +69,18 @@ public class FtcOpModeRegister implements OpModeRegister {
     /*
      * The NullOp op mode
      */
-    //manager.register("NullOp", NullOp.class);
+    manager.register("NullOp", NullOp.class);
+    manager.register("ArmThread", ArmThread.class);
+    manager.register("Teleop", NotATrollBotTeleOp.class);
 
-
+   /* manager.register("Arm_BufferedRunnable", Arm_BufferedRunnable.class);
+    manager.register("AutoArm_BufferedRunnable", AutoArm_BufferedRunnable.class);
+    manager.register("AutoDrive_BufferedRunnable", AutoDrive_BufferedRunnable.class);
+    manager.register("LinearThreadAutonomous_OpMode", LinearThreadAutonomous_OpMode.class);
+    manager.register("Threaded_Drive", Threaded_Drive.class);
+    manager.register("Threaded_Arm", Threaded_Arm.class);
+    manager.register("Threaded_Auto", Threaded_Autonomous.class);
+*/
     /*
      * The following example op modes are designed to work with a K9-style robot.
      *  - K9TeleOp is a simple driver controlled program.
@@ -79,8 +88,10 @@ public class FtcOpModeRegister implements OpModeRegister {
      *  - K9Line uses a legacy LEGO NXT light sensor to follow a white line.
      */
 
-    //manager.register("K9TeleOp", K9TeleOp.class);
-    //manager.register("K9IrSeeker", K9IrSeeker.class);
+    manager.register("K9TeleOp", K9TeleOp.class);
+    manager.register("K9IrSeeker", K9IrSeeker.class);
+    manager.register("K9Line", K9Line.class);
+    manager.register("Testing_Threads", ArmThread.class);
 
     /*
      * The following example op modes are designed to work with a pushbot-style robot.
@@ -91,12 +102,11 @@ public class FtcOpModeRegister implements OpModeRegister {
      *  - PushBotSquare uses the LinearOpMOde class and shows how to drive in a square pattern autonomously.
      */
 
-    //manager.register("PushBotManual", PushBotManual.class);
-    //manager.register("PushBotAuto", PushBotAuto.class);
-    //manager.register("PushBotDriveTouch", PushBotDriveTouch.class);
-    //manager.register("PushBotIrSeek", PushBotIrSeek.class);
-    //manager.register("PushBotSquare", PushBotSquare.class);
-    
+    manager.register("PushBotManual", PushBotManual.class);
+    manager.register("PushBotAuto", PushBotAuto.class);
+    manager.register("PushBotDriveTouch", PushBotDriveTouch.class);
+    manager.register("PushBotIrSeek", PushBotIrSeek.class);
+    manager.register("PushBotSquare", PushBotSquare.class);
 
   }
 }
