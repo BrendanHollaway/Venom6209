@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\exploded-aar\Hardware-release\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="312452430a607b39b92221fbed687e458ed9c8c7">
+        <dex dex="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\pre-dexed\debug\classes-079171b24d699f85af2b6ba3f5ff4aaecddf9a7e.jar" />
+    </item>
+    <item
+        jar="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\exploded-aar\ModernRobotics-release\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="78166ead5f1793270fb95aff9f878f98331ac6e9">
+        <dex dex="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\pre-dexed\debug\classes-730cf61dc6a61aad44bdcc80f54245f6dc93c47e.jar" />
+    </item>
+    <item
+        jar="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\exploded-aar\WirelessP2p-release\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b5f9e5d9a3cadf7329bbbaea6def0fb86d3773a2">
+        <dex dex="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\pre-dexed\debug\classes-6d3f9bceb4a98dfdcde0346e9b4b2fe967d5e7bd.jar" />
+    </item>
+    <item
+        jar="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\exploded-aar\FtcCommon-release\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9112d15701e2c29945597c234eb28110f3e77ddc">
+        <dex dex="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\pre-dexed\debug\classes-38ac2d69d60921a49cd3733be15e5e34937ad3b2.jar" />
+    </item>
+    <item
+        jar="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\exploded-aar\RobotCore-release\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="51740db7999259bcef8a679f349034c760ceb172">
+        <dex dex="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\pre-dexed\debug\classes-cb9f2b3bb6da5979cbdf50bfabec145725a6eb08.jar" />
+    </item>
+    <item
+        jar="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\exploded-aar\Analytics-release\jars\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="be03c1ee2c4c731033845ec1846923138dc9e0fa">
+        <dex dex="C:\Users\viperbots\Desktop\ftc_app-master\FtcRobotController\build\intermediates\pre-dexed\debug\classes-a75218e1ea2a1e2c293760772f68ac353133b5fb.jar" />
+    </item>
+
+</items>
