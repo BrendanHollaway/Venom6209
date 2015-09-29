@@ -34,62 +34,63 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IrSeekerSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * A simple example of a linear op mode that will approach an IR beacon
  */
 public class TrashDashAutonomous extends LinearOpMode {
 
-  DcMotor motorBL;
-  DcMotor motorBR;
-  DcMotor motorFL;
-  DcMotor motorFR;
-  DcMotor motorPulley;
-  Servo clawLeft;
-  Servo clawRight;
-  final static double CLAW_LEFT_OPEN  = 0.20;
-  final static double CLAW_LEFT_CLOSED  = 0.7;
-  final static double CLAW_RIGHT_OPEN  = 0.20;
-  final static double CLAW_RIGHT_CLOSED  = 0.7;
+   DcMotor motorBL;
+   DcMotor motorBR;
+   DcMotor motorFL;
+   DcMotor motorFR;
+   DcMotor motorPulley;
+   Servo clawLeft;
+   Servo clawRight;
+  final  double CLAW_LEFT_OPEN  = 0.20;
+  final  double CLAW_LEFT_CLOSED  = 0.7;
+  final  double CLAW_RIGHT_OPEN  = 0.20;
+  final  double CLAW_RIGHT_CLOSED  = 0.7;
 
-  public static void move(int ms, double speed) {
+  public  void move(int ms, double speed) {
       //double encoder = ms * 280 / (3 * 3.14);
       motorBL.setPower(speed);
       motorBR.setPower(speed);
       motorFL.setPower(speed);
       motorFR.setPower(speed);
-      sleep(ms);
-      stop();
+      ssleep(ms);
+      halt();
   }
-  public static void stop() {
+  public  void halt() {
       motorBL.setPower(0);
       motorBR.setPower(0);
       motorFL.setPower(0);
       motorFR.setPower(0);
       sleep(100);
   }
-  public static void left(int ms, double speed) {
+  public  void left(int ms, double speed) {
       motorBR.setPower(speed);
       motorFR.setPower(speed);
       motorBL.setPower(0);
       motorFL.setPower(0);
       sleep(ms);
-      stop();
+      halt();
   }
-  public static void right(int ms, double speed) {
+  public  void right(int ms, double speed) {
       motorBR.setPower(0);
       motorFR.setPower(0);
       motorBL.setPower(speed);
       motorFL.setPower(speed);
       sleep(ms);
-      stop();
+      halt();
   }
-    public static void openClaw(int ms /* wait for claw to move */) {
+    public  void openClaw(int ms /* wait for claw to move */) {
         clawLeft.setPosition(CLAW_LEFT_OPEN);
         clawRight.setPosition(CLAW_RIGHT_OPEN);
         sleep(ms);
     }
-    public static void closeClaw(int ms) {
+    public  void closeClaw(int ms) {
         clawLeft.setPosition(CLAW_LEFT_CLOSED);
         clawRight.setPosition(CLAW_RIGHT_CLOSED);
         sleep(ms);
@@ -152,8 +153,17 @@ public class TrashDashAutonomous extends LinearOpMode {
       waitOneHardwareCycle();
     }
 
-    // stop the motors
+    // halt the motors
     motorRight.setPower(0);
     motorLeft.setPower(0);*/
   }
+    public void ssleep(long ms)
+    {
+        try{
+            sleep(ms);
+        }
+        catch()
+        {
+        }
+    }
 }
