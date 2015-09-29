@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FtcRobotController/FtcRobotController.iml" filepath="$PROJECT_DIR$/FtcRobotController/FtcRobotController.iml" />
       <module fileurl="file://$PROJECT_DIR$/Venom6209.iml" filepath="$PROJECT_DIR$/Venom6209.iml" />
     </modules>
   </component>

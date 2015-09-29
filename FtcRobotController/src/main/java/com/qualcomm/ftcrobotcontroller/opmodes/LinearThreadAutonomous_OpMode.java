@@ -22,7 +22,8 @@ public class LinearThreadAutonomous_OpMode extends OpMode{
     @Override
     public void start() {
         super.start();
-        armThread.start(); // start Thread running here   if used in init() robot will move early/randomly
+        armThread.start(); // start Thread running here   if used in init() robot will move early/ra
+        // ndomly
         driveThread.start();
     }
 
