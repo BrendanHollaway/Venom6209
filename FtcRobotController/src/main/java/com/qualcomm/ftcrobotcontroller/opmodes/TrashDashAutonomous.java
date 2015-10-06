@@ -157,12 +157,12 @@ public class TrashDashAutonomous extends LinearOpMode {
     motorRight.setPower(0);
     motorLeft.setPower(0);*/
   }
-    public void ssleep(long ms)
+    public void ssleep(long ms) throws InterruptedException
     {
         try{
             sleep(ms);
         }
-        catch()
+        catch(Exception E)
         {
         }
     }
