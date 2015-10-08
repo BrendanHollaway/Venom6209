@@ -15,6 +15,9 @@ public class Close_Red_Buttons extends LinearOpMode {
     DcMotor motorFR;
     DcMotor motorBR;
 
+    double cm_rotation = 1.5*Math.PI*2.54;
+    double square = 60/cm_rotation;
+
 
 
     public void ssleep(long ms) throws InterruptedException
@@ -25,28 +28,56 @@ public class Close_Red_Buttons extends LinearOpMode {
         catch (Exception E){}
     }
 
-    public void move(double power, int ms) throws InterruptedException
+    public void move(double position, double speed) throws InterruptedException
     {
-        motorFL.setTargetPosition(0);// .setPower(power);
-        motorBL.setPower(power);
-        motorFR.setPower(power);
-        motorBR.setPower(power);
+        while(Math.abs(motorFL.getCurrentPosition()) < position ) {
+            motorFL.setPower(Math.signum(position) * Math.abs(speed));
+            motorBL.setPower(Math.signum(position) * Math.abs(speed));
+            motorFR.setPower(Math.signum(position) * Math.abs(speed));
+            motorBR.setPower(Math.signum(position) * Math.abs(speed));
+        }
         halt();
     }
-    public void left(double power, int ms) throws InterruptedException
+    public void turn(double deg, double speed) throws InterruptedException //pos deg is turn right
     {
-        motorFL.setPower(power);
-        motorBL.setPower(power);
-        motorFR.setPower(0);
-        motorBR.setPower(0);
+        deg %= 360.0;
+        if(deg > 180)
+        {
+            deg %= 180.0;
+            deg = 180.0 - deg;
+        }
+        else if(deg < -180)
+        {
+
+        }
+        double getGyro = 0.0;
+        while(Math.abs(getGyro) < Math.abs(deg))
+        {
+            motorFL.setPower(Math.signum(deg) * Math.abs(speed));
+            motorBL.setPower(Math.signum(deg) * Math.abs(speed));
+            motorFR.setPower(-Math.signum(deg) * Math.abs(speed));
+            motorBR.setPower(-Math.signum(deg) * Math.abs(speed));
+        }
         halt();
     }
-    public void right(double power, int ms) throws InterruptedException
+    public void left(double position, double speed) throws InterruptedException
     {
-        motorFL.setPower(0);
-        motorBL.setPower(0);
-        motorFR.setPower(power);
-        motorBR.setPower(power);
+        while(Math.abs(motorFL.getCurrentPosition()) < position ) {
+            motorFL.setPower(Math.signum(position) * Math.abs(speed));
+            motorBL.setPower(Math.signum(position) * Math.abs(speed));
+            motorFR.setPower(0);
+            motorBR.setPower(0);
+        }
+        halt();
+    }
+    public void right(double position, double speed) throws InterruptedException
+    {
+        while(Math.abs(motorFR.getCurrentPosition()) < position ) {
+            motorFL.setPower(0);
+            motorBL.setPower(0);
+            motorFR.setPower(Math.signum(position) * Math.abs(speed));
+            motorBR.setPower(Math.signum(position) * Math.abs(speed));
+        }
         halt();
     }
     public void halt()
@@ -63,11 +94,15 @@ public class Close_Red_Buttons extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motor_2");
         motorFR = hardwareMap.dcMotor.get("motor_3");
         motorBR = hardwareMap.dcMotor.get("motor_4");
-        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
+        move(2 * square, -1);
+        left();
+        move(Math.sqrt(8) * square, -1);
+        left();
 
     }
 }
