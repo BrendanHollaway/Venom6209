@@ -18,9 +18,16 @@ public class AutonomousSegments extends LinearOpMode {
     double cm_rotation = 1.5*Math.PI*2.54;
     double square = 60/cm_rotation;
 
+    public AutonomousSegments()
+    {
+        this.motorFL = null;
+        this.motorBL = null;
+        this.motorFR = null;
+        this.motorBR = null;
+    }
 
 
-    public void init_Motors(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR)
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR)
     {
         this.motorFL = motorFL;
         this.motorBL = motorBL;
@@ -178,6 +185,21 @@ public class AutonomousSegments extends LinearOpMode {
 //BUTTON & CLIMBERS SEGMENT
 
     public void ButtonClimbers() throws InterruptedException {
+
+    }
+
+//BUTTONS TO RAMP SEGMENTS
+
+    public void RedButtons_RedRamp() throws InterruptedException {
+
+    }
+    public void RedButtons_BlueRamp() throws InterruptedException {
+
+    }
+    public void BlueButtons_RedRamp() throws InterruptedException {
+
+    }
+    public void BlueButtons_BlueRamp() throws InterruptedException {
 
     }
 
