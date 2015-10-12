@@ -20,6 +20,14 @@ public class AutonomousSegments extends LinearOpMode {
 
 
 
+    public void init_Motors(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR)
+    {
+        this.motorFL = motorFL;
+        this.motorBL = motorBL;
+        this.motorFR = motorFR;
+        this.motorBR = motorBR;
+    }
+
     public void ssleep(long ms) throws InterruptedException
     {
         try {
@@ -87,7 +95,8 @@ public class AutonomousSegments extends LinearOpMode {
         motorBR.setPower(0);
     }
 
-    // INITIAL SEGMENTS
+//RED INITIAL SEGMENTS
+
     public void Close_Red_Buttons() throws InterruptedException {
         move(-2 * square, 1);
         turn(45, 1);
@@ -111,7 +120,65 @@ public class AutonomousSegments extends LinearOpMode {
         move(2 * square, 1);
         turn(-90,1);
         move(3 * square, 1);
-        turn(45,1);
+        turn(45, 1);
+    }
+    public void Close_Red_BlueRamp() throws InterruptedException {
+        move(2 * square, 1);
+        turn(45, 1);
+        move(Math.sqrt(8) * square, 1);
+    }
+    public void Far_Red_BlueRamp() throws InterruptedException {
+        move(4 * square, 1);
+        turn(45, 1);
+    }
+
+//BLUE INITIAL SEGMENTS
+
+    public void Close_Blue_Buttons() throws InterruptedException {
+        move(-2 * square, 1);
+        turn(-45, 1);
+        move(-Math.sqrt(8) * square, 1);
+        turn(-45, 1);
+    }
+    public void Far_Blue_Buttons() throws InterruptedException {
+        move(-square, 1);
+        turn(-45, 1);
+        move(-Math.sqrt(18) * square, 1);
+        turn(-45, 1);
+        move(-square, 1);
+    }
+    public void Close_Blue_RedRamp() throws InterruptedException {
+        move(square, 1);
+        turn(45, 1);
+        move(-Math.sqrt(8) * square, 1);
+        turn(45, 1);
+    }
+    public void Far_Blue_RedRamp() throws InterruptedException {
+        move(2 * square, 1);
+        turn(90,1);
+        move(3 * square, 1);
+        turn(-45,1);
+    }
+    public void Close_Blue_BlueRamp() throws InterruptedException {
+        move(2 * square, 1);
+        turn(-45, 1);
+        move(Math.sqrt(8) * square, 1);
+    }
+    public void Far_Blue_BlueRamp() throws InterruptedException {
+        move(4 * square, 1);
+        turn(-45, 1);
+    }
+
+//RAMP SEGMENT
+
+    public void ClimbRamp() throws InterruptedException {
+
+    }
+
+//BUTTON & CLIMBERS SEGMENT
+
+    public void ButtonClimbers() throws InterruptedException {
+
     }
 
     public void runOpMode() throws InterruptedException {
