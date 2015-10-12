@@ -38,17 +38,16 @@ public class Close_Red_Buttons extends LinearOpMode {
         }
         halt();
     }
-    public void turn(double deg, double speed) throws InterruptedException //pos deg is turn right
+    public void turn(double deg, double speed) throws InterruptedException //pos deg is turn clockwise (Deg measured after transformation)
     {
         deg %= 360.0;
         if(deg > 180)
         {
-            deg %= 180.0;
-            deg = 180.0 - deg;
+            deg -= 360;
         }
         else if(deg < -180)
         {
-
+            deg += 360;
         }
         double getGyro = 0.0;
         while(Math.abs(getGyro) < Math.abs(deg))
@@ -99,10 +98,10 @@ public class Close_Red_Buttons extends LinearOpMode {
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-        move(2 * square, -1);
-        left();
-        move(Math.sqrt(8) * square, -1);
-        left();
+        move(-2 * square, 1);
+        turn(45,1);
+        move(-Math.sqrt(8) * square, 1);
+        turn(45,1);
 
     }
 }
