@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Created by viperbots on 10/5/2015.
  */
-public class Close_Red_Buttons extends LinearOpMode {
+public class AutonomousSegments extends LinearOpMode {
 
     DcMotor motorFL;
     DcMotor motorBL;
@@ -87,8 +87,35 @@ public class Close_Red_Buttons extends LinearOpMode {
         motorBR.setPower(0);
     }
 
-    public void runOpMode() throws InterruptedException {
+    // INITIAL SEGMENTS
+    public void Close_Red_Buttons() throws InterruptedException {
+        move(-2 * square, 1);
+        turn(45, 1);
+        move(-Math.sqrt(8) * square, 1);
+        turn(45, 1);
+    }
+    public void Far_Red_Buttons() throws InterruptedException {
+        move(-square, 1);
+        turn(45, 1);
+        move(-Math.sqrt(18) * square, 1);
+        turn(45, 1);
+        move(-square, 1);
+    }
+    public void Close_Red_RedRamp() throws InterruptedException {
+        move(square, 1);
+        turn(-45, 1);
+        move(-Math.sqrt(8) * square, 1);
+        turn(-45, 1);
+    }
+    public void Far_Red_RedRamp() throws InterruptedException {
+        move(2 * square, 1);
+        turn(-90,1);
+        move(3 * square, 1);
+        turn(45,1);
+    }
 
+    public void runOpMode() throws InterruptedException {
+/*
         motorFL = hardwareMap.dcMotor.get("motor_1");
         motorBL = hardwareMap.dcMotor.get("motor_2");
         motorFR = hardwareMap.dcMotor.get("motor_3");
@@ -97,11 +124,7 @@ public class Close_Red_Buttons extends LinearOpMode {
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-
-        move(-2 * square, 1);
-        turn(45,1);
-        move(-Math.sqrt(8) * square, 1);
-        turn(45,1);
+*/
 
     }
 }
