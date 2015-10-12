@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Created by viperbots on 10/5/2015.
  */
-public class Close_Red_Buttons extends LinearOpMode {
+public class Far_Red_Buttons extends LinearOpMode {
 
     DcMotor motorFL;
     DcMotor motorBL;
@@ -98,10 +98,11 @@ public class Close_Red_Buttons extends LinearOpMode {
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
-        move(-2 * square, 1);
+        move(-square, 1);
         turn(45,1);
-        move(-Math.sqrt(8) * square, 1);
+        move(-Math.sqrt(18) * square, 1);
         turn(45,1);
+        move(-square, 1);
 
     }
 }
