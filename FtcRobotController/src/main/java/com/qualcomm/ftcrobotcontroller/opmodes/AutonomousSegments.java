@@ -35,6 +35,17 @@ public class AutonomousSegments extends LinearOpMode {
         this.motorBR = motorBR;
     }
 
+    public void setupMotors () {
+        motorFL = hardwareMap.dcMotor.get("motor_1");
+        motorBL = hardwareMap.dcMotor.get("motor_2");
+        motorFR = hardwareMap.dcMotor.get("motor_3");
+        motorBR = hardwareMap.dcMotor.get("motor_4");
+        motorFL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+    }
+
     public void ssleep(long ms) throws InterruptedException
     {
         try {
@@ -191,16 +202,24 @@ public class AutonomousSegments extends LinearOpMode {
 //BUTTONS TO RAMP SEGMENTS
 
     public void RedButtons_RedRamp() throws InterruptedException {
-
+        move(square, 1);
+        turn(90, 1);
+        move(1.5 * square, 1);
+        turn(45,1);
     }
     public void RedButtons_BlueRamp() throws InterruptedException {
-
+        move(4 * square, 1);
+        turn(-45,1);
     }
     public void BlueButtons_RedRamp() throws InterruptedException {
-
+        move(square, 1);
+        turn(90, 1);
+        move(1.5 * square, 1);
+        turn(45,1);
     }
     public void BlueButtons_BlueRamp() throws InterruptedException {
-
+        move(4 * square, 1);
+        turn(-45,1);
     }
 
     public void runOpMode() throws InterruptedException {

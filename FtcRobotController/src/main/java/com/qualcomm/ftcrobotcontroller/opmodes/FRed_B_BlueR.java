@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 /**
  * Created by viperbots on 10/12/2015.
  */
-public class CRed_B_RedR extends LinearOpMode {
+public class FRed_B_BlueR extends LinearOpMode {
     DcMotor motorFL;
     DcMotor motorBL;
     DcMotor motorFR;
@@ -26,9 +26,10 @@ public class CRed_B_RedR extends LinearOpMode {
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
-        auto.Close_Red_Buttons();
+        auto.Far_Red_Buttons();
         auto.ButtonClimbers();
-        auto.RedButtons_RedRamp();
+        auto.RedButtons_BlueRamp();
         auto.ClimbRamp();
     }
 }
+
