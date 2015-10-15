@@ -59,7 +59,7 @@ public class TrashDashAutonomous extends LinearOpMode {
       motorBR.setPower(speed);
       motorFL.setPower(speed);
       motorFR.setPower(speed);
-      ssleep(ms);
+      //ssleep(ms);
       halt();
   }
   public  void halt() {
@@ -67,14 +67,14 @@ public class TrashDashAutonomous extends LinearOpMode {
       motorBR.setPower(0);
       motorFL.setPower(0);
       motorFR.setPower(0);
-      sleep(100);
+      //sleep(100);
   }
   public  void left(int ms, double speed) {
       motorBR.setPower(speed);
       motorFR.setPower(speed);
       motorBL.setPower(0);
       motorFL.setPower(0);
-      sleep(ms);
+      //sleep(ms);
       halt();
   }
   public  void right(int ms, double speed) {
@@ -82,18 +82,18 @@ public class TrashDashAutonomous extends LinearOpMode {
       motorFR.setPower(0);
       motorBL.setPower(speed);
       motorFL.setPower(speed);
-      sleep(ms);
+      //sleep(ms);
       halt();
   }
     public  void openClaw(int ms /* wait for claw to move */) {
         clawLeft.setPosition(CLAW_LEFT_OPEN);
         clawRight.setPosition(CLAW_RIGHT_OPEN);
-        sleep(ms);
+        //sleep(ms);
     }
     public  void closeClaw(int ms) {
         clawLeft.setPosition(CLAW_LEFT_CLOSED);
         clawRight.setPosition(CLAW_RIGHT_CLOSED);
-        sleep(ms);
+        //sleep(ms);
     }
 
 
