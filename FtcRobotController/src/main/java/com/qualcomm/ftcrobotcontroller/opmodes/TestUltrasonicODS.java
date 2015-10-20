@@ -1,8 +1,8 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.hardware.ModernRoboticsNxtUltrasonicSensor;
-import com.qualcomm.hardware.ModernRoboticsOpticalDistanceSensor;
+//import com.qualcomm.hardware.ModernRoboticsNxtUltrasonicSensor;
+//import com.qualcomm.hardware.ModernRoboticsOpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 /**

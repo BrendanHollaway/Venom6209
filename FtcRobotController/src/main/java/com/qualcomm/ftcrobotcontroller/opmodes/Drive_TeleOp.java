@@ -3,6 +3,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.ftcrobotcontroller.helperBuffers_4211Libs.BufferSupportedRunnable;
 import com.qualcomm.ftcrobotcontroller.helperBuffers_4211Libs.BufferedInterpolatedMotor;
 import com.qualcomm.ftcrobotcontroller.helperBuffers_4211Libs.BufferedMotor;
+import com.qualcomm.ftcrobotcontroller.helperBuffers_4211Libs.BufferedServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -16,6 +17,7 @@ public class Drive_TeleOp extends BufferSupportedRunnable {
         BufferedInterpolatedMotor frontLeft;
         BufferedInterpolatedMotor backRight;
         BufferedInterpolatedMotor backLeft;
+        BufferedServo bucket;
         Gamepad localGamepad1;
         Gamepad localGamepad2;
         Object gamepadLock = new Object();
@@ -50,6 +52,8 @@ public class Drive_TeleOp extends BufferSupportedRunnable {
             backRight.resetEncoderValue();
             backLeft.setBufferMode(BufferedMotor.BUFFER_METHOD.POWER_AND_ENCODER);
             backLeft.resetEncoderValue();
+
+            bucket = BufferedServo.createBufferedMotor(map, "bucket");
         }
 
         @Override
@@ -66,18 +70,23 @@ public class Drive_TeleOp extends BufferSupportedRunnable {
             newDataReceived(); // call b/c new data to use
         }
 
-        @Override
-        public void run() {
+
+        public void loop() {
             while (true) // perfectly valid to put infinite loop here or can run linear
             {
                 double y1;
                 double y2;
-                boolean yButton = localGamepad1.y;
+                boolean yButton;
+                boolean lBump;
+                boolean rBump;
 
                 synchronized (gamepadLock)//get joystick values safely
                 {
                     y1 = localGamepad1.left_stick_y;
                     y2 = localGamepad1.right_stick_y;
+                    yButton = localGamepad1.y;
+                    lBump = localGamepad1.left_bumper;
+                    rBump = localGamepad1.right_bumper;
 
                 }
                 //SOS();
@@ -94,6 +103,12 @@ public class Drive_TeleOp extends BufferSupportedRunnable {
 
                 }
 
+                if (lBump) {
+                    bucket.setPosition(1);
+                }
+                if (rBump) {
+                    bucket.setPosition(0);
+                }
                 if (Math.abs(y1)> 0.1 && Math.abs(y2)> 0.1)
                 {
                     frontRight.setPower(scaleInput(y2)/yToggle);
