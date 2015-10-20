@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 /**
  * Created by viperbots on 10/5/2015.
  */
@@ -14,6 +16,7 @@ public class AutonomousSegments extends LinearOpMode {
     DcMotor motorBL;
     DcMotor motorFR;
     DcMotor motorBR;
+    UltrasonicSensor ultra;
 
     double cm_rotation = 1.5*Math.PI*2.54;
     double square = 60/cm_rotation;
@@ -105,8 +108,7 @@ public class AutonomousSegments extends LinearOpMode {
         }
         halt();
     }*/
-    public void halt()
-    {
+    public void halt() {
         motorFL.setPower(0);
         motorBL.setPower(0);
         motorFR.setPower(0);
@@ -190,7 +192,27 @@ public class AutonomousSegments extends LinearOpMode {
 //RAMP SEGMENT
 
     public void ClimbRamp() throws InterruptedException {
+        int counter = 0;
+        int badData = 0;
+        while(ultra.getUltrasonicLevel() < 40) {
 
+        }
+        while(counter < 10) {
+            ssleep(50);
+            if (ultra.getUltrasonicLevel() < 40) {
+                counter++;
+            }
+            else {
+                counter++;
+                badData++;
+            }
+        }
+        if (badData >= 5) {
+            halt();
+        }
+        else {
+            ClimbRamp();
+        }
     }
 
 //BUTTON & CLIMBERS SEGMENT

@@ -18,7 +18,7 @@ public class TestUltrasonicODS extends OpMode{
         us = hardwareMap.ultrasonicSensor.get("ultra");
     }
     public void loop() {
-        System.out.println(optic.getLightDetected());
-        System.out.println(us.getUltrasonicLevel());
+        telemetry.addData("optical: ", String.format("%.2f", optic.getLightDetected()));
+        telemetry.addData("ultrasonic: ", String.format("%.2f", us.getUltrasonicLevel()));
     }
 }

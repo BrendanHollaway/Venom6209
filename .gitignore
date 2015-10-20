@@ -23,3 +23,10 @@ Thumbs.db
 .idea
 .gradle
 build/
+
+.gradle/2.4/taskArtifacts/cache.properties.lock
+.idea/workspace.xml
+.idea/workspace.xml
+.gradle/2.4/taskArtifacts/cache.properties.lock
+build/intermediates/gradle_project_sync_data.bin
+.idea/workspace.xml
