@@ -29,6 +29,7 @@ public class CRed_B_BlueR extends LinearOpMode {
         auto.Close_Red_Buttons();
         auto.ButtonClimbers();
         auto.RedButtons_BlueRamp();
+        auto.ClearRamp();
         auto.ClimbRamp();
     }
 }

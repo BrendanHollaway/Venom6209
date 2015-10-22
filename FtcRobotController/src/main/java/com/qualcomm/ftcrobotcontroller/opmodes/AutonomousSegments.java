@@ -138,7 +138,7 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void Far_Red_RedRamp() throws InterruptedException {
         move(2 * square, 1);
-        turn(-90,1);
+        turn(-90, 1);
         move(3 * square, 1);
         turn(45, 1);
     }
@@ -189,25 +189,33 @@ public class AutonomousSegments extends LinearOpMode {
         turn(-45, 1);
     }
 
-//RAMP SEGMENT
+//RAMP SEGMENTS
+
+    public void ClearRamp() throws InterruptedException {
+        turn(-90, 1);
+        move(.75 * square, 1);
+        move(-1.5 * square,1);
+        move(.75 * square,1);
+        turn(90, 1);
+    }
 
     public void ClimbRamp() throws InterruptedException {
         int counter = 0;
         int badData = 0;
         while(ultra.getUltrasonicLevel() < 40) {
-
+            motorBL.setPower(1);
+            motorFL.setPower(1);
+            motorBR.setPower(1);
+            motorFR.setPower(1);
         }
         while(counter < 10) {
             ssleep(50);
-            if (ultra.getUltrasonicLevel() < 40) {
-                counter++;
-            }
-            else {
-                counter++;
+            if (ultra.getUltrasonicLevel() >= 40) {
                 badData++;
             }
+            counter++;
         }
-        if (badData >= 5) {
+        if (badData > 4) {
             halt();
         }
         else {

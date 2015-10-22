@@ -27,6 +27,7 @@ public class CRed_RedR extends LinearOpMode {
         auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Close_Red_RedRamp();
+        auto.ClearRamp();
         auto.ClimbRamp();
     }
 }

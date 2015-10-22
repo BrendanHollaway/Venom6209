@@ -27,6 +27,7 @@ public class CBlue_BlueR extends LinearOpMode {
         auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Close_Blue_BlueRamp();
+        auto.ClearRamp();
         auto.ClimbRamp();
     }
 }

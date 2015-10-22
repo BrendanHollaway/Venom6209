@@ -54,15 +54,30 @@ public class FtcOpModeRegister implements OpModeRegister {
      *
      * If two or more op modes are registered with the same name, the app will display an error.
      */
-
-    manager.register("NullOp", NullOp.class);
-    manager.register("Drive", Drive_TeleOp.class);
-    manager.register("K9TeleOp", K9TeleOp.class);
-    manager.register ("PushBotAuto", PushBotAuto.class);
-    manager.register ("PushBotManual", PushBotManual.class);
-    manager.register("LegitTeleOp", Threaded_TeleOp.class);
-    manager.register("servotest", servotest.class);
-    manager.register("UltraODStest", TestUltrasonicODS.class);
+      //manager.register("NullOp", NullOp.class);
+      manager.register("Drive_TeleOp", Drive_TeleOp.class);
+      //manager.register("K9TeleOp", K9TeleOp.class);
+      //manager.register ("PushBotAuto", PushBotAuto.class);
+      //manager.register ("PushBotManual", PushBotManual.class);
+      manager.register("Threaded_TeleOp", Threaded_TeleOp.class);
+      manager.register("servotest", servotest.class);
+      manager.register("UltraODStest", TestUltrasonicODS.class);
+      manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
+      manager.register("CBlue_B_RedR", CBlue_B_RedR.class);
+      manager.register("CBlue_BlueR", CBlue_BlueR.class);
+      manager.register("CBlue_RedR", CBlue_RedR.class);
+      manager.register("FBlue_B_BlueR", FBlue_B_BlueR.class);
+      manager.register("FBlue_B_RedR", FBlue_B_RedR.class);
+      manager.register("FBlue_BlueR", FBlue_BlueR.class);
+      manager.register("FBlue_RedR", FBlue_RedR.class);
+      manager.register("CRed_B_BlueR", CRed_B_BlueR.class);
+      manager.register("CRed_B_RedR", CRed_B_RedR.class);
+      manager.register("CRed_BlueR", CRed_BlueR.class);
+      manager.register("CRed_RedR", CRed_RedR.class);
+      manager.register("FRed_B_BlueR", FRed_B_BlueR.class);
+      manager.register("FRed_B_RedR", FRed_B_RedR.class);
+      manager.register("FRed_BlueR", FRed_BlueR.class);
+      manager.register("FRed_RedR", FRed_RedR.class);
     /*
      * Uncomment any of the following lines if you want to register an op mode.
      */

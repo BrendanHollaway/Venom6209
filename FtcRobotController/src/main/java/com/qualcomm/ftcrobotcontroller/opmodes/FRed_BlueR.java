@@ -27,6 +27,7 @@ public class FRed_BlueR extends LinearOpMode {
         auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Far_Red_BlueRamp();
+        auto.ClearRamp();
         auto.ClimbRamp();
     }
 }

@@ -29,6 +29,7 @@ public class FRed_B_BlueR extends LinearOpMode {
         auto.Far_Red_Buttons();
         auto.ButtonClimbers();
         auto.RedButtons_BlueRamp();
+        auto.ClearRamp();
         auto.ClimbRamp();
     }
 }
