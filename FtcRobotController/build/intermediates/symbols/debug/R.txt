@@ -232,7 +232,7 @@ int id top_bar 0x7f0b0015
 int id warning_layout 0x7f0b000b
 int id writeXML 0x7f0b0011
 int id writeXML_text 0x7f0b0013
-int layout about 0x7f030000
+int layout activity_about 0x7f030000
 int layout activity_autoconfigure 0x7f030001
 int layout activity_config_wifi_direct 0x7f030002
 int layout activity_ftc_configuration 0x7f030003

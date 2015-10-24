@@ -12,8 +12,7 @@
     <item>ULTRASONIC_SENSOR</item>
     <item>MOTOR_CONTROLLER</item>
     <item>SERVO_CONTROLLER</item>
-    <!-- add this line back in to enable the MATRIX Controller -->
-    <!-- <item>MATRIX_CONTROLLER</item> -->
+    <item>MATRIX_CONTROLLER</item>
     <item>TOUCH_SENSOR_MULTIPLEXER</item>
     <item>COLOR_SENSOR</item>
     <item>NOTHING</item>
