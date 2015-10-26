@@ -57,13 +57,14 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("NullOp", NullOp.class);
       manager.register("Drive_TeleOp", Drive_TeleOp.class);
       //manager.register("K9TeleOp", K9TeleOp.class);
-      //manager.register ("PushBotAuto", PushBotAuto.class);
       //manager.register ("PushBotManual", PushBotManual.class);
-      manager.register("Threaded_TeleOp", Threaded_TeleOp.class);
+      manager.register("Threaded_TeleOp", Threaded_TeleOp.class);      //manager.register ("PushBotAuto", PushBotAuto.class);
+
       manager.register("servotest", servotest.class);
       manager.register("ColorSensorTest", ColorSensorTest.class);
       manager.register("UltraODStest", TestUltrasonicODS.class);
-      manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
+      manager.register("NoT_TeleOp", NoThread_TeleOp.class);
+      /*manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
       manager.register("CBlue_B_RedR", CBlue_B_RedR.class);
       manager.register("CBlue_BlueR", CBlue_BlueR.class);
       manager.register("CBlue_RedR", CBlue_RedR.class);
@@ -78,8 +79,9 @@ public class FtcOpModeRegister implements OpModeRegister {
       manager.register("FRed_B_BlueR", FRed_B_BlueR.class);
       manager.register("FRed_B_RedR", FRed_B_RedR.class);
       manager.register("FRed_BlueR", FRed_BlueR.class);
-      manager.register("FRed_RedR", FRed_RedR.class);
+      manager.register("FRed_RedR", FRed_RedR.class); */
     /*
+
      * Uncomment any of the following lines if you want to register an op mode.
      */
 

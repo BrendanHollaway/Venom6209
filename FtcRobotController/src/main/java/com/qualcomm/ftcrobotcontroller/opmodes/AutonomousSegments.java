@@ -120,20 +120,20 @@ public class AutonomousSegments extends LinearOpMode {
     public void Close_Red_Buttons() throws InterruptedException {
         move(-2 * square, 1);
         turn(45, 1);
-        move(-Math.sqrt(8) * square, 1);
+        move(1.5 * (-Math.sqrt(2)) * square, 1);
         turn(45, 1);
     }
     public void Far_Red_Buttons() throws InterruptedException {
         move(-square, 1);
         turn(45, 1);
-        move(-Math.sqrt(18) * square, 1);
+        move(2 * (-Math.sqrt(2)) * square, 1);
         turn(45, 1);
-        move(-square, 1);
+        move(-2 * square, 1);
     }
     public void Close_Red_RedRamp() throws InterruptedException {
         move(square, 1);
         turn(-45, 1);
-        move(-Math.sqrt(8) * square, 1);
+        move(-Math.sqrt(2) * square, 1);
         turn(-45, 1);
     }
     public void Far_Red_RedRamp() throws InterruptedException {
@@ -141,14 +141,15 @@ public class AutonomousSegments extends LinearOpMode {
         turn(-90, 1);
         move(3 * square, 1);
         turn(45, 1);
+        move(.5 * Math.sqrt(2) * square, 1);
     }
     public void Close_Red_BlueRamp() throws InterruptedException {
-        move(2 * square, 1);
+        move(1.75 * square, 1);
         turn(45, 1);
         move(Math.sqrt(8) * square, 1);
     }
     public void Far_Red_BlueRamp() throws InterruptedException {
-        move(4 * square, 1);
+        move(3.5 * square, 1);
         turn(45, 1);
     }
 
@@ -157,35 +158,36 @@ public class AutonomousSegments extends LinearOpMode {
     public void Close_Blue_Buttons() throws InterruptedException {
         move(-2 * square, 1);
         turn(-45, 1);
-        move(-Math.sqrt(8) * square, 1);
+        move(1.5 * (-Math.sqrt(2)) * square, 1);
         turn(-45, 1);
     }
     public void Far_Blue_Buttons() throws InterruptedException {
         move(-square, 1);
         turn(-45, 1);
-        move(-Math.sqrt(18) * square, 1);
+        move(2 * (-Math.sqrt(2)) * square, 1);
         turn(-45, 1);
-        move(-square, 1);
+        move(-2 * square, 1);
     }
-    public void Close_Blue_RedRamp() throws InterruptedException {
+    public void Close_Blue_BlueRamp() throws InterruptedException {
         move(square, 1);
         turn(45, 1);
         move(-Math.sqrt(8) * square, 1);
         turn(45, 1);
     }
-    public void Far_Blue_RedRamp() throws InterruptedException {
+    public void Far_Blue_BlueRamp() throws InterruptedException {
         move(2 * square, 1);
-        turn(90,1);
+        turn(90, 1);
         move(3 * square, 1);
-        turn(-45,1);
+        turn(-45, 1);
+        move(.5 * Math.sqrt(2) * square, 1);
     }
-    public void Close_Blue_BlueRamp() throws InterruptedException {
-        move(2 * square, 1);
+    public void Close_Blue_RedRamp() throws InterruptedException {
+        move(1.75 * square, 1);
         turn(-45, 1);
         move(Math.sqrt(8) * square, 1);
     }
-    public void Far_Blue_BlueRamp() throws InterruptedException {
-        move(4 * square, 1);
+    public void Far_Blue_RedRamp() throws InterruptedException {
+        move(3.5 * square, 1);
         turn(-45, 1);
     }
 

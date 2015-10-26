@@ -7,102 +7,101 @@ import com.qualcomm.robotcore.util.Range;
 
 public class NoThread_TeleOp extends OpMode {
 
-
+    double y1;
+    double y2;
+    boolean yButton;
+    boolean lBump;
+    boolean rBump;
+    double lTrig;
+    double rTrig;
     DcMotor motorFR;
     DcMotor motorFL;
     DcMotor motorBR;
     DcMotor motorBL;
+    DcMotor motorPPR;
+    DcMotor motorPPL;
     Servo servoBucket;
-    Gamepad localGamepad1;
-    Gamepad localGamepad2;
+    //Gamepad localGamepad1;
+    //Gamepad localGamepad2;
     Object gamepadLock = new Object();
     double yToggle = 1.0;
     double dScale = 0.0;
 
     public NoThread_TeleOp() {
-        
+
     }
 
     @Override
     public void init() {
-        motorBL = hardwareMap.dcMotor.get("motorBL");
-        motorFL = hardwareMap.dcMotor.get("motorFL");
-        motorBR = hardwareMap.dcMotor.get("motorBR");
-        motorFR = hardwareMap.dcMotor.get("motorFR");
-        servoBucket = hardwareMap.servo.get("servoBucket");
-        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBL = hardwareMap.dcMotor.get("bl");
+        motorFL = hardwareMap.dcMotor.get("fl");
+        motorBR = hardwareMap.dcMotor.get("br");
+        motorFR = hardwareMap.dcMotor.get("fr");
+        motorPPR = hardwareMap.dcMotor.get("ppr");
+        motorPPL = hardwareMap.dcMotor.get("ppl");
+        //
+        // Bucket = hardwareMap.servo.get("servoBucket");
+        /*motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);*/
         
     }
-
+    @Override
     public void loop() {
-        while (true) // perfectly valid to put infinite loop here or can run linear
-        {
-            double y1;
-            double y2;
-            boolean yButton;
-            boolean lBump;
-            boolean rBump;
-            
-            y1 = localGamepad1.left_stick_y;
-            y2 = localGamepad1.right_stick_y;
-            yButton = localGamepad1.y;
-            lBump = localGamepad1.left_bumper;
-            rBump = localGamepad1.right_bumper;
-            
-            //SOS();
-            if (yButton)
-            {
-                if (yToggle == 1)
-                {
-                    yToggle = 2;
-                }
-                else if (yToggle == 2)
-                {
-                    yToggle = 1;
-                }
 
+        y1 = gamepad1.left_stick_y;
+        y2 = gamepad1.right_stick_y;
+        yButton = gamepad1.y;
+        lBump = gamepad1.left_bumper;
+        lTrig = gamepad1.left_trigger;
+        rTrig = gamepad1.left_trigger;
+
+
+
+        //SOS();
+        if (yButton) {
+            if (yToggle == 1) {
+                yToggle = 2;
+            } else if (yToggle == 2) {
+                yToggle = 1;
             }
 
-            if (lBump) {
-                servoBucket.setPosition(1);
-            }
-            else if (rBump) {
-                servoBucket.setPosition(0);
-            }
-            else {
-                servoBucket.setPosition(0.5);
-            }
-            if (Math.abs(y1)> 0.1 && Math.abs(y2)> 0.1)
-            {
-                motorFR.setPower((y2)/yToggle);
-                motorFL.setPower((y1)/yToggle);
-                motorBR.setPower((y2)/yToggle);
-                motorBL.setPower((y1)/yToggle);
-            }
-            else if (Math.abs(y1)> 0.1)
-            {
-                motorFR.setPower(0);
-                motorFL.setPower((y1)/yToggle);
-                motorBR.setPower(0);
-                motorBL.setPower((y1)/yToggle);
-            }
-            else if (Math.abs(y2)> 0.1)
-            {
-                motorFR.setPower((y2)/yToggle);
-                motorFL.setPower(0);
-                motorBR.setPower((y2)/yToggle);
-                motorBL.setPower(0);
-            }
-            else
-            {
-                motorFR.setPower(0);
-                motorFL.setPower(0);
-                motorBR.setPower(0);
-                motorBL.setPower(0);
-            }
+        }
+
+
+        if (lTrig > 0) {
+            motorPPR.setPower(1.0);
+            motorPPL.setPower(-1.0);
+        } else if (lTrig > 0) {
+            motorPPR.setPower(-1.0);
+            motorPPL.setPower(1.0);
+        } else {
+            motorPPL.setPower(0.0);
+            motorPPR.setPower(0.0);
+        }
+        telemetry.addData("middle", "made it to joystick controls");
+        if (Math.abs(y1) > 0.1 && Math.abs(y2) > 0.1) {
+            motorFR.setPower(-(y2) / yToggle);
+            motorFL.setPower((y1) / yToggle);
+            motorBR.setPower(-(y2) / yToggle);
+            motorBL.setPower((y1) / yToggle);
+        } else if (Math.abs(y1) > 0.1) {
+            motorFR.setPower(0);
+            motorFL.setPower((y1) / yToggle);
+            motorBR.setPower(0);
+            motorBL.setPower((y1) / yToggle);
+        } else if (Math.abs(y2) > 0.1) {
+            motorFR.setPower(-(y2) / yToggle);
+            motorFL.setPower(0);
+            motorBR.setPower(-(y2) / yToggle);
+            motorBL.setPower(0);
+        } else {
+            motorFR.setPower(0);
+            motorFL.setPower(0);
+            motorBR.setPower(0);
+            motorBL.setPower(0);
+        }
 
                 /*if (Math.abs(left) < 0.07) // deadband
                 {
@@ -117,7 +116,7 @@ public class NoThread_TeleOp extends OpMode {
                 driveRight.setPower(right);
 
                 newDataWait(5); */
-        }
+        telemetry.addData("end", "I made it to the end of the loop");
     }
     /*double scaleInput(double val)  {
         double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
