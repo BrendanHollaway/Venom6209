@@ -114,6 +114,24 @@ public class AutonomousSegments extends LinearOpMode {
         motorFR.setPower(0);
         motorBR.setPower(0);
     }
+    void SOS(double acc_y, double acc_z)
+    {
+        if (acc_y < -8.88 && acc_z > -4.14)
+        {
+            motorBL.setPower(-1);
+            motorBR.setPower(-1);
+            motorFL.setPower(-1);
+            motorFR.setPower(-1);
+            try {
+                wait(500);
+            }
+            catch (Exception E){}
+            motorBL.setPower(0);
+            motorBR.setPower(0);
+            motorFL.setPower(0);
+            motorFR.setPower(0);
+        }
+    }
 
 //RED INITIAL SEGMENTS
 
@@ -146,7 +164,7 @@ public class AutonomousSegments extends LinearOpMode {
     public void Close_Red_BlueRamp() throws InterruptedException {
         move(1.75 * square, 1);
         turn(45, 1);
-        move(Math.sqrt(8) * square, 1);
+        move(2 * Math.sqrt(2) * square, 1);
     }
     public void Far_Red_BlueRamp() throws InterruptedException {
         move(3.5 * square, 1);
@@ -184,7 +202,7 @@ public class AutonomousSegments extends LinearOpMode {
     public void Close_Blue_RedRamp() throws InterruptedException {
         move(1.75 * square, 1);
         turn(-45, 1);
-        move(Math.sqrt(8) * square, 1);
+        move(2 * Math.sqrt(2) * square, 1);
     }
     public void Far_Blue_RedRamp() throws InterruptedException {
         move(3.5 * square, 1);
@@ -205,6 +223,7 @@ public class AutonomousSegments extends LinearOpMode {
         int counter = 0;
         int badData = 0;
         while(ultra.getUltrasonicLevel() < 40) {
+            //SOS();
             motorBL.setPower(1);
             motorFL.setPower(1);
             motorBR.setPower(1);
