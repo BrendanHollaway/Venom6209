@@ -17,9 +17,12 @@ public class AutonomousSegments extends LinearOpMode {
     DcMotor motorFR;
     DcMotor motorBR;
     UltrasonicSensor ultra;
+    UltrasonicSensor frontUltra;
 
     double cm_rotation = 1.5*Math.PI*2.54;
     double square = 60/cm_rotation;
+    double inches = 1.5*Math.PI;
+
 
     public AutonomousSegments()
     {
@@ -59,13 +62,44 @@ public class AutonomousSegments extends LinearOpMode {
 
     public void move(double position, double speed) throws InterruptedException
     {
-        while(Math.abs(motorFL.getCurrentPosition()) < position ) {
+        int currentPosition = motorFL.getCurrentPosition();
+        while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition ) {
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
             motorBL.setPower(Math.signum(position) * Math.abs(speed));
             motorFR.setPower(Math.signum(position) * Math.abs(speed));
             motorBR.setPower(Math.signum(position) * Math.abs(speed));
         }
         halt();
+    }
+    public void moveCheck(double position, double speed) throws InterruptedException
+    {
+        int currentPosition = motorFL.getCurrentPosition();
+        while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition ) {
+            checkObject();
+            motorFL.setPower(Math.signum(position) * Math.abs(speed));
+            motorBL.setPower(Math.signum(position) * Math.abs(speed));
+            motorFR.setPower(Math.signum(position) * Math.abs(speed));
+            motorBR.setPower(Math.signum(position) * Math.abs(speed));
+        }
+        halt();
+    }
+    public void checkObject() throws InterruptedException
+    {
+        if (frontUltra.getUltrasonicLevel() < 10)
+        {
+            halt();
+            ssleep(3000);
+            /*if (frontUltra.getUltrasonicLevel() < 10)
+            {
+                turn(90, 1);
+                move(30 * inches, 1);
+                turn(-90, 1);
+                move(48 * inches, 1);
+                turn(-90, 1);
+                move(30 * inches, 1);
+                turn(90, 1);
+            }*/
+        }
     }
     public void turn(double deg, double speed) throws InterruptedException //pos deg is turn clockwise (Deg measured after transformation)
     {
@@ -138,13 +172,14 @@ public class AutonomousSegments extends LinearOpMode {
     public void Close_Red_Buttons() throws InterruptedException {
         move(-2 * square, 1);
         turn(45, 1);
-        move(1.5 * (-Math.sqrt(2)) * square, 1);
+        move(-1.5 * (Math.sqrt(2)) * square, 1);
         turn(45, 1);
+        move(-0.5 * square,1);
     }
     public void Far_Red_Buttons() throws InterruptedException {
         move(-square, 1);
         turn(45, 1);
-        move(2 * (-Math.sqrt(2)) * square, 1);
+        move(-2 * (Math.sqrt(2)) * square, 1);
         turn(45, 1);
         move(-2 * square, 1);
     }
@@ -152,7 +187,7 @@ public class AutonomousSegments extends LinearOpMode {
         move(square, 1);
         turn(-45, 1);
         move(-Math.sqrt(2) * square, 1);
-        turn(-45, 1);
+        turn(-90, 1);
     }
     public void Far_Red_RedRamp() throws InterruptedException {
         move(2 * square, 1);
@@ -162,7 +197,7 @@ public class AutonomousSegments extends LinearOpMode {
         move(.5 * Math.sqrt(2) * square, 1);
     }
     public void Close_Red_BlueRamp() throws InterruptedException {
-        move(1.75 * square, 1);
+        move(3 * square, 1);
         turn(45, 1);
         move(2 * Math.sqrt(2) * square, 1);
     }
@@ -176,13 +211,14 @@ public class AutonomousSegments extends LinearOpMode {
     public void Close_Blue_Buttons() throws InterruptedException {
         move(-2 * square, 1);
         turn(-45, 1);
-        move(1.5 * (-Math.sqrt(2)) * square, 1);
+        move(-1.5 * (Math.sqrt(2)) * square, 1);
         turn(-45, 1);
+        move(-0.5 * square, 1);
     }
     public void Far_Blue_Buttons() throws InterruptedException {
         move(-square, 1);
         turn(-45, 1);
-        move(2 * (-Math.sqrt(2)) * square, 1);
+        move(-2 * (Math.sqrt(2)) * square, 1);
         turn(-45, 1);
         move(-2 * square, 1);
     }
@@ -190,7 +226,7 @@ public class AutonomousSegments extends LinearOpMode {
         move(square, 1);
         turn(45, 1);
         move(-Math.sqrt(8) * square, 1);
-        turn(45, 1);
+        turn(90, 1);
     }
     public void Far_Blue_BlueRamp() throws InterruptedException {
         move(2 * square, 1);
@@ -200,7 +236,7 @@ public class AutonomousSegments extends LinearOpMode {
         move(.5 * Math.sqrt(2) * square, 1);
     }
     public void Close_Blue_RedRamp() throws InterruptedException {
-        move(1.75 * square, 1);
+        move(3 * square, 1);
         turn(-45, 1);
         move(2 * Math.sqrt(2) * square, 1);
     }

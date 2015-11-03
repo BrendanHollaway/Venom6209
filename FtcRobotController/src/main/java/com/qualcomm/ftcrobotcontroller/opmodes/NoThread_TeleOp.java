@@ -63,7 +63,8 @@ public class NoThread_TeleOp extends OpMode {
         if (yButton) {
             if (yToggle == 1) {
                 yToggle = 2;
-            } else if (yToggle == 2) {
+            }
+            else if (yToggle == 2) {
                 yToggle = 1;
             }
 
