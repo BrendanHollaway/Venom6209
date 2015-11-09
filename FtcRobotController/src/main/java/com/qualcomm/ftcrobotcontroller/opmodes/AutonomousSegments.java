@@ -169,6 +169,9 @@ public class AutonomousSegments extends LinearOpMode {
         motorFR.setPower(0);
         motorBR.setPower(0);
     }
+    public void squareTest () throws InterruptedException {
+        move(square, 1);
+    }
     void SOS(double acc_y, double acc_z)
     {
         if (acc_y < -8.88 && acc_z > -4.14)

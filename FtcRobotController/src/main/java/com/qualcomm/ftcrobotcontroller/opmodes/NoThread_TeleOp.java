@@ -59,8 +59,9 @@ public class NoThread_TeleOp extends OpMode {
         y2 = gamepad1.right_stick_y;
         yButton = gamepad1.y;
         lBump = gamepad1.left_bumper;
+        rBump = gamepad1.right_bumper;
         lTrig = gamepad1.left_trigger;
-        rTrig = gamepad1.left_trigger;
+        rTrig = gamepad1.right_trigger;
 
 
 
@@ -77,53 +78,33 @@ public class NoThread_TeleOp extends OpMode {
         }
 
 
-        if (lTrig > 0.1 && rTrig > 0.1) {
-            //motorPPR.setPower(1.0);
-            //motorPPL.setPower(-1.0);
-            if (servoL.getPosition() > 0.5) {
-                servoL.setPosition(0);
-            }
-            else {
-                servoL.setPosition(1);
-            }
-            if (servoR.getPosition() > 0.5) {
-                servoR.setPosition(0);
-            }
-            else {
-                servoR.setPosition(1);
-            }
-        } else if (lTrig > 0.1) {
-            if (servoL.getPosition() > 0.5) {
-                servoL.setPosition(0);
-            }
-            else {
-                servoL.setPosition(1);
-            }
-        } else if (rTrig > 0.1) {
-            if (servoR.getPosition() > 0.5) {
-                servoR.setPosition(0);
-            }
-            else {
-                servoR.setPosition(1);
-            }
-        } else {
-
+        if (lTrig > 0.1) {
+            servoL.setPosition(Range.clip(servoL.getPosition() + 0.01, 0, 1));
+        }
+        if (rTrig > 0.1) {
+            servoR.setPosition(Range.clip(servoR.getPosition() + 0.01, 0, 1));
+        }
+        if (lBump) {
+            servoL.setPosition(Range.clip(servoL.getPosition() - 0.01, 0, 1));
+        }
+        if (rBump) {
+            servoR.setPosition(Range.clip(servoR.getPosition() - 0.01, 0, 1));
         }
         telemetry.addData("middle", "made it to joystick controls");
         if (Math.abs(y1) > 0.1 && Math.abs(y2) > 0.1) {
-            motorFR.setPower((y2) / yToggle);
-            motorFL.setPower(-(y1) / yToggle);
-            motorBR.setPower((y2) / yToggle);
-            motorBL.setPower(-(y1) / yToggle);
+            motorFR.setPower(-(y2) / yToggle);
+            motorFL.setPower((y1) / yToggle);
+            motorBR.setPower(-(y2) / yToggle);
+            motorBL.setPower((y1) / yToggle);
         } else if (Math.abs(y1) > 0.1) {
             motorFR.setPower(0);
-            motorFL.setPower(-(y1) / yToggle);
+            motorFL.setPower((y1) / yToggle);
             motorBR.setPower(0);
-            motorBL.setPower(-(y1) / yToggle);
+            motorBL.setPower((y1) / yToggle);
         } else if (Math.abs(y2) > 0.1) {
-            motorFR.setPower((y2) / yToggle);
+            motorFR.setPower(-(y2) / yToggle);
             motorFL.setPower(0);
-            motorBR.setPower((y2) / yToggle);
+            motorBR.setPower(-(y2) / yToggle);
             motorBL.setPower(0);
         } else {
             motorFR.setPower(0);
