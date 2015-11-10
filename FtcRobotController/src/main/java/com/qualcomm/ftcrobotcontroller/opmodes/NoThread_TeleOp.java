@@ -23,6 +23,8 @@ public class NoThread_TeleOp extends OpMode {
     //Servo servoBucket;
     Servo servoL;
     Servo servoR;
+    AdafruitIMU gyroAcc;
+    volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
 
     //Gamepad localGamepad1;
     //Gamepad localGamepad2;
@@ -34,6 +36,10 @@ public class NoThread_TeleOp extends OpMode {
 
     }
 
+    public double gyroTest() {
+        gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        return yawAngle[0];
+    }
     @Override
     public void init() {
         motorBL = hardwareMap.dcMotor.get("bl");

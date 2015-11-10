@@ -18,6 +18,8 @@ public class AutonomousSegments extends LinearOpMode {
     DcMotor motorBR;
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
+    AdafruitIMU gyroAcc;
+
 
     double cm_rotation = 1.5*Math.PI*2.54;
     double square = 60/cm_rotation;                  //different units used for measuring distance moved
@@ -28,7 +30,7 @@ public class AutonomousSegments extends LinearOpMode {
     public AutonomousSegments()
     {
         this.motorFL = null;
-        this.motorBL = null;                        //"Why not!?" -Brendan Hollaway
+        this.motorBL = null;                        //"Why not!?" -Brendan
         this.motorFR = null;
         this.motorBR = null;
     }
@@ -172,7 +174,7 @@ public class AutonomousSegments extends LinearOpMode {
     public void squareTest () throws InterruptedException {
         move(square, 1);
     }
-    void SOS(double acc_y, double acc_z)
+    public void SOS(double acc_y, double acc_z)
     {
         if (acc_y < -8.88 && acc_z > -4.14)
         {
@@ -190,6 +192,7 @@ public class AutonomousSegments extends LinearOpMode {
             motorFR.setPower(0);
         }
     }
+
 
 //RED INITIAL SEGMENTS
 
