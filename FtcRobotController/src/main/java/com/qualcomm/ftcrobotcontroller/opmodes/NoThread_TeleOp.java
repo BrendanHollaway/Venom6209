@@ -7,19 +7,26 @@ import com.qualcomm.robotcore.util.Range;
 
 public class NoThread_TeleOp extends OpMode {
 
-    double y1;
-    double y2;
+    double y1_1;
+    double y1_2;
+    double y2_1;
+    double y2_2;
     boolean yButton;
     boolean lBump;
     boolean rBump;
     double lTrig;
     double rTrig;
+    boolean dpadUp;
+    boolean dpadDown;
+    double lTrig2;
     DcMotor motorFR;
     DcMotor motorFL;
     DcMotor motorBR;
     DcMotor motorBL;
-    DcMotor motorPPR;
-    DcMotor motorPPL;
+    DcMotor motorExtendLiftR;
+    DcMotor motorExtendLiftL;
+    DcMotor motorRaiseLiftR;
+    DcMotor motorRaiseLiftL;
     //Servo servoBucket;
     Servo servoL;
     Servo servoR;
@@ -46,8 +53,10 @@ public class NoThread_TeleOp extends OpMode {
         motorFL = hardwareMap.dcMotor.get("fl");
         motorBR = hardwareMap.dcMotor.get("br");
         motorFR = hardwareMap.dcMotor.get("fr");
-        motorPPR = hardwareMap.dcMotor.get("ppr");
-        motorPPL = hardwareMap.dcMotor.get("ppl");
+        motorExtendLiftR = hardwareMap.dcMotor.get("ppr");
+        motorExtendLiftL = hardwareMap.dcMotor.get("ppl");
+        motorRaiseLiftR = hardwareMap.dcMotor.get("ppr");
+        motorRaiseLiftL = hardwareMap.dcMotor.get("ppl");
         servoL = hardwareMap.servo.get("lServo");
         servoR = hardwareMap.servo.get("rServo");
         //
@@ -61,13 +70,17 @@ public class NoThread_TeleOp extends OpMode {
     @Override
     public void loop() {
 
-        y1 = gamepad1.left_stick_y;
-        y2 = gamepad1.right_stick_y;
+        y1_1 = gamepad1.left_stick_y;
+        y1_2 = gamepad1.right_stick_y;
         yButton = gamepad1.y;
         lBump = gamepad1.left_bumper;
         rBump = gamepad1.right_bumper;
         lTrig = gamepad1.left_trigger;
         rTrig = gamepad1.right_trigger;
+        dpadUp = gamepad1.dpad_up;
+        dpadDown = gamepad1.dpad_down;
+        y2_1 = gamepad2.left_stick_y;
+        y2_2 = gamepad2.right_stick_y;
 
 
 
@@ -85,32 +98,39 @@ public class NoThread_TeleOp extends OpMode {
 
 
         if (lTrig > 0.1) {
-            servoL.setPosition(Range.clip(servoL.getPosition() + 0.01, 0, 1));
+            servoL.setPosition(Range.clip(servoL.getPosition() + 0.02, 0, 1));
         }
         if (rTrig > 0.1) {
-            servoR.setPosition(Range.clip(servoR.getPosition() + 0.01, 0, 1));
+            servoR.setPosition(Range.clip(servoR.getPosition() + 0.02, 0, 1));
         }
         if (lBump) {
-            servoL.setPosition(Range.clip(servoL.getPosition() - 0.01, 0, 1));
+            servoL.setPosition(Range.clip(servoL.getPosition() - 0.02, 0, 1));
         }
         if (rBump) {
-            servoR.setPosition(Range.clip(servoR.getPosition() - 0.01, 0, 1));
+            servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
         }
-        telemetry.addData("middle", "made it to joystick controls");
-        if (Math.abs(y1) > 0.1 && Math.abs(y2) > 0.1) {
-            motorFR.setPower(-(y2) / yToggle);
-            motorFL.setPower((y1) / yToggle);
-            motorBR.setPower(-(y2) / yToggle);
-            motorBL.setPower((y1) / yToggle);
-        } else if (Math.abs(y1) > 0.1) {
+        if (Math.abs(y2_1) > 0.1 ) {
+            motorExtendLiftL.setPower(y2_1);
+            motorExtendLiftR.setPower(-y2_1);
+        }
+        if (Math.abs(y2_2) > 0.1) {
+            motorRaiseLiftL.setPower(y2_2);
+            motorRaiseLiftR.setPower(-y2_2);
+        }
+        if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1) {
+            motorFR.setPower(-(y1_2) / yToggle);
+            motorFL.setPower((y1_1) / yToggle);
+            motorBR.setPower(-(y1_2) / yToggle);
+            motorBL.setPower((y1_1) / yToggle);
+        } else if (Math.abs(y1_1) > 0.1) {
             motorFR.setPower(0);
-            motorFL.setPower((y1) / yToggle);
+            motorFL.setPower((y1_1) / yToggle);
             motorBR.setPower(0);
-            motorBL.setPower((y1) / yToggle);
-        } else if (Math.abs(y2) > 0.1) {
-            motorFR.setPower(-(y2) / yToggle);
+            motorBL.setPower((y1_1) / yToggle);
+        } else if (Math.abs(y1_2) > 0.1) {
+            motorFR.setPower(-(y1_2) / yToggle);
             motorFL.setPower(0);
-            motorBR.setPower(-(y2) / yToggle);
+            motorBR.setPower(-(y1_2) / yToggle);
             motorBL.setPower(0);
         } else {
             motorFR.setPower(0);
