@@ -473,10 +473,10 @@ public class AdafruitIMU implements HardwareDevice, I2cController.I2cPortReadyCa
       }
     }
     Log.i("FtcRobotController", "Autocalibration timed out! Cal status byte = "
-      + String.format("0X%02X",i2cReadCache[I2cController.I2C_BUFFER_START_ADDRESS])
-      + ". Self Test byte = "
-      + String.format("0X%02X",i2cReadCache[I2cController.I2C_BUFFER_START_ADDRESS + 1])
-      + ".");
+            + String.format("0X%02X", i2cReadCache[I2cController.I2C_BUFFER_START_ADDRESS])
+            + ". Self Test byte = "
+            + String.format("0X%02X", i2cReadCache[I2cController.I2C_BUFFER_START_ADDRESS + 1])
+            + ".");
     return false;
   }
 
@@ -623,6 +623,18 @@ public class AdafruitIMU implements HardwareDevice, I2cController.I2cPortReadyCa
       yaw[0] = 0.0;
       yaw[1] = 0.0;
     }
+  }
+  public void getAccel(double[] accs) // x,y,z acc double[]
+  {
+    accs[0] = (double) ((short)
+            ((i2cReadCache[BNO055_LINEAR_ACCEL_DATA_X_MSB_ADDR - readCacheOffset] & 0XFF) << 8)
+            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR - readCacheOffset] & 0XFF)) / 16.0;
+    accs[1] = (double) ((short)
+            ((i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Y_MSB_ADDR - readCacheOffset] & 0XFF) << 8)
+            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Y_LSB_ADDR - readCacheOffset] & 0XFF)) / 16.0;
+    accs[2] = (double) ((short)
+            ((i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Z_MSB_ADDR - readCacheOffset] & 0XFF) << 8)
+            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Z_LSB_ADDR - readCacheOffset] & 0XFF)) / 16.0;
   }
 
   /*

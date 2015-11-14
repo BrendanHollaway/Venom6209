@@ -110,12 +110,24 @@ public class NoThread_TeleOp extends OpMode {
             servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
         }
         if (Math.abs(y2_1) > 0.1 ) {
-            motorExtendLiftL.setPower(y2_1);
-            motorExtendLiftR.setPower(-y2_1);
+            if ((motorExtendLiftL.getCurrentPosition() > 1000 && y2_1 > 0) || (motorExtendLiftL.getCurrentPosition() < 10 && y2_1 < 0)) {
+                motorExtendLiftL.setPower(0);
+                motorExtendLiftR.setPower(0);
+            }
+            else {
+                motorExtendLiftL.setPower(y2_1);
+                motorExtendLiftR.setPower(-y2_1);
+            }
         }
         if (Math.abs(y2_2) > 0.1) {
-            motorRaiseLiftL.setPower(y2_2);
-            motorRaiseLiftR.setPower(-y2_2);
+            if ((motorRaiseLiftL.getCurrentPosition() > 1000 && y2_2 > 0) || (motorRaiseLiftL.getCurrentPosition() < 10 && y2_2 < 0)) {
+                motorRaiseLiftL.setPower(0);
+                motorRaiseLiftR.setPower(0);
+            }
+            else {
+                motorRaiseLiftL.setPower(y2_2);
+                motorRaiseLiftR.setPower(-y2_2);
+            }
         }
         if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1) {
             motorFR.setPower(-(y1_2) / yToggle);
@@ -152,7 +164,7 @@ public class NoThread_TeleOp extends OpMode {
                 driveRight.setPower(right);
 
                 newDataWait(5); */
-        telemetry.addData("end", "I made it to the end of the loop");
+        telemetry.addData("gyro yaw", gyroTest());
     }
     /*double scaleInput(double val)  {
         double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,

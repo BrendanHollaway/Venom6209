@@ -25,6 +25,7 @@ public class AutonomousSegments extends LinearOpMode {
     double square = 60/cm_rotation;                  //different units used for measuring distance moved
     double inches = 1.5*Math.PI;
     double degrees = 2000/90;
+    volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
 
 
     public AutonomousSegments()
@@ -55,6 +56,9 @@ public class AutonomousSegments extends LinearOpMode {
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     } */
 
+    public double degtoRad (double deg) {
+        return deg * (Math.PI/180);
+    }
     public void ssleep(long ms) throws InterruptedException                 //method for sleeping
     {
         try {
@@ -171,6 +175,10 @@ public class AutonomousSegments extends LinearOpMode {
         motorFR.setPower(0);
         motorBR.setPower(0);
     }
+    public double getGyroYaw() {
+        gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        return yawAngle[0];
+    }
     public void squareTest () throws InterruptedException {
         move(square, 1);
     }
@@ -203,7 +211,7 @@ public class AutonomousSegments extends LinearOpMode {
         move(-1.5 * (Math.sqrt(2)) * square, 1);
         //turn(45, 1);
         encoderTurn(45, 1);
-        move(-0.5 * square,1);
+        move(-0.5 * square, 1);
     }
     public void Far_Red_Buttons() throws InterruptedException {
         move(-square, 1);
@@ -363,6 +371,41 @@ public class AutonomousSegments extends LinearOpMode {
         //turn(-45,1);
         encoderTurn(-45, 1);
     }
+
+
+
+    public void GyroAccFinder() {
+        long oldTime = 0;
+        long currTime = 0;
+        double oldX = 0;
+        double normX = 0;
+        double rotX = 0;
+        double oldY = 0;
+        double normY = 0;
+        double rotY = 0;
+        double oldZ = 0;
+        double normZ = 0;
+        double xVel = 0;
+        double yVel = 0;
+        while(true)
+        {
+            oldTime = currTime;
+            currTime = System.currentTimeMillis();          //x' = x cos f - y sin f       y' = y cos f + x sin f
+            long dt = currTime - oldTime;
+            oldX = rotX;
+            oldY = rotY;
+            //normX = ;
+            //normY = ;
+            //normZ = ;
+            rotX = normX * Math.cos(degtoRad(getGyroYaw())) - normY * Math.sin(degtoRad(getGyroYaw()));
+            rotY = normY * Math.cos(degtoRad(getGyroYaw())) + normX * Math.sin(degtoRad(getGyroYaw()));
+            xVel = (rotX + oldX) * .5 * dt;
+            yVel = (rotY + oldY) * .5 * dt;
+        }
+    }
+
+
+
 
     public void runOpMode() throws InterruptedException {
 /*

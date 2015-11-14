@@ -65,6 +65,9 @@ public class FtcOpModeRegister implements OpModeRegister {
       manager.register("UltraODStest", TestUltrasonicODS.class);
       manager.register("NoT_TeleOp", NoThread_TeleOp.class);
       manager.register("SquareTest", squareTest.class);
+      manager.register("IMUout", IMUoutput.class);
+      manager.register("IMUtest", IMUtest.class);
+      manager.register("teleTest", telemetryTest.class);
       /*manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
       manager.register("CBlue_B_RedR", CBlue_B_RedR.class);
       manager.register("CBlue_BlueR", CBlue_BlueR.class);
