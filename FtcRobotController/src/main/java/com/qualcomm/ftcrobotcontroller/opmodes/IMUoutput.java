@@ -5,12 +5,16 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.*;
+
+import java.util.Timer;
+
 /**
  * Created by viperbots on 11/14/2015.
  */
 public class IMUoutput extends OpMode{
     AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
+    double[] accel = new double[3];
 
     public double gyroTest() {
         gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
@@ -19,7 +23,7 @@ public class IMUoutput extends OpMode{
     public void init() {
         long systemTime = System.nanoTime();
         try {
-            gyroAcc = new AdafruitIMU(hardwareMap, "IMU"
+            gyroAcc = new AdafruitIMU(hardwareMap, "hydro"
 
                     //The following was required when the definition of the "I2cDevice" class was incomplete.
                     //, "cdim", 5
@@ -29,13 +33,24 @@ public class IMUoutput extends OpMode{
                     , (byte)AdafruitIMU.OPERATION_MODE_IMU);
         } catch (RobotCoreException e){
         }
-
-    }
-    @Override
-    public void loop() {
         gyroAcc.startIMU();
 
-        gyroTest();
+    }
+    double velocity_x = 0;
+    @Override
+    public void loop() {
+
         telemetry.addData("gyro yaw", gyroTest());
+        gyroAcc.getAccel(accel);
+        try{
+            telemetry.addData("acc_X: ", accel[0]);
+            telemetry.addData("acc_Y: ", accel[1]);
+            telemetry.addData("acc_Z: ", accel[2]);
+            velocity_x += accel[0];
+        }
+        catch(Exception e)
+        {
+            telemetry.addData("Error: ", e.getMessage());
+        }
     }
 }

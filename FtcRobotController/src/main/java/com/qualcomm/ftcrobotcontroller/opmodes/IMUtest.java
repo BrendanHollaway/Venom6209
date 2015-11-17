@@ -26,9 +26,10 @@ public class IMUtest extends OpMode {
    */
   @Override
   public void init() {
+    telemetry.addData("Init: ", "Init begins");
     systemTime = System.nanoTime();
     try {
-      boschBNO055 = new AdafruitIMU(hardwareMap, "bno055"
+      boschBNO055 = new AdafruitIMU(hardwareMap, "hydro"
 
         //The following was required when the definition of the "I2cDevice" class was incomplete.
         //, "cdim", 5
@@ -41,7 +42,9 @@ public class IMUtest extends OpMode {
     }
     Log.i("FtcRobotController", "IMU Init method finished in: "
                                      + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");
-    //ADDRESS_B is the "standard" I2C bus address for the Bosch BNO055 (IMU data sheet, p. 90).
+    telemetry.addData("Init: ", "Init end");
+    //ADDRESS_B is the "standard" I2C bus
+    // address for the Bosch BNO055 (IMU data sheet, p. 90).
     //BUT DAVID PIERCE, MENTOR OF TEAM 8886, HAS EXAMINED THE SCHEMATIC FOR THE ADAFRUIT BOARD ON
     //WHICH THE IMU CHIP IS MOUNTED. SINCE THE SCHEMATIC SHOWS THAT THE COM3 PIN IS PULLED LOW,
     //ADDRESS_A IS THE IMU'S OPERATIVE I2C BUS ADDRESS

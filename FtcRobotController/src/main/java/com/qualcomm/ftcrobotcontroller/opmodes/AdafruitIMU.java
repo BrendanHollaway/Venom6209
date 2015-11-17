@@ -628,13 +628,13 @@ public class AdafruitIMU implements HardwareDevice, I2cController.I2cPortReadyCa
   {
     accs[0] = (double) ((short)
             ((i2cReadCache[BNO055_LINEAR_ACCEL_DATA_X_MSB_ADDR - readCacheOffset] & 0XFF) << 8)
-            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR - readCacheOffset] & 0XFF)) / 16.0;
+            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR - readCacheOffset] & 0XFF)) / 100.0;
     accs[1] = (double) ((short)
             ((i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Y_MSB_ADDR - readCacheOffset] & 0XFF) << 8)
-            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Y_LSB_ADDR - readCacheOffset] & 0XFF)) / 16.0;
+            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Y_LSB_ADDR - readCacheOffset] & 0XFF)) / 100.0;
     accs[2] = (double) ((short)
             ((i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Z_MSB_ADDR - readCacheOffset] & 0XFF) << 8)
-            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Z_LSB_ADDR - readCacheOffset] & 0XFF)) / 16.0;
+            | (i2cReadCache[BNO055_LINEAR_ACCEL_DATA_Z_LSB_ADDR - readCacheOffset] & 0XFF)) / 100.0;
   }
 
   /*
