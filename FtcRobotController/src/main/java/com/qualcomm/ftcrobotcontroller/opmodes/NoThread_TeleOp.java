@@ -12,13 +12,18 @@ public class NoThread_TeleOp extends OpMode {
     double y2_1;
     double y2_2;
     boolean yButton;
-    boolean lBump;
-    boolean rBump;
-    double lTrig;
-    double rTrig;
-    boolean dpadUp;
-    boolean dpadDown;
+    boolean lBump1;
+    boolean rBump1;
+    double lTrig1;
+    double rTrig1;
+    boolean lBump2;
+    boolean rBump2;
     double lTrig2;
+    double rTrig2;
+    boolean dpadUp1;
+    boolean dpadDown1;
+    boolean dpadUp2;
+    boolean dpadDown2;
     DcMotor motorFR;
     DcMotor motorFL;
     DcMotor motorBR;
@@ -27,9 +32,12 @@ public class NoThread_TeleOp extends OpMode {
     DcMotor motorExtendLiftL;
     DcMotor motorRaiseLiftR;
     DcMotor motorRaiseLiftL;
-    //Servo servoBucket;
+    //Servo servoservoBucket;
     Servo servoL;
     Servo servoR;
+    Servo servoArm;
+    Servo servoBucketSweep;
+    Servo servoBucketFloor;
     AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
 
@@ -38,6 +46,10 @@ public class NoThread_TeleOp extends OpMode {
     Object gamepadLock = new Object();
     double yToggle = 1.0;
     double dScale = 0.0;
+    //double [] servoArmPos = new double[]{};
+    int servoArmPos = 0;
+    boolean servoBucketOpen = false;
+
 
     public NoThread_TeleOp() {
 
@@ -46,6 +58,13 @@ public class NoThread_TeleOp extends OpMode {
     public double gyroTest() {
         gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
+    }
+    public void sleep(int ms) {
+        try {
+            wait(ms);
+        }
+        catch (Exception E) {}
+
     }
     @Override
     public void init() {
@@ -73,12 +92,18 @@ public class NoThread_TeleOp extends OpMode {
         y1_1 = gamepad1.left_stick_y;
         y1_2 = gamepad1.right_stick_y;
         yButton = gamepad1.y;
-        lBump = gamepad1.left_bumper;
-        rBump = gamepad1.right_bumper;
-        lTrig = gamepad1.left_trigger;
-        rTrig = gamepad1.right_trigger;
-        dpadUp = gamepad1.dpad_up;
-        dpadDown = gamepad1.dpad_down;
+        lBump1 = gamepad1.left_bumper;
+        rBump1 = gamepad1.right_bumper;
+        lTrig1 = gamepad1.left_trigger;
+        rTrig1 = gamepad1.right_trigger;
+        lBump2 = gamepad2.left_bumper;
+        rBump2 = gamepad2.right_bumper;
+        lTrig2 = gamepad2.left_trigger;
+        rTrig2 = gamepad2.right_trigger;
+        dpadUp1 = gamepad1.dpad_up;
+        dpadDown1 = gamepad1.dpad_down;
+        dpadUp2 = gamepad2.dpad_up;
+        dpadDown2 = gamepad2.dpad_down;
         y2_1 = gamepad2.left_stick_y;
         y2_2 = gamepad2.right_stick_y;
 
@@ -88,46 +113,27 @@ public class NoThread_TeleOp extends OpMode {
         //SOS();
         if (yButton) {
             if (yToggle == 1) {
-                yToggle = 2;
+                yToggle = 3;
             }
-            else if (yToggle == 2) {
+            else if (yToggle == 3) {
                 yToggle = 1;
             }
 
         }
 
+        // DRIVE CONTROL AND CLIMBER RELEASE
 
-        if (lTrig > 0.1) {
+        if (lTrig1 > 0.1) {
             servoL.setPosition(Range.clip(servoL.getPosition() + 0.02, 0, 1));
         }
-        if (rTrig > 0.1) {
+        if (rTrig1 > 0.1) {
             servoR.setPosition(Range.clip(servoR.getPosition() + 0.02, 0, 1));
         }
-        if (lBump) {
+        if (lBump1) {
             servoL.setPosition(Range.clip(servoL.getPosition() - 0.02, 0, 1));
         }
-        if (rBump) {
+        if (rBump1) {
             servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
-        }
-        if (Math.abs(y2_1) > 0.1 ) {
-            if ((motorExtendLiftL.getCurrentPosition() > 1000 && y2_1 > 0) || (motorExtendLiftL.getCurrentPosition() < 10 && y2_1 < 0)) {
-                motorExtendLiftL.setPower(0);
-                motorExtendLiftR.setPower(0);
-            }
-            else {
-                motorExtendLiftL.setPower(y2_1);
-                motorExtendLiftR.setPower(-y2_1);
-            }
-        }
-        if (Math.abs(y2_2) > 0.1) {
-            if ((motorRaiseLiftL.getCurrentPosition() > 1000 && y2_2 > 0) || (motorRaiseLiftL.getCurrentPosition() < 10 && y2_2 < 0)) {
-                motorRaiseLiftL.setPower(0);
-                motorRaiseLiftR.setPower(0);
-            }
-            else {
-                motorRaiseLiftL.setPower(y2_2);
-                motorRaiseLiftR.setPower(-y2_2);
-            }
         }
         if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1) {
             motorFR.setPower(-(y1_2) / yToggle);
@@ -151,6 +157,69 @@ public class NoThread_TeleOp extends OpMode {
             motorBL.setPower(0);
         }
 
+        // LIFT CONTROLS START HERE
+
+        if (Math.abs(y2_1) > 0.1 ) {
+            if ((motorExtendLiftL.getCurrentPosition() > 1000 && y2_1 > 0) || (motorExtendLiftL.getCurrentPosition() < 10 && y2_1 < 0)) {
+                motorExtendLiftL.setPower(0);
+                motorExtendLiftR.setPower(0);
+            }
+            else {
+                motorExtendLiftL.setPower(y2_1);
+                motorExtendLiftR.setPower(-y2_1);
+            }
+        }
+        if (Math.abs(y2_2) > 0.1) {
+            if ((motorRaiseLiftL.getCurrentPosition() > 1000 && y2_2 > 0) || (motorRaiseLiftL.getCurrentPosition() < 10 && y2_2 < 0)) {
+                motorRaiseLiftL.setPower(0);
+                motorRaiseLiftR.setPower(0);
+            }
+            else {
+                motorRaiseLiftL.setPower(y2_2);
+                motorRaiseLiftR.setPower(-y2_2);
+            }
+        }
+
+
+        if (lBump2) {
+            if (servoArmPos == 1) {
+                servoArm.setPosition(0.4);
+                sleep(500);
+            }
+            else if (servoArmPos == 2) {
+                servoArm.setPosition(0.4);
+                sleep(150);
+            }
+            else if (servoArmPos == 3) {
+                servoArm.setPosition(0.4);
+                sleep(150);
+            }
+            else servoArm.setPosition(0.5);
+        }
+        else if (rBump2) {
+            if (servoArmPos == 0) {
+                servoArm.setPosition(0.6);
+                sleep(500);
+            }
+            else if (servoArmPos == 1) {
+                servoArm.setPosition(0.6);
+                sleep(150);
+            }
+            else if (servoArmPos == 2) {
+                servoArm.setPosition(0.6);
+                sleep(150);
+            }
+            else servoArm.setPosition(0.5);
+        }
+        if (lTrig2 > 0.1) {
+            servoBucketSweep.setPosition(0.5 + (lTrig2/2));
+        }
+        if (rTrig2 > 0.1) {
+            servoBucketSweep.setPosition(0.5 - (rTrig2/2));
+        }
+        if (dpadDown2) {
+
+        }
                 /*if (Math.abs(left) < 0.07) // deadband
                 {
                     left = 0;
