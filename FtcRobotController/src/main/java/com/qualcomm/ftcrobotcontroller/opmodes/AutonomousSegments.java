@@ -26,6 +26,7 @@ public class AutonomousSegments extends LinearOpMode {
     double inches = 1.5*Math.PI;
     double degrees = 2000/90;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
+    double[] accel = new double[3];
 
 
     public AutonomousSegments()
@@ -55,10 +56,7 @@ public class AutonomousSegments extends LinearOpMode {
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     } */
-
-    public double degtoRad (double deg) {
-        return deg * (Math.PI/180);
-    }
+    
     public void ssleep(long ms) throws InterruptedException                 //method for sleeping
     {
         try {
@@ -119,8 +117,7 @@ public class AutonomousSegments extends LinearOpMode {
         {
             deg += 360;
         }
-        double getGyro = 0.0;
-        while(Math.abs(getGyro) < Math.abs(deg))
+        while(Math.abs(getGyroYaw()) < Math.abs(deg))
         {
             motorFL.setPower(Math.signum(deg) * Math.abs(speed));
             motorBL.setPower(Math.signum(deg) * Math.abs(speed));
@@ -184,6 +181,9 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void SOS(double acc_y, double acc_z)
     {
+        gyroAcc.getAccel(accel);
+        acc_y = accel[1];
+        acc_z = accel[2];
         if (acc_y < -8.88 && acc_z > -4.14)
         {
             motorBL.setPower(-1);
@@ -206,110 +206,110 @@ public class AutonomousSegments extends LinearOpMode {
 
     public void Close_Red_Buttons() throws InterruptedException {
         move(-2 * square, 1);
-        //turn(45, 1);
-        encoderTurn(45,1);
+        turn(45, 1);
+        //encoderTurn(45,1);
         move(-1.5 * (Math.sqrt(2)) * square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
         move(-0.5 * square, 1);
     }
     public void Far_Red_Buttons() throws InterruptedException {
         move(-square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
         move(-2 * (Math.sqrt(2)) * square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
         move(-2 * square, 1);
     }
     public void Close_Red_RedRamp() throws InterruptedException {
         move(square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
         move(-Math.sqrt(2) * square, 1);
-        //turn(-90, 1);
-        encoderTurn(-90, 1);
+        turn(-90, 1);
+        //encoderTurn(-90, 1);
     }
     public void Far_Red_RedRamp() throws InterruptedException {
         move(2 * square, 1);
-        //turn(-90, 1);
-        encoderTurn(-90, 1);
+        turn(-90, 1);
+        //encoderTurn(-90, 1);
         move(3 * square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
         move(.5 * Math.sqrt(2) * square, 1);
     }
     public void Close_Red_BlueRamp() throws InterruptedException {
         move(3 * square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
         move(2 * Math.sqrt(2) * square, 1);
     }
     public void Far_Red_BlueRamp() throws InterruptedException {
         move(3.5 * square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
     }
 
 //BLUE INITIAL SEGMENTS
 
     public void Close_Blue_Buttons() throws InterruptedException {
         move(-2 * square, 1);
-        //turn(-45, 1);
-        encoderTurn(45, 1);
+        turn(-45, 1);
+        //encoderTurn(45, 1);
         move(-1.5 * (Math.sqrt(2)) * square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
         move(-0.5 * square, 1);
     }
     public void Far_Blue_Buttons() throws InterruptedException {
         move(-square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
         move(-2 * (Math.sqrt(2)) * square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
         move(-2 * square, 1);
     }
     public void Close_Blue_BlueRamp() throws InterruptedException {
         move(square, 1);
-        //turn(45, 1);
-        encoderTurn(45, 1);
+        turn(45, 1);
+        //encoderTurn(45, 1);
         move(-Math.sqrt(8) * square, 1);
-        //turn(90, 1);
-        encoderTurn(90, 1);
+        turn(90, 1);
+        //encoderTurn(90, 1);
     }
     public void Far_Blue_BlueRamp() throws InterruptedException {
         move(2 * square, 1);
-        //turn(90, 1);
-        encoderTurn(90, 1);
+        turn(90, 1);
+        //encoderTurn(90, 1);
         move(3 * square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
         move(.5 * Math.sqrt(2) * square, 1);
     }
     public void Close_Blue_RedRamp() throws InterruptedException {
         move(3 * square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
         move(2 * Math.sqrt(2) * square, 1);
     }
     public void Far_Blue_RedRamp() throws InterruptedException {
         move(3.5 * square, 1);
-        //turn(-45, 1);
-        encoderTurn(-45, 1);
+        turn(-45, 1);
+        //encoderTurn(-45, 1);
     }
 
 //RAMP SEGMENTS
 
     public void ClearRamp() throws InterruptedException {
-        //turn(-90, 1);
-        encoderTurn(-90, 1);
+        turn(-90, 1);
+        //encoderTurn(-90, 1);
         move(.75 * square, 1);
         move(-1.5 * square,1);
         move(.75 * square,1);
-        //turn(90, 1);
-        encoderTurn(90, 1);
+        turn(90, 1);
+        //encoderTurn(90, 1);
     }
 
     public void ClimbRamp() throws InterruptedException {
@@ -347,29 +347,29 @@ public class AutonomousSegments extends LinearOpMode {
 
     public void RedButtons_RedRamp() throws InterruptedException {
         move(square, 1);
-        //turn(90, 1);
-        encoderTurn(90, 1);
+        turn(90, 1);
+        //encoderTurn(90, 1);
         move(1.5 * square, 1);
-        //turn(45,1);
-        encoderTurn(45, 1);
+        turn(45,1);
+        //encoderTurn(45, 1);
     }
     public void RedButtons_BlueRamp() throws InterruptedException {
         move(4 * square, 1);
-        //turn(-45,1);
-        encoderTurn(-45, 1);
+        turn(-45,1);
+        //encoderTurn(-45, 1);
     }
     public void BlueButtons_RedRamp() throws InterruptedException {
         move(square, 1);
-        //turn(90, 1);
-        encoderTurn(90, 1);
+        turn(90, 1);
+        //encoderTurn(90, 1);
         move(1.5 * square, 1);
-        //turn(45,1);
-        encoderTurn(45, 1);
+        turn(45,1);
+        //encoderTurn(45, 1);
     }
     public void BlueButtons_BlueRamp() throws InterruptedException {
         move(4 * square, 1);
-        //turn(-45,1);
-        encoderTurn(-45, 1);
+        turn(-45,1);
+        //encoderTurn(-45, 1);
     }
 
 
@@ -397,8 +397,8 @@ public class AutonomousSegments extends LinearOpMode {
             //normX = ;
             //normY = ;
             //normZ = ;
-            rotX = normX * Math.cos(degtoRad(getGyroYaw())) - normY * Math.sin(degtoRad(getGyroYaw()));
-            rotY = normY * Math.cos(degtoRad(getGyroYaw())) + normX * Math.sin(degtoRad(getGyroYaw()));
+            rotX = normX * Math.cos(Math.toRadians(getGyroYaw())) - normY * Math.sin(Math.toRadians(getGyroYaw()));
+            rotY = normY * Math.cos(Math.toRadians(getGyroYaw())) + normX * Math.sin(Math.toRadians(getGyroYaw()));
             xVel = (rotX + oldX) * .5 * dt;
             yVel = (rotY + oldY) * .5 * dt;
         }

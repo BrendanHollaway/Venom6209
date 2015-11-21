@@ -11,7 +11,9 @@ public class NoThread_TeleOp extends OpMode {
     double y1_2;
     double y2_1;
     double y2_2;
-    boolean yButton;
+    boolean yButton1;
+    boolean yButton2;
+    boolean aButton2;
     boolean lBump1;
     boolean rBump1;
     double lTrig1;
@@ -38,8 +40,11 @@ public class NoThread_TeleOp extends OpMode {
     Servo servoArm;
     Servo servoBucketSweep;
     Servo servoBucketFloor;
+    Servo servoTopRatchet;
+    Servo servoBotRatchet;
     AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
+    double[] accel = new double[3];
 
     //Gamepad localGamepad1;
     //Gamepad localGamepad2;
@@ -91,7 +96,9 @@ public class NoThread_TeleOp extends OpMode {
 
         y1_1 = gamepad1.left_stick_y;
         y1_2 = gamepad1.right_stick_y;
-        yButton = gamepad1.y;
+        yButton1 = gamepad1.y;
+        yButton2 = gamepad2.y;
+        aButton2 = gamepad2.a;
         lBump1 = gamepad1.left_bumper;
         rBump1 = gamepad1.right_bumper;
         lTrig1 = gamepad1.left_trigger;
@@ -111,7 +118,7 @@ public class NoThread_TeleOp extends OpMode {
 
 
         //SOS();
-        if (yButton) {
+        if (yButton1) {
             if (yToggle == 1) {
                 yToggle = 3;
             }
@@ -214,11 +221,30 @@ public class NoThread_TeleOp extends OpMode {
         if (lTrig2 > 0.1) {
             servoBucketSweep.setPosition(0.5 + (lTrig2/2));
         }
-        if (rTrig2 > 0.1) {
+        else if (rTrig2 > 0.1) {
             servoBucketSweep.setPosition(0.5 - (rTrig2/2));
         }
         if (dpadDown2) {
-
+            servoBucketFloor.setPosition(servoBucketFloor.getPosition() + 0.05);
+        }
+        else if (dpadUp2) {
+            servoBucketFloor.setPosition(servoBucketFloor.getPosition() - 0.05);
+        }
+        if (yButton2) {
+            int topRatchethold = 0;
+            while (yButton2) {
+                topRatchethold++;
+            }
+            if (topRatchethold > 4)
+                servoTopRatchet.setPosition(0.5);
+        }
+        if (aButton2) {
+            int botRatchethold = 0;
+            while (yButton2) {
+                botRatchethold++;
+            }
+            if (botRatchethold > 4)
+                servoBotRatchet.setPosition(0.5);
         }
                 /*if (Math.abs(left) < 0.07) // deadband
                 {
@@ -262,6 +288,9 @@ public class NoThread_TeleOp extends OpMode {
     } */
     void SOS(double acc_y, double acc_z)
     {
+        gyroAcc.getAccel(accel);
+        acc_y = accel[1];
+        acc_z = accel[2];
         if (acc_y < -8.88 && acc_z > -4.14)
         {
             motorBL.setPower(-1);
