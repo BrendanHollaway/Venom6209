@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.util.Range;
+
 /**
  * Created by viperbots on 10/5/2015.
  */
@@ -22,11 +24,13 @@ public class AutonomousSegments extends LinearOpMode {
 
 
     double cm_rotation = 1.5*Math.PI*2.54;
-    double square = 60/cm_rotation;                  //different units used for measuring distance moved
+    double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
     double inches = 1.5*Math.PI;
-    double degrees = 2000/90;
+    double degrees = 2000.0/90.0;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
+    double xPos = 0;
+    double yPos = 0;
 
 
     public AutonomousSegments()
@@ -56,7 +60,7 @@ public class AutonomousSegments extends LinearOpMode {
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     } */
-    
+
     public void ssleep(long ms) throws InterruptedException                 //method for sleeping
     {
         try {
@@ -64,9 +68,16 @@ public class AutonomousSegments extends LinearOpMode {
         }
         catch (Exception E){}
     }
+    public void updatePosition(double encoderVal) {
+        xPos += (motorFL.getCurrentPosition() - encoderVal)*Math.cos(getGyroYaw()); // encoder ticks
+        yPos += (motorFL.getCurrentPosition() - encoderVal)*Math.sin(getGyroYaw());
+        encoderVal = motorFL.getCurrentPosition();
+    }
+    //public void moveToPosition()
 
-    public void move(double position, double speed) throws InterruptedException        //move in a straight line
+    public void move(double squares, double speed) throws InterruptedException        //move in a straight line
     {
+        double position = squares / square_per_rot * 1120; //1120 is number of encoder ticks per rotation
         int currentPosition = motorFL.getCurrentPosition();                            //measures current encoder value
         while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition ) {  //moves until encoders change by value inputted
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
@@ -108,6 +119,7 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void turn(double deg, double speed) throws InterruptedException //pos deg is turn clockwise (Deg measured after transformation)
     {
+        speed = Range.clip(speed, -1, 1);
         deg %= 360.0;
         if(deg > 180)
         {
@@ -128,6 +140,7 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void encoderTurn(double position, double speed) throws InterruptedException           //left is negative, right is positive
     {
+        speed = Range.clip(speed, -1, 1);
         int currentPosition = motorFL.getCurrentPosition();                                   // WRITE MEDIAN FUNCTION
         if(Math.abs(motorFL.getCurrentPosition()) < position * degrees + currentPosition) {
             while (Math.abs(motorFL.getCurrentPosition()) < position * degrees + currentPosition) {
@@ -148,6 +161,7 @@ public class AutonomousSegments extends LinearOpMode {
     }
     /*public void left(double position, double speed) throws InterruptedException
     {
+        speed = Range.clip(speed, -1, 1);
         while(Math.abs(motorFL.getCurrentPosition()) < position ) {
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
             motorBL.setPower(Math.signum(position) * Math.abs(speed));
@@ -158,6 +172,7 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void right(double position, double speed) throws InterruptedException
     {
+        speed = Range.clip(speed, -1, 1);
         while(Math.abs(motorFR.getCurrentPosition()) < position ) {
             motorFL.setPower(0);
             motorBL.setPower(0);
@@ -177,7 +192,7 @@ public class AutonomousSegments extends LinearOpMode {
         return yawAngle[0];
     }
     public void squareTest () throws InterruptedException {
-        move(square, 1);
+        move( 1, 1);
     }
     public void SOS(double acc_y, double acc_z)
     {
@@ -205,97 +220,180 @@ public class AutonomousSegments extends LinearOpMode {
 //RED INITIAL SEGMENTS
 
     public void Close_Red_Buttons() throws InterruptedException {
-        move(-2 * square, 1);
+        move(-2 , 1);
         turn(45, 1);
         //encoderTurn(45,1);
-        move(-1.5 * (Math.sqrt(2)) * square, 1);
+        move(-1.5 * (Math.sqrt(2)) , 1);
         turn(45, 1);
         //encoderTurn(45, 1);
-        move(-0.5 * square, 1);
+        move(-0.5 , 1);
     }
     public void Far_Red_Buttons() throws InterruptedException {
-        move(-square, 1);
+        move(- 1, 1);
         turn(45, 1);
         //encoderTurn(45, 1);
-        move(-2 * (Math.sqrt(2)) * square, 1);
+        move(-2 * (Math.sqrt(2)) , 1);
         turn(45, 1);
         //encoderTurn(45, 1);
-        move(-2 * square, 1);
+        move(-2 , 1);
     }
     public void Close_Red_RedRamp() throws InterruptedException {
-        move(square, 1);
+        move( 1, 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
-        move(-Math.sqrt(2) * square, 1);
+        move(-Math.sqrt(2) , 1);
         turn(-90, 1);
         //encoderTurn(-90, 1);
     }
     public void Far_Red_RedRamp() throws InterruptedException {
-        move(2 * square, 1);
+        move(2 , 1);
         turn(-90, 1);
         //encoderTurn(-90, 1);
-        move(3 * square, 1);
+        move(3 , 1);
         turn(45, 1);
         //encoderTurn(45, 1);
-        move(.5 * Math.sqrt(2) * square, 1);
+        move(.5 * Math.sqrt(2) , 1);
     }
     public void Close_Red_BlueRamp() throws InterruptedException {
-        move(3 * square, 1);
+        move(3 , 1);
         turn(45, 1);
         //encoderTurn(45, 1);
-        move(2 * Math.sqrt(2) * square, 1);
+        move(2 * Math.sqrt(2) , 1);
     }
     public void Far_Red_BlueRamp() throws InterruptedException {
-        move(3.5 * square, 1);
+        move(3.5, 1);
         turn(45, 1);
         //encoderTurn(45, 1);
     }
 
+    public void move_pos(double x, double y, double speed)
+    {
+        Range.clip(speed, -1, 1);
+        double target_heading;
+        double target_x;
+        double target_y;
+        double left_speed;
+        double right_speed;
+        double old_x_acc = 0;
+        double curr_x_acc = 0;
+        double old_y_acc = 0;
+        double curr_y_acc = 0;
+        double x_vel = 0;
+        double y_vel = 0;
+        double oldEncoder;
+        double currEncoder = motorFL.getCurrentPosition();
+        double dE;
+        double dEx = 0;
+        double dEy = 0;
+        long oldTime;
+        long currTime = System.nanoTime();
+        double dt = 0;
+        double[] accs = new double[3];
+        while(Math.abs(x-xPos) > .1 && Math.abs(y-yPos) > .1)
+        {
+            //TARGET HEADING CALCULATIONS
+            target_x = x - xPos;
+            target_y = y - yPos;
+            target_heading = Math.atan2(target_y, target_x);
+            target_heading = target_heading > 0? target_heading : target_heading + 2 * Math.PI; // makes it positive, from 0 to 2pi
+            target_heading = Math.toDegrees(target_heading); // rad -> deg; 0 to 360
+            if(speed < 0) // makes it negative for negative movement... not sure if this will work. Don't back up :D
+                target_heading = -target_heading;
+            //TIME CALCULATIONS
+            oldTime = currTime;
+            currTime = System.nanoTime();
+            dt = (currTime - oldTime) / Math.pow(10, 9); // puts time in seconds
+            //ECNCODER VALUE CALCULATIONS
+            oldEncoder = currEncoder;
+            currEncoder = motorFL.getCurrentPosition();
+            dE = currEncoder - oldEncoder;
+            dEx = dE * Math.cos(Math.toRadians(getGyroYaw()));
+            dEy = dE * Math.sin(Math.toRadians(getGyroYaw()));
+            // ACCELERATION VALUE CALCULATIONS
+            gyroAcc.getAccel(accs);
+            old_x_acc = curr_x_acc;
+            old_y_acc = curr_y_acc;
+            curr_x_acc = accs[0];
+            curr_y_acc = accs[1];
+            //VELOCITY
+            x_vel += 0.5 * (old_x_acc + curr_x_acc) * dt;
+            y_vel += 0.5 * (old_y_acc + curr_y_acc) * dt;
+            //CALCULATE POSITION
+            if(0.5 * (0.5 * (old_x_acc + curr_x_acc)) * Math.pow(dt,2) + x_vel * dt < dEx * 0.5) // 1/2*a*t^2 + v*t < half of change in position encoder-wise; aka a wheel is free-spinning
+                xPos += 0.5 * (0.5 * (old_x_acc + curr_x_acc)) * Math.pow(dt,2) + x_vel * dt;
+            else
+                xPos += dEx;
+            if(0.5 * (0.5 * (old_y_acc + curr_y_acc)) * Math.pow(dt,2) + y_vel * dt < dEy * 0.5)
+                yPos += 0.5 * (0.5 * (old_y_acc + curr_y_acc)) * Math.pow(dt,2) + y_vel * dt;
+            else
+                yPos += dEy;
+            //CALCULATE SPEED
+            if(getGyroYaw() < target_heading)
+            {
+                left_speed = speed;
+                right_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+            }
+            else
+            {
+                right_speed = speed;
+                left_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+            }
+            if(speed < 0) // if its going backwards, adjustments must be flipped
+            {
+                double temp = right_speed;
+                right_speed = left_speed;
+                left_speed = temp;
+            }
+
+            motorBL.setPower(left_speed);
+            motorBR.setPower(right_speed);
+        }
+    }
 //BLUE INITIAL SEGMENTS
 
     public void Close_Blue_Buttons() throws InterruptedException {
-        move(-2 * square, 1);
+        move(-2 , 1);
         turn(-45, 1);
         //encoderTurn(45, 1);
-        move(-1.5 * (Math.sqrt(2)) * square, 1);
+        move(-1.5 * (Math.sqrt(2)) , 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
-        move(-0.5 * square, 1);
+        move(-0.5 , 1);
     }
     public void Far_Blue_Buttons() throws InterruptedException {
-        move(-square, 1);
+        move(- 1, 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
-        move(-2 * (Math.sqrt(2)) * square, 1);
+        move(-2 * (Math.sqrt(2)) , 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
-        move(-2 * square, 1);
+        move(-2 , 1);
     }
     public void Close_Blue_BlueRamp() throws InterruptedException {
-        move(square, 1);
+        move( 1, 1);
         turn(45, 1);
         //encoderTurn(45, 1);
-        move(-Math.sqrt(8) * square, 1);
+        move(-Math.sqrt(8) , 1);
         turn(90, 1);
         //encoderTurn(90, 1);
     }
     public void Far_Blue_BlueRamp() throws InterruptedException {
-        move(2 * square, 1);
+        move(2 , 1);
         turn(90, 1);
         //encoderTurn(90, 1);
-        move(3 * square, 1);
+        move(3 , 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
-        move(.5 * Math.sqrt(2) * square, 1);
+        move(.5 * Math.sqrt(2) , 1);
     }
     public void Close_Blue_RedRamp() throws InterruptedException {
-        move(3 * square, 1);
+        move(3 , 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
-        move(2 * Math.sqrt(2) * square, 1);
+        move(2 * Math.sqrt(2) , 1);
     }
     public void Far_Blue_RedRamp() throws InterruptedException {
-        move(3.5 * square, 1);
+        move(3.5 , 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
     }
@@ -305,9 +403,9 @@ public class AutonomousSegments extends LinearOpMode {
     public void ClearRamp() throws InterruptedException {
         turn(-90, 1);
         //encoderTurn(-90, 1);
-        move(.75 * square, 1);
-        move(-1.5 * square,1);
-        move(.75 * square,1);
+        move(.75 , 1);
+        move(-1.5 ,1);
+        move(.75 ,1);
         turn(90, 1);
         //encoderTurn(90, 1);
     }
@@ -346,28 +444,28 @@ public class AutonomousSegments extends LinearOpMode {
 //BUTTONS TO RAMP SEGMENTS
 
     public void RedButtons_RedRamp() throws InterruptedException {
-        move(square, 1);
+        move( 1, 1);
         turn(90, 1);
         //encoderTurn(90, 1);
-        move(1.5 * square, 1);
+        move(1.5 , 1);
         turn(45,1);
         //encoderTurn(45, 1);
     }
     public void RedButtons_BlueRamp() throws InterruptedException {
-        move(4 * square, 1);
+        move(4 , 1);
         turn(-45,1);
         //encoderTurn(-45, 1);
     }
     public void BlueButtons_RedRamp() throws InterruptedException {
-        move(square, 1);
+        move( 1, 1);
         turn(90, 1);
         //encoderTurn(90, 1);
-        move(1.5 * square, 1);
+        move(1.5 , 1);
         turn(45,1);
         //encoderTurn(45, 1);
     }
     public void BlueButtons_BlueRamp() throws InterruptedException {
-        move(4 * square, 1);
+        move(4 , 1);
         turn(-45,1);
         //encoderTurn(-45, 1);
     }

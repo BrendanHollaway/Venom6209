@@ -1,6 +1,7 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -26,8 +27,8 @@ public class NoThread_TeleOp extends OpMode {
     boolean dpadDown1;
     boolean dpadUp2;
     boolean dpadDown2;
-    DcMotor motorFR;
-    DcMotor motorFL;
+    //DcMotor motorFR;
+    //DcMotor motorFL;
     DcMotor motorBR;
     DcMotor motorBL;
     DcMotor motorExtendLiftR;
@@ -37,11 +38,10 @@ public class NoThread_TeleOp extends OpMode {
     //Servo servoservoBucket;
     Servo servoL;
     Servo servoR;
-    Servo servoArm;
-    Servo servoBucketSweep;
-    Servo servoBucketFloor;
     Servo servoTopRatchet;
-    Servo servoBotRatchet;
+    //Servo servoBotRatchet1;
+    //Servo servoBotRatchet2;
+    Servo servoClimberArm;
     AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
@@ -74,15 +74,33 @@ public class NoThread_TeleOp extends OpMode {
     @Override
     public void init() {
         motorBL = hardwareMap.dcMotor.get("bl");
-        motorFL = hardwareMap.dcMotor.get("fl");
+        //motorFL = hardwareMap.dcMotor.get("fl");
         motorBR = hardwareMap.dcMotor.get("br");
-        motorFR = hardwareMap.dcMotor.get("fr");
+        //motorFR = hardwareMap.dcMotor.get("fr");
         motorExtendLiftR = hardwareMap.dcMotor.get("ppr");
         motorExtendLiftL = hardwareMap.dcMotor.get("ppl");
-        motorRaiseLiftR = hardwareMap.dcMotor.get("ppr");
-        motorRaiseLiftL = hardwareMap.dcMotor.get("ppl");
+        motorRaiseLiftR = hardwareMap.dcMotor.get("rlr");
+        motorRaiseLiftL = hardwareMap.dcMotor.get("rll");
         servoL = hardwareMap.servo.get("lServo");
         servoR = hardwareMap.servo.get("rServo");
+        servoClimberArm = hardwareMap.servo.get("climberArm");
+        servoTopRatchet = hardwareMap.servo.get("topRat");
+        //servoBotRatchet1 = hardwareMap.servo.get("botRat1");
+        //servoBotRatchet2 = hardwareMap.servo.get("botRat2");
+
+        long systemTime = System.nanoTime();
+        try {
+            gyroAcc = new AdafruitIMU(hardwareMap, "hydro"
+
+                    //The following was required when the definition of the "I2cDevice" class was incomplete.
+                    //, "cdim", 5
+
+                    , (byte)(AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
+                    //addressing
+                    , (byte)AdafruitIMU.OPERATION_MODE_IMU);
+        } catch (RobotCoreException e){
+        }
+        gyroAcc.startIMU();
         //
         // Bucket = hardwareMap.servo.get("servoBucket");
         /*motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
@@ -143,23 +161,23 @@ public class NoThread_TeleOp extends OpMode {
             servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
         }
         if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1) {
-            motorFR.setPower(-(y1_2) / yToggle);
-            motorFL.setPower((y1_1) / yToggle);
+            //motorFR.setPower(-(y1_2) / yToggle);
+            //motorFL.setPower((y1_1) / yToggle);
             motorBR.setPower(-(y1_2) / yToggle);
             motorBL.setPower((y1_1) / yToggle);
         } else if (Math.abs(y1_1) > 0.1) {
-            motorFR.setPower(0);
-            motorFL.setPower((y1_1) / yToggle);
+            //motorFR.setPower(0);
+            //motorFL.setPower((y1_1) / yToggle);
             motorBR.setPower(0);
             motorBL.setPower((y1_1) / yToggle);
         } else if (Math.abs(y1_2) > 0.1) {
-            motorFR.setPower(-(y1_2) / yToggle);
-            motorFL.setPower(0);
+            //motorFR.setPower(-(y1_2) / yToggle);
+            //motorFL.setPower(0);
             motorBR.setPower(-(y1_2) / yToggle);
             motorBL.setPower(0);
         } else {
-            motorFR.setPower(0);
-            motorFL.setPower(0);
+            //motorFR.setPower(0);
+            //motorFL.setPower(0);
             motorBR.setPower(0);
             motorBL.setPower(0);
         }
@@ -186,9 +204,13 @@ public class NoThread_TeleOp extends OpMode {
                 motorRaiseLiftR.setPower(-y2_2);
             }
         }
+        if (lBump1)
+            servoClimberArm.setPosition(.1);
+        else if (rBump2)
+            servoClimberArm.setPosition(.9);
 
 
-        if (lBump2) {
+        /*if (lBump2) {
             if (servoArmPos == 1) {
                 servoArm.setPosition(0.4);
                 sleep(500);
@@ -229,36 +251,25 @@ public class NoThread_TeleOp extends OpMode {
         }
         else if (dpadUp2) {
             servoBucketFloor.setPosition(servoBucketFloor.getPosition() - 0.05);
-        }
+        }*/
         if (yButton2) {
-            int topRatchethold = 0;
+            int hold = 0;
             while (yButton2) {
-                topRatchethold++;
+                hold++;
             }
-            if (topRatchethold > 4)
+            if (hold > 4)
                 servoTopRatchet.setPosition(0.5);
         }
-        if (aButton2) {
-            int botRatchethold = 0;
+        /*if (aButton2) {
+            int hold = 0;
             while (yButton2) {
-                botRatchethold++;
+                hold++;
             }
-            if (botRatchethold > 4)
-                servoBotRatchet.setPosition(0.5);
-        }
-                /*if (Math.abs(left) < 0.07) // deadband
-                {
-                    left = 0;
-                }
-                if (Math.abs(right) < 0.07) // deadband
-                {
-                    right = 0;
-                }
+            if (hold > 4)
+                servoBotRatchet1.setPosition(0.5);
+                servoBotRatchet2.setPosition(0.5);
+        }*/
 
-                driveLeft.setPower(left);
-                driveRight.setPower(right);
-
-                newDataWait(5); */
         telemetry.addData("gyro yaw", gyroTest());
     }
     /*double scaleInput(double val)  {
@@ -295,16 +306,16 @@ public class NoThread_TeleOp extends OpMode {
         {
             motorBL.setPower(-1);
             motorBR.setPower(-1);
-            motorFL.setPower(-1);
-            motorFR.setPower(-1);
+            //motorFL.setPower(-1);
+            //motorFR.setPower(-1);
             try {
                 wait(500);
             }
             catch (Exception E){}
             motorBL.setPower(0);
             motorBR.setPower(0);
-            motorFL.setPower(0);
-            motorFR.setPower(0);
+            //motorFL.setPower(0);
+            //motorFR.setPower(0);
         }
     }
 }
