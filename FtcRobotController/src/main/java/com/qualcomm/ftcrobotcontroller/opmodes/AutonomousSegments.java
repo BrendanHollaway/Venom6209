@@ -20,7 +20,7 @@ public class AutonomousSegments extends LinearOpMode {
     DcMotor motorBR;
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
-    AdafruitIMU gyroAcc;
+    AdafruitIMU IMU;
 
 
     double cm_rotation = 1.5*Math.PI*2.54;
@@ -69,17 +69,17 @@ public class AutonomousSegments extends LinearOpMode {
         catch (Exception E){}
     }
     public void updatePosition(double encoderVal) {
-        xPos += (motorFL.getCurrentPosition() - encoderVal)*Math.cos(getGyroYaw()); // encoder ticks
-        yPos += (motorFL.getCurrentPosition() - encoderVal)*Math.sin(getGyroYaw());
-        encoderVal = motorFL.getCurrentPosition();
+        xPos += (motorBR.getCurrentPosition() - encoderVal)*Math.cos(getGyroYaw()); // encoder ticks
+        yPos += (motorBR.getCurrentPosition() - encoderVal)*Math.sin(getGyroYaw());
+        encoderVal = motorBR.getCurrentPosition();
     }
     //public void moveToPosition()
 
     public void move(double squares, double speed) throws InterruptedException        //move in a straight line
     {
         double position = squares / square_per_rot * 1120; //1120 is number of encoder ticks per rotation
-        int currentPosition = motorFL.getCurrentPosition();                            //measures current encoder value
-        while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition ) {  //moves until encoders change by value inputted
+        int currentPosition = motorBR.getCurrentPosition();                            //measures current encoder value
+        while(Math.abs(motorBR.getCurrentPosition()) < position + currentPosition ) {  //moves until encoders change by value inputted
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
             motorBL.setPower(Math.signum(position) * Math.abs(speed));                 //takes sign of position, so sign of speed does not matter
             motorFR.setPower(Math.signum(position) * Math.abs(speed));
@@ -89,8 +89,8 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void moveCheck(double position, double speed) throws InterruptedException   //move while checking for other robots
     {
-        int currentPosition = motorFL.getCurrentPosition();
-        while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition ) {
+        int currentPosition = motorBR.getCurrentPosition();
+        while(Math.abs(motorBR.getCurrentPosition()) < position + currentPosition ) {
             checkObject();
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
             motorBL.setPower(Math.signum(position) * Math.abs(speed));
@@ -141,9 +141,9 @@ public class AutonomousSegments extends LinearOpMode {
     public void encoderTurn(double position, double speed) throws InterruptedException           //left is negative, right is positive
     {
         speed = Range.clip(speed, -1, 1);
-        int currentPosition = motorFL.getCurrentPosition();                                   // WRITE MEDIAN FUNCTION
-        if(Math.abs(motorFL.getCurrentPosition()) < position * degrees + currentPosition) {
-            while (Math.abs(motorFL.getCurrentPosition()) < position * degrees + currentPosition) {
+        int currentPosition = motorBR.getCurrentPosition();                                   // WRITE MEDIAN FUNCTION
+        if(Math.abs(motorBR.getCurrentPosition()) < position * degrees + currentPosition) {
+            while (Math.abs(motorBR.getCurrentPosition()) < position * degrees + currentPosition) {
                 motorFL.setPower(Math.signum(position) * Math.abs(speed));
                 motorBL.setPower(Math.signum(position) * Math.abs(speed));
                 motorFR.setPower(-Math.signum(position) * Math.abs(speed));
@@ -151,7 +151,7 @@ public class AutonomousSegments extends LinearOpMode {
             }
         }
         else {
-            while (Math.abs(motorFL.getCurrentPosition()) > position * degrees + currentPosition) {
+            while (Math.abs(motorBR.getCurrentPosition()) > position * degrees + currentPosition) {
                 motorFL.setPower(Math.signum(position) * Math.abs(speed));
                 motorBL.setPower(Math.signum(position) * Math.abs(speed));
                 motorFR.setPower(-Math.signum(position) * Math.abs(speed));
@@ -188,7 +188,7 @@ public class AutonomousSegments extends LinearOpMode {
         motorBR.setPower(0);
     }
     public double getGyroYaw() {
-        gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
     public void squareTest () throws InterruptedException {
@@ -196,7 +196,7 @@ public class AutonomousSegments extends LinearOpMode {
     }
     public void SOS(double acc_y, double acc_z)
     {
-        gyroAcc.getAccel(accel);
+        IMU.getAccel(accel);
         acc_y = accel[1];
         acc_z = accel[2];
         if (acc_y < -8.88 && acc_z > -4.14)
@@ -268,7 +268,7 @@ public class AutonomousSegments extends LinearOpMode {
 
     public void move_pos(double x, double y, double speed)
     {
-        Range.clip(speed, -1, 1);
+        speed = Range.clip(speed, -1, 1);
         double target_heading;
         double target_x;
         double target_y;
@@ -277,11 +277,11 @@ public class AutonomousSegments extends LinearOpMode {
         double old_x_acc = 0;
         double curr_x_acc = 0;
         double old_y_acc = 0;
-        double curr_y_acc = 0;
-        double x_vel = 0;
+        double curr_y_acc = 0;                                //x is currently forwards and backwards
+        double x_vel = 0;                                     //moves robot to position using encoder values, gyro, accelerometer, and magnetometer
         double y_vel = 0;
         double oldEncoder;
-        double currEncoder = motorFL.getCurrentPosition();
+        double currEncoder = motorBR.getCurrentPosition();
         double dE;
         double dEx = 0;
         double dEy = 0;
@@ -289,7 +289,7 @@ public class AutonomousSegments extends LinearOpMode {
         long currTime = System.nanoTime();
         double dt = 0;
         double[] accs = new double[3];
-        while(Math.abs(x-xPos) > .1 && Math.abs(y-yPos) > .1)
+        while(Math.abs(x-xPos) > .1 || Math.abs(y-yPos) > .1)
         {
             //TARGET HEADING CALCULATIONS
             target_x = x - xPos;
@@ -305,12 +305,12 @@ public class AutonomousSegments extends LinearOpMode {
             dt = (currTime - oldTime) / Math.pow(10, 9); // puts time in seconds
             //ECNCODER VALUE CALCULATIONS
             oldEncoder = currEncoder;
-            currEncoder = motorFL.getCurrentPosition();
+            currEncoder = motorBR.getCurrentPosition();
             dE = currEncoder - oldEncoder;
             dEx = dE * Math.cos(Math.toRadians(getGyroYaw()));
             dEy = dE * Math.sin(Math.toRadians(getGyroYaw()));
             // ACCELERATION VALUE CALCULATIONS
-            gyroAcc.getAccel(accs);
+            IMU.getAccel(accs);
             old_x_acc = curr_x_acc;
             old_y_acc = curr_y_acc;
             curr_x_acc = accs[0];
@@ -319,8 +319,8 @@ public class AutonomousSegments extends LinearOpMode {
             x_vel += 0.5 * (old_x_acc + curr_x_acc) * dt;
             y_vel += 0.5 * (old_y_acc + curr_y_acc) * dt;
             //CALCULATE POSITION
-            if(0.5 * (0.5 * (old_x_acc + curr_x_acc)) * Math.pow(dt,2) + x_vel * dt < dEx * 0.5) // 1/2*a*t^2 + v*t < half of change in position encoder-wise; aka a wheel is free-spinning
-                xPos += 0.5 * (0.5 * (old_x_acc + curr_x_acc)) * Math.pow(dt,2) + x_vel * dt;
+            if(0.5 * (0.5 * (old_x_acc + curr_x_acc)) * Math.pow(dt,2) + x_vel * dt < dEx * 0.5) // 1/2*a*t^2 + v*t < half of change in position encoder-wise;
+                xPos += 0.5 * (0.5 * (old_x_acc + curr_x_acc)) * Math.pow(dt,2) + x_vel * dt;    // aka a wheel is free-spinning
             else
                 xPos += dEx;
             if(0.5 * (0.5 * (old_y_acc + curr_y_acc)) * Math.pow(dt,2) + y_vel * dt < dEy * 0.5)
@@ -349,6 +349,48 @@ public class AutonomousSegments extends LinearOpMode {
             motorBR.setPower(right_speed);
         }
     }
+    public void move_To(double squares, double speed)
+    {
+        //double target_heading;
+        double target_x;
+        double target_y;
+        double left_speed;
+        double right_speed;
+        double old_x_acc = 0;
+        double curr_x_acc = 0;
+        double old_y_acc = 0;
+        double curr_y_acc = 0;                                //x is currently forwards and backwards
+        double x_vel = 0;                                     //moves robot to position using encoder values, gyro, accelerometer, and magnetometer
+        double y_vel = 0;
+        double oldEncoder;
+        double currEncoder = motorBR.getCurrentPosition();
+        double dE;
+        double dEx = 0;
+        double dEy = 0;
+        long oldTime;
+        long currTime = System.nanoTime();
+        double dt = 0;
+        double[] accs = new double[3];
+        //double avg_encoder = (motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) / 2.0;
+        double encoder = squares / square_per_rot * 1140;
+        double target_heading = getGyroYaw();
+        while(Math.abs(currEncoder) < Math.abs(encoder))
+        {
+            if(getGyroYaw() < target_heading)
+            {
+                left_speed = speed;
+                right_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+            }
+            else
+            {
+                right_speed = speed;
+                left_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+            }
+            motorBR.setPower(Range.clip(right_speed, -1, 1));
+            motorBL.setPower(Range.clip(left_speed, -1, 1));
+        }
+    }
+
 //BLUE INITIAL SEGMENTS
 
     public void Close_Blue_Buttons() throws InterruptedException {
@@ -472,7 +514,7 @@ public class AutonomousSegments extends LinearOpMode {
 
 
 
-    public void GyroAccFinder() {
+    public void IMUFinder() {
         long oldTime = 0;
         long currTime = 0;
         double oldX = 0;

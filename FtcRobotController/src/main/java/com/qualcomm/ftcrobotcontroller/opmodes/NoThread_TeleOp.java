@@ -14,6 +14,7 @@ public class NoThread_TeleOp extends OpMode {
     double y2_2;
     boolean yButton1;
     boolean yButton2;
+    boolean aButton1;
     boolean aButton2;
     boolean lBump1;
     boolean rBump1;
@@ -39,7 +40,7 @@ public class NoThread_TeleOp extends OpMode {
     Servo servoL;
     Servo servoR;
     Servo servoTopRatchet;
-    //Servo servoBotRatchet1;
+    Servo servoBotRatchet1;
     //Servo servoBotRatchet2;
     Servo servoClimberArm;
     AdafruitIMU gyroAcc;
@@ -54,6 +55,9 @@ public class NoThread_TeleOp extends OpMode {
     //double [] servoArmPos = new double[]{};
     int servoArmPos = 0;
     boolean servoBucketOpen = false;
+    boolean enableSOS = true;
+    int y_toggle_count=0;
+    int SOS_toggle_count=0;
 
 
     public NoThread_TeleOp() {
@@ -63,6 +67,10 @@ public class NoThread_TeleOp extends OpMode {
     public double gyroTest() {
         gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
+    }
+    public double gyroPitch() {
+        gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        return pitchAngle[0];
     }
     public void sleep(int ms) {
         try {
@@ -81,10 +89,10 @@ public class NoThread_TeleOp extends OpMode {
         motorExtendLiftL = hardwareMap.dcMotor.get("ppl");
         motorRaiseLiftR = hardwareMap.dcMotor.get("rlr");
         motorRaiseLiftL = hardwareMap.dcMotor.get("rll");
-        servoL = hardwareMap.servo.get("lServo");
-        servoR = hardwareMap.servo.get("rServo");
-        servoClimberArm = hardwareMap.servo.get("climberArm");
-        servoTopRatchet = hardwareMap.servo.get("topRat");
+        servoL = hardwareMap.servo.get("climberArm"); //dont judge
+        servoR = hardwareMap.servo.get("topRat");//dont judge
+        servoClimberArm = hardwareMap.servo.get("lServo");
+        servoTopRatchet = hardwareMap.servo.get("rServo");
         //servoBotRatchet1 = hardwareMap.servo.get("botRat1");
         //servoBotRatchet2 = hardwareMap.servo.get("botRat2");
 
@@ -107,8 +115,35 @@ public class NoThread_TeleOp extends OpMode {
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);*/
-        
+        servoTopRatchet.setPosition(1);
+        servoClimberArm.setPosition(1);
+        servoR.setPosition(0);
+        servoL.setPosition(.7);
+      //  servoBotRatchet1.setPosition(1);
     }
+
+    /* BUTTON MAPPING
+        CONTROLLER 1
+            y1 = left tread
+            y2 = right tread
+            y_btn = toggle for speed of treads
+            a_btn = toggle for SOS mode
+            left_trigger = swing-out the left zip-line knocker
+            left_bumper = swing-in the left zip-line knocker
+            right_trigger = swing-out the right zip-line knocker
+            right_bumper = swing-in the right zip-line knocker
+
+        CONTROLLER 2
+            y1 = extend/retract lift
+            y2 = change angle of lift
+            y_btn = hold for top ratchet release
+            a_btn = hold for bot ratchet release
+            left_bumper = retract climber arm towards robot
+            right_bumper = flip climber arm out
+
+
+
+     */
     @Override
     public void loop() {
 
@@ -116,6 +151,7 @@ public class NoThread_TeleOp extends OpMode {
         y1_2 = gamepad1.right_stick_y;
         yButton1 = gamepad1.y;
         yButton2 = gamepad2.y;
+        aButton1 = gamepad1.a;
         aButton2 = gamepad2.a;
         lBump1 = gamepad1.left_bumper;
         rBump1 = gamepad1.right_bumper;
@@ -131,49 +167,68 @@ public class NoThread_TeleOp extends OpMode {
         dpadDown2 = gamepad2.dpad_down;
         y2_1 = gamepad2.left_stick_y;
         y2_2 = gamepad2.right_stick_y;
-
-
-
-
-        //SOS();
         if (yButton1) {
             if (yToggle == 1) {
-                yToggle = 3;
+                y_toggle_count++;
             }
             else if (yToggle == 3) {
                 yToggle = 1;
             }
-
+            if(y_toggle_count > 1)
+            {
+                y_toggle_count = 0;
+                yToggle = 3;
+            }
         }
+        if (aButton1) {
+            if (!enableSOS) {
+                SOS_toggle_count++;
+            }
+            else {
+                enableSOS = false;
+            }
+            if(SOS_toggle_count > 1)
+            {
+                SOS_toggle_count = 0;
+                enableSOS = true;
+            }
+        }
+        /*if(gamepad1.x)
+            servoTopRatchet.setPosition(1);
+        if(gamepad1.b)
+            servoTopRatchet.setPosition(0);*/
+        if(enableSOS)
+            SOScheck();
+        telemetry.addData("SOS Check: ", enableSOS);
 
         // DRIVE CONTROL AND CLIMBER RELEASE
 
         if (lTrig1 > 0.1) {
             servoL.setPosition(Range.clip(servoL.getPosition() + 0.02, 0, 1));
         }
+        else if (lBump1) {
+            servoL.setPosition(Range.clip(servoL.getPosition() - 0.02, 0, 1));
+        }
         if (rTrig1 > 0.1) {
             servoR.setPosition(Range.clip(servoR.getPosition() + 0.02, 0, 1));
         }
-        if (lBump1) {
-            servoL.setPosition(Range.clip(servoL.getPosition() - 0.02, 0, 1));
-        }
-        if (rBump1) {
+        else if (rBump1) {
             servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
         }
         if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1) {
             //motorFR.setPower(-(y1_2) / yToggle);
             //motorFL.setPower((y1_1) / yToggle);
-            motorBR.setPower(-(y1_2) / yToggle);
-            motorBL.setPower((y1_1) / yToggle);
+            motorBR.setPower((y1_2) / yToggle);
+            motorBL.setPower(-(y1_1) / yToggle);
         } else if (Math.abs(y1_1) > 0.1) {
             //motorFR.setPower(0);
             //motorFL.setPower((y1_1) / yToggle);
             motorBR.setPower(0);
-            motorBL.setPower((y1_1) / yToggle);
+            motorBL.setPower(-(y1_1) / yToggle);
         } else if (Math.abs(y1_2) > 0.1) {
             //motorFR.setPower(-(y1_2) / yToggle);
             //motorFL.setPower(0);
-            motorBR.setPower(-(y1_2) / yToggle);
+            motorBR.setPower((y1_2) / yToggle);
             motorBL.setPower(0);
         } else {
             //motorFR.setPower(0);
@@ -185,30 +240,27 @@ public class NoThread_TeleOp extends OpMode {
         // LIFT CONTROLS START HERE
 
         if (Math.abs(y2_1) > 0.1 ) {
-            if ((motorExtendLiftL.getCurrentPosition() > 1000 && y2_1 > 0) || (motorExtendLiftL.getCurrentPosition() < 10 && y2_1 < 0)) {
-                motorExtendLiftL.setPower(0);
-                motorExtendLiftR.setPower(0);
-            }
-            else {
                 motorExtendLiftL.setPower(y2_1);
                 motorExtendLiftR.setPower(-y2_1);
-            }
         }
+        else{
+            motorExtendLiftL.setPower(0);
+            motorExtendLiftR.setPower(0);
+        }
+
         if (Math.abs(y2_2) > 0.1) {
-            if ((motorRaiseLiftL.getCurrentPosition() > 1000 && y2_2 > 0) || (motorRaiseLiftL.getCurrentPosition() < 10 && y2_2 < 0)) {
-                motorRaiseLiftL.setPower(0);
-                motorRaiseLiftR.setPower(0);
-            }
-            else {
                 motorRaiseLiftL.setPower(y2_2);
                 motorRaiseLiftR.setPower(-y2_2);
-            }
-        }
-        if (lBump1)
-            servoClimberArm.setPosition(.1);
-        else if (rBump2)
-            servoClimberArm.setPosition(.9);
 
+        }
+        else {
+            motorRaiseLiftL.setPower(0);
+            motorRaiseLiftR.setPower(0);
+        }
+        if (lBump2)
+            servoClimberArm.setPosition(0);
+        else if (rBump2)
+            servoClimberArm.setPosition(1);
 
         /*if (lBump2) {
             if (servoArmPos == 1) {
@@ -253,24 +305,24 @@ public class NoThread_TeleOp extends OpMode {
             servoBucketFloor.setPosition(servoBucketFloor.getPosition() - 0.05);
         }*/
         if (yButton2) {
-            int hold = 0;
-            while (yButton2) {
+            /*int hold = 0;
+            if(yButton2) {
                 hold++;
             }
-            if (hold > 4)
-                servoTopRatchet.setPosition(0.5);
+            if (hold > 4) */
+                servoTopRatchet.setPosition(0);
         }
-        /*if (aButton2) {
+        if (aButton2) {
             int hold = 0;
             while (yButton2) {
                 hold++;
             }
-            if (hold > 4)
-                servoBotRatchet1.setPosition(0.5);
-                servoBotRatchet2.setPosition(0.5);
-        }*/
-
+            if (hold > 4) {
+                //servoBotRatchet1.setPosition(0);
+            }
+        }
         telemetry.addData("gyro yaw", gyroTest());
+        telemetry.addData("gyro pitch", gyroPitch());
     }
     /*double scaleInput(double val)  {
         double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
@@ -297,16 +349,14 @@ public class NoThread_TeleOp extends OpMode {
 
         return dScale;
     } */
-    void SOS(double acc_y, double acc_z)
+    void SOScheck()
     {
-        gyroAcc.getAccel(accel);
-        acc_y = accel[1];
-        acc_z = accel[2];
-        if (acc_y < -8.88 && acc_z > -4.14)
+        gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        if (pitchAngle[0] > 55 && enableSOS)
         {
             motorBL.setPower(-1);
-            motorBR.setPower(-1);
-            //motorFL.setPower(-1);
+            motorBR.setPower(1);                    //If the robot is flipping over, then driver control is
+            //motorFL.setPower(-1);                 //taken away and motors run backwards to stabilize it
             //motorFR.setPower(-1);
             try {
                 wait(500);

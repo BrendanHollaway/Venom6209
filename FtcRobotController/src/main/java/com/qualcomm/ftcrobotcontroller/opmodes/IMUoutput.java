@@ -16,7 +16,7 @@ public class IMUoutput extends OpMode{
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
 
-    public double gyroTest() {
+    public double yawTest() {
         gyroAcc.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
@@ -40,7 +40,7 @@ public class IMUoutput extends OpMode{
     @Override
     public void loop() {
 
-        telemetry.addData("gyro yaw", gyroTest());
+        telemetry.addData("gyro yaw", yawTest());
         gyroAcc.getAccel(accel);
         try{
             telemetry.addData("acc_X: ", accel[0]);
