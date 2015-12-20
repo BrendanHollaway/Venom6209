@@ -185,7 +185,7 @@ public class NoThread_TeleOp extends OpMode {
         //If enableSOS is false, then SOS is not enabled, and thus the robot will not move backwards by itself
         // even if the robot is tilting over.
         //If it's true, then it'll save your bacon
-        //if greter then 55, then SOS may need to be disabled
+        //if greater then 55, then SOS may need to be disabled
         if (aButton1) {
             //if SOS is not enabled
             if (!enableSOS) {
