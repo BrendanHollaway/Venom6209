@@ -111,7 +111,8 @@ public class IMUtest extends OpMode {
   public void stop() {
     //When the FTC Driver Station's "Start with Timer" button commands autonomous mode to start,
     //then stop after 30 seconds, stop the motors immediately!
-    //Following this method, the underlying FTC system will call a "stop" routine of its own
+    //Following this method, the underlying FTC system will call
+    // a "stop" routine of its own
     systemTime = System.nanoTime();
     Log.i("FtcRobotController", "IMU Stop method finished in: "
                                     + (-(systemTime - (systemTime = System.nanoTime()))) + " ns.");

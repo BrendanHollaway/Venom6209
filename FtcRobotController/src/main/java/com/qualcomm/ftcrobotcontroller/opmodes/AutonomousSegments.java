@@ -12,23 +12,19 @@ import com.qualcomm.robotcore.util.Range;
 /**
  * Created by viperbots on 10/5/2015.
  */
-public class AutonomousSegments extends LinearOpMode {
+public class AutonomousSegments extends LinearOpMode2 {
 
-    DcMotor motorFL;
-    DcMotor motorBL;
-    DcMotor motorFR;
-    DcMotor motorBR;
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
-    AdafruitIMU IMU;
+    protected double kP=0.002;
+    protected double kI=0.008;
+    protected double kD=0.01;
 
 
     double cm_rotation = 1.5*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
     double inches = 1.5*Math.PI;
     double degrees = 2000.0/90.0;
-    volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
-    double[] accel = new double[3];
     double xPos = 0;
     double yPos = 0;
 
@@ -41,14 +37,22 @@ public class AutonomousSegments extends LinearOpMode {
         this.motorBR = null;
     }
 
-
-    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR)
+    public AutonomousSegments(DcMotor motorBL, DcMotor motorBR, AdafruitIMU IMU)
     {
-        this.motorFL = motorFL;
-        this.motorBL = motorBL;                     //Actually initializes motors
-        this.motorFR = motorFR;
+        this.motorBL = motorBL;
         this.motorBR = motorBR;
+        this.motorFL = motorFL;
+        this.motorFR = motorFR;
+        this.IMU = IMU;
     }
+
+    /*public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR)
+    {
+        //this.motorFL = motorFL;
+        this.motorBL = motorBL;                     //Actually initializes motors
+        //this.motorFR = motorFR;
+        this.motorBR = motorBR;
+    } */
 
     /* public void setupMotors () {
         motorFL = hardwareMap.dcMotor.get("motor_1");
@@ -144,7 +148,7 @@ public class AutonomousSegments extends LinearOpMode {
         int currentPosition = motorBR.getCurrentPosition();                                   // WRITE MEDIAN FUNCTION
         if(Math.abs(motorBR.getCurrentPosition()) < position * degrees + currentPosition) {
             while (Math.abs(motorBR.getCurrentPosition()) < position * degrees + currentPosition) {
-                motorFL.setPower(Math.signum(position) * Math.abs(speed));
+                //  motorFL.setPower(Math.signum(position) * Math.abs(speed));
                 motorBL.setPower(Math.signum(position) * Math.abs(speed));
                 motorFR.setPower(-Math.signum(position) * Math.abs(speed));
                 motorBR.setPower(-Math.signum(position) * Math.abs(speed));
@@ -194,6 +198,7 @@ public class AutonomousSegments extends LinearOpMode {
     public void squareTest () throws InterruptedException {
         move( 1, 1);
     }
+    //SOS is deprecated here
     public void SOS(double acc_y, double acc_z)
     {
         IMU.getAccel(accel);
@@ -274,6 +279,7 @@ public class AutonomousSegments extends LinearOpMode {
         double target_y;
         double left_speed;
         double right_speed;
+        double p = 2.0; // the P of PID- position control
         double old_x_acc = 0;
         double curr_x_acc = 0;
         double old_y_acc = 0;
@@ -285,8 +291,8 @@ public class AutonomousSegments extends LinearOpMode {
         double dE;
         double dEx = 0;
         double dEy = 0;
-        long oldTime;
-        long currTime = System.nanoTime();
+        double oldTime;
+        double currTime = getRuntime();
         double dt = 0;
         double[] accs = new double[3];
         while(Math.abs(x-xPos) > .1 || Math.abs(y-yPos) > .1)
@@ -301,8 +307,8 @@ public class AutonomousSegments extends LinearOpMode {
                 target_heading = -target_heading;
             //TIME CALCULATIONS
             oldTime = currTime;
-            currTime = System.nanoTime();
-            dt = (currTime - oldTime) / Math.pow(10, 9); // puts time in seconds
+            currTime = getRuntime();
+            dt = currTime - oldTime; // puts time in seconds
             //ECNCODER VALUE CALCULATIONS
             oldEncoder = currEncoder;
             currEncoder = motorBR.getCurrentPosition();
@@ -331,12 +337,12 @@ public class AutonomousSegments extends LinearOpMode {
             if(getGyroYaw() < target_heading)
             {
                 left_speed = speed;
-                right_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+                right_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / p));
             }
             else
             {
                 right_speed = speed;
-                left_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+                left_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / p));
             }
             if(speed < 0) // if its going backwards, adjustments must be flipped
             {
@@ -349,13 +355,14 @@ public class AutonomousSegments extends LinearOpMode {
             motorBR.setPower(right_speed);
         }
     }
-    public void move_To(double squares, double speed)
+    public void move_To(double squares, double speed, double current_Time_Remaining)
     {
         //double target_heading;
         double target_x;
         double target_y;
         double left_speed;
         double right_speed;
+        double p = 2.0; // the P of PID- position control
         double old_x_acc = 0;
         double curr_x_acc = 0;
         double old_y_acc = 0;
@@ -364,6 +371,7 @@ public class AutonomousSegments extends LinearOpMode {
         double y_vel = 0;
         double oldEncoder;
         double currEncoder = motorBR.getCurrentPosition();
+        telemetry.addData("currEncoder", currEncoder);
         double dE;
         double dEx = 0;
         double dEy = 0;
@@ -374,21 +382,58 @@ public class AutonomousSegments extends LinearOpMode {
         //double avg_encoder = (motorBL.getCurrentPosition() + motorBR.getCurrentPosition()) / 2.0;
         double encoder = squares / square_per_rot * 1140;
         double target_heading = getGyroYaw();
-        while(Math.abs(currEncoder) < Math.abs(encoder))
+        while(Math.abs(currEncoder) < Math.abs(encoder) &&  getRuntime() < current_Time_Remaining)
         {
-            if(getGyroYaw() < target_heading)
+            if(makePositive(getGyroYaw()) < target_heading)
             {
                 left_speed = speed;
-                right_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+                right_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / p));
             }
             else
             {
                 right_speed = speed;
-                left_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / 5.0));
+                left_speed = speed / (1.0 + (Math.abs(target_heading - getGyroYaw()) / p));
             }
-            motorBR.setPower(Range.clip(right_speed, -1, 1));
+            motorBR.setPower(Range.clip(-right_speed, -1, 1));
             motorBL.setPower(Range.clip(left_speed, -1, 1));
+            telemetry.addData("left_speed", left_speed);
+            telemetry.addData("right_speed", left_speed);
         }
+    }
+
+    public void PID_move(double encoder, double target_heading, double speed)
+    {
+        speed = Range.clip(speed, -1, 1);
+        motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        //All errors are used for heading; the robot's yaw
+        double prevError = 0;
+        double error = 0;
+        double iError = 0;
+        double dError = 0;
+        double dt = 0;
+        resetStartTime();
+        double time = getRuntime();
+        while(Math.abs(motorBR.getCurrentPosition()) < encoder)
+        {
+            dt = getRuntime() - time;
+            time = getRuntime();
+            prevError = error;
+            error = target_heading - makePositive(getGyroYaw());
+            dError = (error - prevError) / dt;
+            iError = Range.clip(iError + error * dt,-360,360);
+           setRightPower(kP * error + kD * dError + kI * iError);
+
+        }
+    }
+    double makePositive(double heading_Deg)
+    {
+        return heading_Deg < 0? heading_Deg + 360: heading_Deg;
+    }
+    void setRightPower(double power)
+    {
+        motorBR.setPower(Range.clip(power,-1,1));
+        motorFR.setPower(Range.clip(power, -1, 1));
     }
 
 //BLUE INITIAL SEGMENTS
@@ -458,7 +503,7 @@ public class AutonomousSegments extends LinearOpMode {
         while(ultra.getUltrasonicLevel() < 40) {
             //SOS();
             motorBL.setPower(1);
-            motorFL.setPower(1);
+            //   motorFL.setPower(1);
             motorBR.setPower(1);
             motorFR.setPower(1);
         }

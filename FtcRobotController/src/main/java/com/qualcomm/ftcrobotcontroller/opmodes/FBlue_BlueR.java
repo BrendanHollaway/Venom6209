@@ -24,7 +24,7 @@ public class FBlue_BlueR extends LinearOpMode {
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
+        //auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Far_Blue_BlueRamp();
         auto.ClearRamp();

@@ -20,7 +20,7 @@ public class squareTest extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("bl");
         motorFR = hardwareMap.dcMotor.get("fr");
         motorBR = hardwareMap.dcMotor.get("br");
-        auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
+        //auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         try {
             waitForStart();

@@ -24,7 +24,7 @@ public class CBlue_B_RedR extends LinearOpMode {
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
+        //auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Close_Blue_Buttons();
         auto.ButtonClimbers();
