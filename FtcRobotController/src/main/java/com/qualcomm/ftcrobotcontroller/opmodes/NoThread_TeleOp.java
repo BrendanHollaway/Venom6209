@@ -50,7 +50,6 @@ public class NoThread_TeleOp extends OpMode {
     AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
-    //
 
     //Gamepad localGamepad1;
     //Gamepad localGamepad2;
@@ -167,25 +166,15 @@ public class NoThread_TeleOp extends OpMode {
                 //   enableSOS = !enableSOS;
 =======
         }
-        //If A button is pressed
-        //If enableSOS is false, then SOS is not enabled, and thus the robot will not move backwards by itself
-        // even if the robot is tilting over.
-        //If it's true, then it'll save your bacon
-        //if greater then 55, then SOS may need to be disabled
         if (aButton1) {
-            //if SOS is not enabled
             if (!enableSOS) {
-                //increase the toggle count
                 SOS_toggle_count++;
             }
-            //turns SOS off; SOS will not run
             else {
                 enableSOS = false;
             }
-            //if the count is greater than 1
             if(SOS_toggle_count > 1)
             {
-                //reset toggle count and turn on SOS
                 SOS_toggle_count = 0;
                 enableSOS = true;
 >>>>>>> cc691a59a8c00e515b1dc082078a6478cfdd4718
