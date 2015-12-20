@@ -6,8 +6,56 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+<<<<<<< HEAD
 public class NoThread_TeleOp extends LinearOpMode2{
     
+=======
+public class NoThread_TeleOp extends OpMode {
+
+    double y1_1;
+    double y1_2;
+    double y2_1;
+    double y2_2;
+    boolean yButton1;
+    boolean yButton2;
+    boolean aButton1;
+    boolean aButton2;
+    boolean lBump1;
+    boolean rBump1;
+    double lTrig1;
+    double rTrig1;
+    boolean lBump2;
+    boolean rBump2;
+    double lTrig2;
+    double rTrig2;
+    boolean dpadUp1;
+    boolean dpadDown1;
+    boolean dpadUp2;
+    boolean dpadDown2;
+    //DcMotor motorFR;
+    //DcMotor motorFL;
+    DcMotor motorBR;
+    DcMotor motorBL;
+    DcMotor motorExtendLiftR;
+    DcMotor motorExtendLiftL;
+    DcMotor motorRaiseLiftR;
+    DcMotor motorRaiseLiftL;
+    //Servo servoservoBucket;
+    Servo servoL;
+    Servo servoR;
+    Servo servoTopRatchet;
+    Servo servoBotRatchet1;
+    //Servo servoBotRatchet2;
+    Servo servoClimberArm;
+    AdafruitIMU gyroAcc;
+    volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
+    double[] accel = new double[3];
+    //
+
+    //Gamepad localGamepad1;
+    //Gamepad localGamepad2;
+    Object gamepadLock = new Object();
+>>>>>>> cc691a59a8c00e515b1dc082078a6478cfdd4718
     double yToggle = 1.0;
     boolean enableSOS = true;
     int y_toggle_count=0;
@@ -113,9 +161,34 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 y_toggle_count = 0;
                 yToggle = 3;
             }
+<<<<<<< HEAD
         } */
             if (aButton1) {
                 //   enableSOS = !enableSOS;
+=======
+        }
+        //If A button is pressed
+        //If enableSOS is false, then SOS is not enabled, and thus the robot will not move backwards by itself
+        // even if the robot is tilting over.
+        //If it's true, then it'll save your bacon
+        //if greater then 55, then SOS may need to be disabled
+        if (aButton1) {
+            //if SOS is not enabled
+            if (!enableSOS) {
+                //increase the toggle count
+                SOS_toggle_count++;
+            }
+            //turns SOS off; SOS will not run
+            else {
+                enableSOS = false;
+            }
+            //if the count is greater than 1
+            if(SOS_toggle_count > 1)
+            {
+                //reset toggle count and turn on SOS
+                SOS_toggle_count = 0;
+                enableSOS = true;
+>>>>>>> cc691a59a8c00e515b1dc082078a6478cfdd4718
             }
         /*if(gamepad1.x)
             servoTopRatchet.setPosition(1);
