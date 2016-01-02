@@ -12,5 +12,8 @@
                      android:targetPackage="com.qualcomm.ftcrobotcontroller"
                      android:handleProfiling="false"
                      android:functionalTest="false"
-                     android:label="Tests for com.qualcomm.ftcrobotcontroller"/>
+                     android:label="Tests for com.qualcomm.ftcrobotcontroller"/><uses-permission android:name="android.permission.CAMERA" />
+
+<uses-feature android:name="android.hardware.camera" />
+<uses-feature android:name="android.hardware.camera.front" />
 </manifest>

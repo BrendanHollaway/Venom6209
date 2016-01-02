@@ -20,12 +20,32 @@ public abstract class LinearOpMode2 extends LinearOpMode {
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
 
+    protected static DcMotor motorFR;
+    protected static DcMotor motorFL;
+    protected static DcMotor motorBR;
+    protected static DcMotor motorBL;
+    protected static DcMotor motorExtendLiftR;
+    protected static DcMotor motorExtendLiftL;
+    protected static DcMotor motorRaiseLiftR;
+    protected static DcMotor motorRaiseLiftL;
+    //protected Servo servoservoBucket;
+    protected static Servo servoL;
+    protected static Servo servoR;
+    protected static Servo servoTopRatchet;
+    protected Servo servoBotRatchet1;
+    //protected Servo servoBotRatchet2;
+    protected Servo servoClimberArm;
+    protected AdafruitIMU IMU;
+    protected volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
+    protected double[] accel = new double[3];
+    static int encoderOffset = 0;
+
     protected void map() {
         motorBL = hardwareMap.dcMotor.get("bl");
         motorFL = hardwareMap.dcMotor.get("fl");
         motorBR = hardwareMap.dcMotor.get("br");
         motorFR = hardwareMap.dcMotor.get("fr");
-        motorExtendLiftR = hardwareMap.dcMotor.get("ppr");
+        /*motorExtendLiftR = hardwareMap.dcMotor.get("ppr");
         motorExtendLiftL = hardwareMap.dcMotor.get("ppl");
         motorRaiseLiftR = hardwareMap.dcMotor.get("rlr");
         motorRaiseLiftL = hardwareMap.dcMotor.get("rll");
@@ -43,58 +63,15 @@ public abstract class LinearOpMode2 extends LinearOpMode {
                     , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
                     //addressing
                     , (byte) AdafruitIMU.OPERATION_MODE_IMU);
+            telemetry.addData("IMU IS ALIVE: ", "NO ERRORS!");
         } catch (RobotCoreException e) {
             telemetry.addData("IMU IS DEAD: ", "IT THREW AN ERROR");
         }
-        IMU.startIMU();
+        IMU.startIMU(); */
     }
 
     public LinearOpMode2() {
     }
-
-
-    protected double y1_1;
-    protected double y1_2;
-    protected double y2_1;
-    protected double y2_2;
-    protected boolean yButton1;
-    protected boolean yButton2;
-    protected boolean aButton1;
-    protected boolean aButton2;
-    protected boolean lBump1;
-    protected boolean rBump1;
-    protected double lTrig1;
-    protected double rTrig1;
-    protected boolean lBump2;
-    protected boolean rBump2;
-    protected double lTrig2;
-    protected double rTrig2;
-    protected boolean dpadUp1;
-    protected boolean dpadDown1;
-    protected boolean dpadUp2;
-    protected boolean dpadDown2;
-    protected static DcMotor motorFR;
-    protected static DcMotor motorFL;
-    protected static DcMotor motorBR;
-    protected static DcMotor motorBL;
-    protected static DcMotor motorExtendLiftR;
-    protected static DcMotor motorExtendLiftL;
-    protected static DcMotor motorRaiseLiftR;
-    protected static DcMotor motorRaiseLiftL;
-    //protected Servo servoservoBucket;
-    protected static Servo servoL;
-    protected static Servo servoR;
-    protected static Servo servoTopRatchet;
-    protected Servo servoBotRatchet1;
-    //protected Servo servoBotRatchet2;
-    protected Servo servoClimberArm;
-    AdafruitIMU IMU;
-    protected volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
-    protected double[] accel = new double[3];
-    static int encoderOffset = 0;
-
-
-
     public abstract void runOpMode() throws InterruptedException;
 
     public synchronized void waitForStart() throws InterruptedException {

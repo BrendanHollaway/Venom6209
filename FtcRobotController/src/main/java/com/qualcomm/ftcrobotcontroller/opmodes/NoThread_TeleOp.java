@@ -6,11 +6,8 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-<<<<<<< HEAD
+
 public class NoThread_TeleOp extends LinearOpMode2{
-    
-=======
-public class NoThread_TeleOp extends OpMode {
 
     double y1_1;
     double y1_2;
@@ -32,32 +29,11 @@ public class NoThread_TeleOp extends OpMode {
     boolean dpadDown1;
     boolean dpadUp2;
     boolean dpadDown2;
-    //DcMotor motorFR;
-    //DcMotor motorFL;
-    DcMotor motorBR;
-    DcMotor motorBL;
-    DcMotor motorExtendLiftR;
-    DcMotor motorExtendLiftL;
-    DcMotor motorRaiseLiftR;
-    DcMotor motorRaiseLiftL;
-    //Servo servoservoBucket;
-    Servo servoL;
-    Servo servoR;
-    Servo servoTopRatchet;
-    Servo servoBotRatchet1;
-    //Servo servoBotRatchet2;
-    Servo servoClimberArm;
     AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
-
-    //Gamepad localGamepad1;
-    //Gamepad localGamepad2;
-    Object gamepadLock = new Object();
->>>>>>> cc691a59a8c00e515b1dc082078a6478cfdd4718
     double yToggle = 1.0;
     boolean enableSOS = true;
-    int y_toggle_count=0;
     boolean SOSactive = false;
     
 
@@ -160,25 +136,10 @@ public class NoThread_TeleOp extends OpMode {
                 y_toggle_count = 0;
                 yToggle = 3;
             }
-<<<<<<< HEAD
         } */
             if (aButton1) {
                 //   enableSOS = !enableSOS;
-=======
         }
-        if (aButton1) {
-            if (!enableSOS) {
-                SOS_toggle_count++;
-            }
-            else {
-                enableSOS = false;
-            }
-            if(SOS_toggle_count > 1)
-            {
-                SOS_toggle_count = 0;
-                enableSOS = true;
->>>>>>> cc691a59a8c00e515b1dc082078a6478cfdd4718
-            }
         /*if(gamepad1.x)
             servoTopRatchet.setPosition(1);
         if(gamepad1.b)
@@ -189,7 +150,7 @@ public class NoThread_TeleOp extends OpMode {
             // DRIVE CONTROL AND CLIMBER RELEASE
 
 
-            if (lTrig1 > 0.1 ) {
+            /*if (lTrig1 > 0.1 ) {
                 servoL.setPosition(Range.clip(servoL.getPosition() + 0.02, 0, 1));
             } else if (lBump1) {
                 servoL.setPosition(Range.clip(servoL.getPosition() - 0.02, 0, 1));
@@ -198,21 +159,21 @@ public class NoThread_TeleOp extends OpMode {
                 servoR.setPosition(Range.clip(servoR.getPosition() + 0.02, 0, 1));
             } else if (rBump1) {
                 servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
-            }
+            } */
             if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1 && !SOSactive) {
                 motorFR.setPower(-(y1_2) / yToggle);
                 motorFL.setPower((y1_1) / yToggle);
-                motorBR.setPower((y1_2) / yToggle);
-                motorBL.setPower(-(y1_1) / yToggle);
+                motorBR.setPower(-(y1_2) / yToggle);
+                motorBL.setPower((y1_1) / yToggle);
             } else if (Math.abs(y1_1) > 0.1 && !SOSactive) {
                 motorFR.setPower(0);
                 motorFL.setPower((y1_1) / yToggle);
                 motorBR.setPower(0);
-                motorBL.setPower(-(y1_1) / yToggle);
+                motorBL.setPower((y1_1) / yToggle);
             } else if (Math.abs(y1_2) > 0.1 && !SOSactive) {
                 motorFR.setPower(-(y1_2) / yToggle);
                 motorFL.setPower(0);
-                motorBR.setPower((y1_2) / yToggle);
+                motorBR.setPower(-(y1_2) / yToggle);
                 motorBL.setPower(0);
             } else {
                 motorFR.setPower(0);
@@ -220,9 +181,17 @@ public class NoThread_TeleOp extends OpMode {
                 motorBR.setPower(0);
                 motorBL.setPower(0);
             }
+            /*if(gamepad1.dpad_up)
+                motorFR.setPower(1);
+            if(gamepad1.dpad_down)
+                motorFL.setPower(1);
+            if(gamepad1.dpad_left)
+                motorBL.setPower(1);
+            if(gamepad1.dpad_right)
+                motorBR.setPower(1);*/
 
             // LIFT CONTROLS START HERE
-
+/*
             if (Math.abs(y2_1) > 0.1 ) {
                 motorExtendLiftL.setPower(y2_1);
                 motorExtendLiftR.setPower(-y2_1);
@@ -243,7 +212,7 @@ public class NoThread_TeleOp extends OpMode {
                 servoClimberArm.setPosition(0);
             else if (rBump2 )
                 servoClimberArm.setPosition(1);
-
+*/
         /*if (lBump2) {
             if (servoArmPos == 1) {
                 servoArm.setPosition(0.4);
@@ -286,12 +255,12 @@ public class NoThread_TeleOp extends OpMode {
         else if (dpadUp2) {
             servoBucketFloor.setPosition(servoBucketFloor.getPosition() - 0.05);
         }*/
-            if (yButton2) {
+  /*          if (yButton2) {
                 servoTopRatchet.setPosition(Range.clip(servoTopRatchet.getPosition() + 0.005, 0, 1));
             }
             if (aButton2) {
                 servoTopRatchet.setPosition(Range.clip(servoTopRatchet.getPosition() - 0.005, 0, 1));
-            }
+            }*/
         /*if (aButton2) {
                 //servoBotRatchet1.setPosition(Range.clip(servoBotRatchet1.getPortN);
         }*/
@@ -337,6 +306,8 @@ public class NoThread_TeleOp extends OpMode {
             //motorFL.setPower(0);
             //motorFR.setPower(0);
         }
+        else
+            SOSactive = false;
     }
 }
 

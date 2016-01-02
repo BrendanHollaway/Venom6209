@@ -64,6 +64,7 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("ColorSensorTest", ColorSensorTest.class);
       //manager.register("UltraODStest", TestUltrasonicODS.class);
       manager.register("TeleOp", NoThread_TeleOp.class);
+      manager.register("Temp", tempTele.class);
       //manager.register("SquareTest", squareTest.class);
       //manager.register("IMUout", IMUoutput.class);
       manager.register("IMUtest", IMUtest.class);
@@ -73,6 +74,9 @@ public class FtcOpModeRegister implements OpModeRegister {
       manager.register("sostest", sostest.class);
       manager.register("tank_test", tankdrive_test.class);
       manager.register("servo test", ServoTesssst.class);
+      manager.register("DetectColor", DetectColor.class);
+      manager.register("LinearDetectColor", LinearDetectColor.class);
+      manager.register("Log Camera", CameraTest.class);
       /*manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
       manager.register("CBlue_B_RedR", CBlue_B_RedR.class);
       manager.register("CBlue_BlueR", CBlue_BlueR.class);
@@ -89,41 +93,5 @@ public class FtcOpModeRegister implements OpModeRegister {
       manager.register("FRed_B_RedR", FRed_B_RedR.class);
       manager.register("FRed_BlueR", FRed_BlueR.class);
       manager.register("FRed_RedR", FRed_RedR.class); */
-    /*
-
-     * Uncomment any of the following lines if you want to register an op mode.
-     */
-
-    //manager.register("AdafruitRGBExample", AdafruitRGBExample.class);
-    //manager.register("MRRGBExample", MRRGBExample.class);
-    //manager.register("ColorSensorDriver", ColorSensorDriver.class);
-    //manager.register("HTRGBExample", HTRGBExample.class);
-
-    //manager.register("IrSeekerOp", IrSeekerOp.class);
-    //manager.register("CompassCalibration", CompassCalibration.class);
-    //manager.register("I2cAddressChangeExample", LinearI2cAddressChange.class);
-
-
-    //manager.register("NxtTeleOp", NxtTeleOp.class);
-    
-    //manager.register("LinearK9TeleOp", LinearK9TeleOp.class);
-    //manager.register("LinearIrExample", LinearIrExample.class);
-
-    
-    //manager.register ("PushBotManual1", PushBotManual1.class);
-    //manager.register ("PushBotAutoSensors", PushBotAutoSensors.class);
-    //manager.register ("PushBotIrEvent", PushBotIrEvent.class);
-    
-    //manager.register ("PushBotManualSensors", PushBotManualSensors.class);
-    //manager.register ("PushBotOdsDetectEvent", PushBotOdsDetectEvent.class);
-    //manager.register ("PushBotOdsFollowEvent", PushBotOdsFollowEvent.class);
-    //manager.register ("PushBotTouchEvent", PushBotTouchEvent.class);    
-    
-    //manager.register("PushBotDriveTouch", PushBotDriveTouch.class);
-    //manager.register("PushBotIrSeek", PushBotIrSeek.class);
-    //manager.register("PushBotSquare", PushBotSquare.class);
-
-    
-    
   }
 }

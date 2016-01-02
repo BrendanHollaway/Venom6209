@@ -10,13 +10,13 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by viperbots on 10/5/2015.
+ * Created by Venom6209 on 10/5/2015.
  */
 public class AutonomousSegments extends LinearOpMode2 {
 
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
-    protected double kP=0.002;
+    protected double kP=0.008;
     protected double kI=0.008;
     protected double kD=0.01;
 
@@ -41,19 +41,16 @@ public class AutonomousSegments extends LinearOpMode2 {
     {
         this.motorBL = motorBL;
         this.motorBR = motorBR;
-        this.motorFL = motorFL;
-        this.motorFR = motorFR;
         this.IMU = IMU;
     }
 
-    /*public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR)
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMU)
     {
-        //this.motorFL = motorFL;
+        this.motorFL = motorFL;
         this.motorBL = motorBL;                     //Actually initializes motors
-        //this.motorFR = motorFR;
+        this.motorFR = motorFR;
         this.motorBR = motorBR;
-    } */
-
+    }
     /* public void setupMotors () {
         motorFL = hardwareMap.dcMotor.get("motor_1");
         motorBL = hardwareMap.dcMotor.get("motor_2");
@@ -195,7 +192,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
-    public void squareTest () throws InterruptedException {
+    public void squareTest() throws InterruptedException {
         move( 1, 1);
     }
     //SOS is deprecated here
@@ -400,43 +397,97 @@ public class AutonomousSegments extends LinearOpMode2 {
             telemetry.addData("right_speed", left_speed);
         }
     }
-
+    //===========================================================
+    //========================PID CONTROL========================
+    //===========================================================
     public void PID_move(double encoder, double target_heading, double speed)
     {
         speed = Range.clip(speed, -1, 1);
         motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        //All errors are used for heading; the robot's yaw
-        double prevError = 0;
+        //All errors are in terms of heading: the robot's yaw
+        double prevError;
         double error = 0;
         double iError = 0;
-        double dError = 0;
-        double dt = 0;
+        double dError;
+        double max;
+        double min;
+        double dt;
         resetStartTime();
         double time = getRuntime();
+        double PID_change;
+        double right;
+        double left;
         while(Math.abs(motorBR.getCurrentPosition()) < encoder)
         {
             dt = getRuntime() - time;
             time = getRuntime();
             prevError = error;
-            error = target_heading - makePositive(getGyroYaw());
+            max = Math.max(target_heading, getGyroYaw());
+            min = Math.min(target_heading, getGyroYaw());
+            error = Math.min(max-min, min + 360 - max);
+            if(error == min + 360 - max)
+                error *= -1;
             dError = (error - prevError) / dt;
-            iError = Range.clip(iError + error * dt,-360,360);
-           setRightPower(kP * error + kD * dError + kI * iError);
-
+            iError = Range.clip(iError + error * dt,-125,125);
+            PID_change = kP * error + kD * dError + kI * iError;
+            right = speed - PID_change;
+            left = speed + PID_change;
+            max = Math.max(right, left);
+            right /= max;
+            right *= speed;
+            left /= max;
+            left *= speed;
+            setRightPower(right);
+            setLeftPower(left);
         }
     }
+    public double getKP()
+    {
+        return kP;
+    }
+    public double getKI()
+    {
+        return kI;
+    }
+    public double getKD()
+    {
+        return kD;
+    }
+    public void setKP(double kP)
+    {
+        this.kP = kP;
+    }
+    public void setKI(double kI)
+    {
+        this.kI = kI;
+    }
+    public void setKD(double kD)
+    {
+        this.kD = kD;
+    }
+    //===========================================================
+    //====================END PID CONTROL========================
+    //===========================================================
     double makePositive(double heading_Deg)
     {
         return heading_Deg < 0? heading_Deg + 360: heading_Deg;
     }
     void setRightPower(double power)
     {
-        motorBR.setPower(Range.clip(power,-1,1));
+        motorBR.setPower(Range.clip(power, -1, 1));
         motorFR.setPower(Range.clip(power, -1, 1));
     }
+    void setLeftPower(double power)
+    {
+        motorBL.setPower(Range.clip(-power, -1, 1));
+        motorFL.setPower(Range.clip(-power, -1, 1));
+    }
 
-//BLUE INITIAL SEGMENTS
+    //==================BLUE INITIAL SEGMENTS==================
+    //These are all in terms of squares moved
+    //E.g. move(-2,1) means to move two squares backwards
+
 
     public void Close_Blue_Buttons() throws InterruptedException {
         move(-2 , 1);

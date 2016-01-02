@@ -13,9 +13,11 @@ import com.qualcomm.ftcrobotcontroller.opmodes.AdafruitIMU;
 public class IMUtest extends OpMode {
 
   AdafruitIMU boschBNO055;
+  public double accel[] = new double[3];
 
   //The following arrays contain both the Euler angles reported by the IMU (indices = 0) AND the
-  // Tait-Bryan angles calculated from the 4 components of the quaternion vector (indices = 1)
+  // Tait-Bryan angles ca+
+  // lculated from the 4 components of the quaternion vector (indices = 1)
   volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
 
   long systemTime;//Relevant values of System.nanoTime
@@ -90,6 +92,7 @@ public class IMUtest extends OpMode {
 
     //Read the encoder values that the "worker" threads will use in their computations
     boschBNO055.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+    boschBNO055.getAccel(accel);
 		/*
 		 * Send whatever telemetry data you want back to driver station.
 		 */
@@ -97,10 +100,12 @@ public class IMUtest extends OpMode {
     telemetry.addData("Headings(yaw): ",
       String.format("Euler= %4.5f, Quaternion calculated= %4.5f", yawAngle[0], yawAngle[1]));
     telemetry.addData("Pitches: ",
-      String.format("Euler= %4.5f, Quaternion calculated= %4.5f", pitchAngle[0], pitchAngle[1]));
+            String.format("Euler= %4.5f, Quaternion calculated= %4.5f", pitchAngle[0], pitchAngle[1]));
     telemetry.addData("Max I2C read interval: ",
       String.format("%4.4f ms. Average interval: %4.4f ms.", boschBNO055.maxReadInterval
         , boschBNO055.avgReadInterval));
+    telemetry.addData("Accel ",
+            String.format(" %4.5f,  %4.5f", accel[0], accel[1], accel[2]));
   }
 
   /*
