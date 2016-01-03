@@ -2,6 +2,8 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import android.graphics.Bitmap;
 
+import com.qualcomm.ftccommon.DbgLog;
+
 /**
  * TeleOp Mode
  * <p/>
@@ -51,13 +53,11 @@ public class DetectColor extends OpModeCamera {
                         output += color(pixel);
                     }
                 }
-                DbgLog.msg("My Name is Bo, Run #" + ++looped +": " + output);
+                DbgLog.msg("My Name is Bo, Run #" + ++looped + ": " + output);
                 int redValue = 0;
                 int blueValue = 0;
                 int greenValue = 0;
 
-                Bitmap rgbImage;
-                rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
                 for (int x = 0; x < width / ds2; x++) {
                     for (int y = 0; y < height / ds2; y++) {
                         int pixel = rgbImage.getPixel(x, y);
@@ -78,7 +78,7 @@ public class DetectColor extends OpModeCamera {
                     case 2:
                         colorString = "BLUE";
                 }
-                Telemetry.addData("Color: ", colorString);
+                telemetry.addData("Color: ", colorString);
                 telemetry.addData("My Name is Bo, Run #", looped +": " + output);
             }
         }

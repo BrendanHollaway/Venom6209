@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package robotics;
-import java.awt.Point;
+package com.qualcomm.ftcrobotcontroller.opmodes;
+
+import com.qualcomm.ftcrobotcontroller.Point;
+
 import java.util.*;
 /**
  *
@@ -39,15 +41,15 @@ public class Robotics {
     public static void main(String[] args) {
         for(int i = 0; i < RGB_photo.length; i++)
             RGB_photo_copy[i] = Arrays.copyOf(RGB_photo[i], RGB_photo[i].length);
-        red_solutions = new ArrayList<>();
-        blue_solutions = new ArrayList<>();
+        red_solutions = new ArrayList<ArrayList<Point>>();
+        blue_solutions = new ArrayList<ArrayList<Point>>();
         for(byte x = 0; x < RGB_photo.length; x++)
             for(byte y = 0; y < RGB_photo[0].length; y++)
             {
                 solve_red(x, y, (byte)red_solutions.size());
                 solve_blue(x, y, (byte)blue_solutions.size());
             }
-        TreeMap<Double, ArrayList<Point>> compared_solutions = new TreeMap<>();
+        TreeMap<Double, ArrayList<Point>> compared_solutions = new TreeMap<Double, ArrayList<Point>>();
         for(ArrayList<Point> arr : red_solutions)
         {
            /* Iterator<Point> it = arr.iterator();
@@ -84,7 +86,7 @@ public class Robotics {
             if(RGB_photo_copy[x][y] == r)
             {
                 if(!(index < red_solutions.size()))
-                    red_solutions.add(new ArrayList<>());
+                    red_solutions.add(new ArrayList<Point>());
                 red_solutions.get(index).add(new Point(x,y));
                 RGB_photo_copy[x][y] = g;
                 //all solutions upwards
@@ -108,7 +110,7 @@ public class Robotics {
             if(RGB_photo_copy[x][y] == b)
             {
                 if(!(index < blue_solutions.size()))
-                    blue_solutions.add(new ArrayList<>());
+                    blue_solutions.add(new ArrayList<Point>());
                 blue_solutions.get(index).add(new Point(x,y));
                 RGB_photo_copy[x][y] = g;
                 //all solutions upwards
@@ -154,7 +156,7 @@ public class Robotics {
         }
         adjust(test, min_x, min_y);
         Point test_center = DPoint.toPoint(center(test));
-        ArrayList<Point> ALtemplate = new ArrayList<>();
+        ArrayList<Point> ALtemplate = new ArrayList<Point>();
         for(byte x = 0; x < template.length; x++)
             for(byte y = 0; y < template[0].length; y++)
                 if(template[x][y] == r)
@@ -164,7 +166,7 @@ public class Robotics {
         Point template_center_max_y =   DPoint.toMaxYPoint(center(ALtemplate));
         Point template_center_max   =   DPoint.toMaxPoint(center(ALtemplate));
         equalize_centers(ALtemplate, template_center_min, test_center);
-        ArrayList<Double> solutions = new ArrayList<>();
+        ArrayList<Double> solutions = new ArrayList<Double>();
         solutions.add(proportional_equal(ALtemplate, test));
         if(!template_center_min.equals(template_center_max_x))
         {

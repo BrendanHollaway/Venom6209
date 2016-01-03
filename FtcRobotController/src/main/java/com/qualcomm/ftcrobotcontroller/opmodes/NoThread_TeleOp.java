@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.*;
@@ -17,6 +18,8 @@ public class NoThread_TeleOp extends LinearOpMode2{
     boolean yButton2;
     boolean aButton1;
     boolean aButton2;
+    boolean xButton2;
+    boolean bButton2;
     boolean lBump1;
     boolean rBump1;
     double lTrig1;
@@ -35,6 +38,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
     double yToggle = 1.0;
     boolean enableSOS = true;
     boolean SOSactive = false;
+    boolean rat360moved = false;
     
 
 
@@ -57,25 +61,18 @@ public class NoThread_TeleOp extends LinearOpMode2{
         catch (Exception E) {}
 
     }
+    public boolean buttonheld(boolean button) {
+        int holdTime = 0;
+        while (button) {
+            holdTime++;
+            if (holdTime > 4)
+                return true;
+        }
+            return false;
+    }
     @Override
     public void runOpMode() {
         super.map();
-        //servoBotRatchet1 = hardwareMap.servo.get("botRat1");
-        //servoBotRatchet2 = hardwareMap.servo.get("botRat2");
-
-
-        //
-        // Bucket = hardwareMap.servo.get("servoBucket");
-        /*motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);*/
-        //servoTopRatchet.setPosition(1);
-        //servoClimberArm.setPosition(1);
-        //servoR.setPosition(0);
-        //servoL.setPosition(.7);
-        //  servoBotRatchet1.setPosition(1);
-    
 
     /* BUTTON MAPPING
         CONTROLLER 1
@@ -95,21 +92,19 @@ public class NoThread_TeleOp extends LinearOpMode2{
             a_btn = hold for bot ratchet release
             left_bumper = retract climber arm towards robot
             right_bumper = flip climber arm out
-
-
-
      */
+        while(!opModeIsActive())
 
-        
-
-        while(true) {
+        while(opModeIsActive()) {
 
             y1_1 = gamepad1.left_stick_y;
-            y1_2 = gamepad1.right_stick_y;
+            y1_2 = -gamepad1.right_stick_y;
             yButton1 = gamepad1.y;
             yButton2 = gamepad2.y;
             aButton1 = gamepad1.a;
             aButton2 = gamepad2.a;
+            xButton2 = gamepad2.x;
+            bButton2 = gamepad2.b;
             lBump1 = gamepad1.left_bumper;
             rBump1 = gamepad1.right_bumper;
             lTrig1 = gamepad1.left_trigger;
@@ -137,43 +132,34 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 yToggle = 3;
             }
         } */
-            if (aButton1) {
-                //   enableSOS = !enableSOS;
-        }
-        /*if(gamepad1.x)
-            servoTopRatchet.setPosition(1);
-        if(gamepad1.b)
-            servoTopRatchet.setPosition(0);*/
-            SOScheck();
-            telemetry.addData("SOS Check: ", enableSOS);
 
             // DRIVE CONTROL AND CLIMBER RELEASE
 
 
-            /*if (lTrig1 > 0.1 ) {
+            if (lTrig1 > 0.1 ) {
                 servoL.setPosition(Range.clip(servoL.getPosition() + 0.02, 0, 1));
             } else if (lBump1) {
                 servoL.setPosition(Range.clip(servoL.getPosition() - 0.02, 0, 1));
             }
             if (rTrig1 > 0.1) {
-                servoR.setPosition(Range.clip(servoR.getPosition() + 0.02, 0, 1));
-            } else if (rBump1) {
                 servoR.setPosition(Range.clip(servoR.getPosition() - 0.02, 0, 1));
-            } */
-            if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0.1 && !SOSactive) {
-                motorFR.setPower(-(y1_2) / yToggle);
-                motorFL.setPower((y1_1) / yToggle);
-                motorBR.setPower(-(y1_2) / yToggle);
-                motorBL.setPower((y1_1) / yToggle);
-            } else if (Math.abs(y1_1) > 0.1 && !SOSactive) {
+            } else if (rBump1) {
+                servoR.setPosition(Range.clip(servoR.getPosition() + 0.02, 0, 1));
+            }
+            if (Math.abs(y1_1) > 0.1 && Math.abs(y1_2) > 0) {
+                motorFR.setPower(y1_2);
+                motorFL.setPower(y1_1);
+                motorBR.setPower(y1_2);
+                motorBL.setPower(y1_1);
+            } else if (Math.abs(y1_1) > 0.1) {
                 motorFR.setPower(0);
-                motorFL.setPower((y1_1) / yToggle);
+                motorFL.setPower(y1_1);
                 motorBR.setPower(0);
-                motorBL.setPower((y1_1) / yToggle);
-            } else if (Math.abs(y1_2) > 0.1 && !SOSactive) {
-                motorFR.setPower(-(y1_2) / yToggle);
+                motorBL.setPower(y1_1);
+            } else if (Math.abs(y1_2) > 0.1) {
+                motorFR.setPower(y1_2);
                 motorFL.setPower(0);
-                motorBR.setPower(-(y1_2) / yToggle);
+                motorBR.setPower(y1_2);
                 motorBL.setPower(0);
             } else {
                 motorFR.setPower(0);
@@ -181,91 +167,46 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBR.setPower(0);
                 motorBL.setPower(0);
             }
-            /*if(gamepad1.dpad_up)
-                motorFR.setPower(1);
-            if(gamepad1.dpad_down)
-                motorFL.setPower(1);
-            if(gamepad1.dpad_left)
-                motorBL.setPower(1);
-            if(gamepad1.dpad_right)
-                motorBR.setPower(1);*/
+
+            if(Math.abs(y2_1) > 0)
+            {
+                motorPL.setPower(y2_1);
+                motorPR.setPower(y2_1);
+            }
+            else if(gamepad2.right_bumper)
+                motorPR.setPower(-0.25);
+            else if(gamepad2.right_trigger > 0.1)
+                motorPR.setPower(0.25);
+            else if(gamepad2.left_bumper)
+                motorPL.setPower(-0.25);
+            else if(gamepad2.left_trigger > 0.1)
+                motorPL.setPower(0.25);
+            else
+            {
+                motorPL.setPower(0);
+                motorPR.setPower(0);
+            }
+
+            if (buttonheld(xButton2))
+                servoLRat.setPosition(0);
+            if (buttonheld(bButton2) && !rat360moved) {
+                servoRRat.setPosition(1);
+                sleep(100);
+                servoRRat.setPosition(.5);
+                rat360moved = true;
+            }
 
             // LIFT CONTROLS START HERE
 /*
-            if (Math.abs(y2_1) > 0.1 ) {
-                motorExtendLiftL.setPower(y2_1);
-                motorExtendLiftR.setPower(-y2_1);
-            } else {
-                motorExtendLiftL.setPower(0);
-                motorExtendLiftR.setPower(0);
-            }
-
-            if (Math.abs(y2_2) > 0.1 && !SOSactive) {
-                motorRaiseLiftL.setPower(y2_2);
-                motorRaiseLiftR.setPower(-y2_2);
-
-            } else {
-                motorRaiseLiftL.setPower(0);
-                motorRaiseLiftR.setPower(0);
-            }
             if (lBump2 )
                 servoClimberArm.setPosition(0);
             else if (rBump2 )
                 servoClimberArm.setPosition(1);
 */
-        /*if (lBump2) {
-            if (servoArmPos == 1) {
-                servoArm.setPosition(0.4);
-                sleep(500);
-            }
-            else if (servoArmPos == 2) {
-                servoArm.setPosition(0.4);
-                sleep(150);
-            }
-            else if (servoArmPos == 3) {
-                servoArm.setPosition(0.4);
-                sleep(150);
-            }
-            else servoArm.setPosition(0.5);
-        }
-        else if (rBump2) {
-            if (servoArmPos == 0) {
-                servoArm.setPosition(0.6);
-                sleep(500);
-            }
-            else if (servoArmPos == 1) {
-                servoArm.setPosition(0.6);
-                sleep(150);
-            }
-            else if (servoArmPos == 2) {
-                servoArm.setPosition(0.6);
-                sleep(150);
-            }
-            else servoArm.setPosition(0.5);
-        }
-        if (lTrig2 > 0.1) {
-            servoBucketSweep.setPosition(0.5 + (lTrig2/2));
-        }
-        else if (rTrig2 > 0.1) {
-            servoBucketSweep.setPosition(0.5 - (rTrig2/2));
-        }
-        if (dpadDown2) {
-            servoBucketFloor.setPosition(servoBucketFloor.getPosition() + 0.05);
-        }
-        else if (dpadUp2) {
-            servoBucketFloor.setPosition(servoBucketFloor.getPosition() - 0.05);
-        }*/
-  /*          if (yButton2) {
-                servoTopRatchet.setPosition(Range.clip(servoTopRatchet.getPosition() + 0.005, 0, 1));
-            }
-            if (aButton2) {
-                servoTopRatchet.setPosition(Range.clip(servoTopRatchet.getPosition() - 0.005, 0, 1));
-            }*/
-        /*if (aButton2) {
-                //servoBotRatchet1.setPosition(Range.clip(servoBotRatchet1.getPortN);
-        }*/
-            telemetry.addData("gyro yaw; ", gyroTest());
-            telemetry.addData("gyro pitch: ", gyroPitch());
+            //SOScheck();
+            //telemetry.addData("gyro yaw; ", gyroTest());
+            //telemetry.addData("gyro pitch: ", gyroPitch());
+
         }
     }
     /*double scaleInput(double val)  {

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package robotics;
+package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import java.awt.Point;
+
+import com.qualcomm.ftcrobotcontroller.Point;
 
 /**
  *
@@ -19,12 +20,12 @@ public class DPoint extends Point
         x = a;
         y = b;
     }
-    @Override
+    //@Override
     public double getX()
     {
         return x;
     }
-    @Override
+    //@Override
     public double getY()
     {
         return y;

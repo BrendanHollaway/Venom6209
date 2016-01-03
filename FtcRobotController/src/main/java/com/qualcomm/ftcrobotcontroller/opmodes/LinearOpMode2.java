@@ -20,41 +20,36 @@ public abstract class LinearOpMode2 extends LinearOpMode {
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
 
-    protected static DcMotor motorFR;
-    protected static DcMotor motorFL;
-    protected static DcMotor motorBR;
-    protected static DcMotor motorBL;
-    protected static DcMotor motorExtendLiftR;
-    protected static DcMotor motorExtendLiftL;
-    protected static DcMotor motorRaiseLiftR;
-    protected static DcMotor motorRaiseLiftL;
-    //protected Servo servoservoBucket;
-    protected static Servo servoL;
-    protected static Servo servoR;
-    protected static Servo servoTopRatchet;
-    protected Servo servoBotRatchet1;
-    //protected Servo servoBotRatchet2;
+    protected DcMotor motorFR;
+    protected DcMotor motorFL;
+    protected DcMotor motorBR;
+    protected DcMotor motorBL;
+    protected DcMotor motorPR;
+    protected DcMotor motorPL;
+    protected Servo servoL;
+    protected Servo servoR;
     protected Servo servoClimberArm;
+    protected Servo servoLRat;
+    protected Servo servoRRat;
     protected AdafruitIMU IMU;
     protected volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     protected double[] accel = new double[3];
-    static int encoderOffset = 0;
+    int encoderOffset = 0;
 
     protected void map() {
         motorBL = hardwareMap.dcMotor.get("bl");
         motorFL = hardwareMap.dcMotor.get("fl");
         motorBR = hardwareMap.dcMotor.get("br");
         motorFR = hardwareMap.dcMotor.get("fr");
-        /*motorExtendLiftR = hardwareMap.dcMotor.get("ppr");
-        motorExtendLiftL = hardwareMap.dcMotor.get("ppl");
-        motorRaiseLiftR = hardwareMap.dcMotor.get("rlr");
-        motorRaiseLiftL = hardwareMap.dcMotor.get("rll");
-        servoL = hardwareMap.servo.get("climberArm"); //dont judge
-        servoR = hardwareMap.servo.get("topRat");//dont judge
-        servoClimberArm = hardwareMap.servo.get("lServo");
-        servoTopRatchet = hardwareMap.servo.get("rServo");
-        long systemTime = System.nanoTime();
-        try {
+        motorPL = hardwareMap.dcMotor.get("pl");
+        motorPR = hardwareMap.dcMotor.get("pr");
+        servoLRat = hardwareMap.servo.get("lrat");
+        servoRRat = hardwareMap.servo.get("rrat");
+        servoClimberArm = hardwareMap.servo.get("arm");
+        servoL = hardwareMap.servo.get("lservo");
+        servoR = hardwareMap.servo.get("rservo");
+
+        /*try {
             IMU = new AdafruitIMU(hardwareMap, "hydro"
 
                     //The following was required when the definition of the "I2cDevice" class was incomplete.
@@ -72,39 +67,7 @@ public abstract class LinearOpMode2 extends LinearOpMode {
 
     public LinearOpMode2() {
     }
-    public abstract void runOpMode() throws InterruptedException;
-
-    public synchronized void waitForStart() throws InterruptedException {
-        while(!this.d) {
-            synchronized(this) {
-                this.wait();
-            }
-        }
-
-    }
-
-    public void waitOneFullHardwareCycle() throws InterruptedException {
-        this.waitForNextHardwareCycle();
-        Thread.sleep(1L);
-        this.waitForNextHardwareCycle();
-    }
-
-    public void waitForNextHardwareCycle() throws InterruptedException {
-        synchronized(this) {
-            this.wait();
-        }
-    }
-
-    public void sleep(long milliseconds) throws InterruptedException {
-        Thread.sleep(milliseconds);
-    }
-
-    public boolean opModeIsActive() {
-        return this.d;
-    }
-
-
-    private static class a implements Runnable {
+    private class a implements Runnable {
         private RuntimeException a = null;
         private boolean b = false;
         private final LinearOpMode2 c;
@@ -141,15 +104,9 @@ public abstract class LinearOpMode2 extends LinearOpMode {
             return this.b;
         }
 
-        public DcMotor getMotorFR()
-        {
-            return motorFR;
-        }
+        //public DcMotor getMotorFR() { return motorFR; }
 
-        public Servo getServoZipLeft()
-        {
-            return servoL;
-        }
+        //public Servo getServoZipLeft() { return servoL; }
 
         public void setEncoderFR(int encoder)
         {
@@ -160,8 +117,6 @@ public abstract class LinearOpMode2 extends LinearOpMode {
         {
             return motorFR.getCurrentPosition() - encoderOffset;
         }
-
-
     }
 }
 
