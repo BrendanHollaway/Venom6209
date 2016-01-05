@@ -32,7 +32,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
     boolean dpadDown1;
     boolean dpadUp2;
     boolean dpadDown2;
-    AdafruitIMU gyroAcc;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
     double yToggle = 1.0;
@@ -171,7 +170,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             if(Math.abs(y2_1) > 0)
             {
                 motorPL.setPower(y2_1);
-                motorPR.setPower(y2_1);
+                motorPR.setPower(-y2_1);
             }
             else if(gamepad2.right_bumper)
                 motorPR.setPower(-0.25);
@@ -203,9 +202,9 @@ public class NoThread_TeleOp extends LinearOpMode2{
             else if (rBump2 )
                 servoClimberArm.setPosition(1);
 */
-            //SOScheck();
-            //telemetry.addData("gyro yaw; ", gyroTest());
-            //telemetry.addData("gyro pitch: ", gyroPitch());
+            SOScheck();
+            telemetry.addData("gyro yaw; ", gyroTest());
+            telemetry.addData("gyro pitch: ", gyroPitch());
 
         }
     }

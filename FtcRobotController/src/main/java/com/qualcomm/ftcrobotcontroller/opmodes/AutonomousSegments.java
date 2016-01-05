@@ -41,7 +41,7 @@ public class AutonomousSegments extends LinearOpMode2 {
     {
         this.motorBL = motorBL;
         this.motorBR = motorBR;
-        this.IMU = IMU;
+        //this.IMU = IMU;
     }
 
     public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMU)
@@ -189,7 +189,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         motorBR.setPower(0);
     }
     public double getGyroYaw() {
-        IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        //IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
     public void squareTest() throws InterruptedException {
@@ -198,7 +198,7 @@ public class AutonomousSegments extends LinearOpMode2 {
     //SOS is deprecated here
     public void SOS(double acc_y, double acc_z)
     {
-        IMU.getAccel(accel);
+        //IMU.getAccel(accel);
         acc_y = accel[1];
         acc_z = accel[2];
         if (acc_y < -8.88 && acc_z > -4.14)
@@ -313,7 +313,7 @@ public class AutonomousSegments extends LinearOpMode2 {
             dEx = dE * Math.cos(Math.toRadians(getGyroYaw()));
             dEy = dE * Math.sin(Math.toRadians(getGyroYaw()));
             // ACCELERATION VALUE CALCULATIONS
-            IMU.getAccel(accs);
+            //IMU.getAccel(accs);
             old_x_acc = curr_x_acc;
             old_y_acc = curr_y_acc;
             curr_x_acc = accs[0];

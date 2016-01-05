@@ -31,6 +31,9 @@ public abstract class LinearOpMode2 extends LinearOpMode {
     protected Servo servoClimberArm;
     protected Servo servoLRat;
     protected Servo servoRRat;
+    protected Servo servoF;
+    protected Servo servoTL;
+    protected Servo servoTR;
     protected AdafruitIMU IMU;
     protected volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     protected double[] accel = new double[3];
@@ -48,8 +51,11 @@ public abstract class LinearOpMode2 extends LinearOpMode {
         servoClimberArm = hardwareMap.servo.get("arm");
         servoL = hardwareMap.servo.get("lservo");
         servoR = hardwareMap.servo.get("rservo");
+        servoF = hardwareMap.servo.get("servof");
+        servoTL = hardwareMap.servo.get("servotl");
+        servoTR = hardwareMap.servo.get("servotr");
 
-        /*try {
+        try {
             IMU = new AdafruitIMU(hardwareMap, "hydro"
 
                     //The following was required when the definition of the "I2cDevice" class was incomplete.
@@ -62,7 +68,7 @@ public abstract class LinearOpMode2 extends LinearOpMode {
         } catch (RobotCoreException e) {
             telemetry.addData("IMU IS DEAD: ", "IT THREW AN ERROR");
         }
-        IMU.startIMU(); */
+        IMU.startIMU();
     }
 
     public LinearOpMode2() {
