@@ -70,7 +70,7 @@ public class FtcOpModeRegister implements OpModeRegister {
       manager.register("IMUtest", IMUtest.class);
       //manager.register("teleTest", telemetryTest.class);
       manager.register("Straight_Auto", Straight_Auto.class);
-      manager.register("Auto_Power_Treads", Uh_oh_Auto.class);
+      manager.register("autotest", autotest.class);
       manager.register("sostest", sostest.class);
       manager.register("tank_test", tankdrive_test.class);
       manager.register("servo test", ServoTesssst.class);

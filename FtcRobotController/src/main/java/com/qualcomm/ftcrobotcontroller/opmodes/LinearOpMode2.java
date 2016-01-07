@@ -52,8 +52,8 @@ public abstract class LinearOpMode2 extends LinearOpMode {
         servoL = hardwareMap.servo.get("lservo");
         servoR = hardwareMap.servo.get("rservo");
         servoF = hardwareMap.servo.get("servof");
-        servoTL = hardwareMap.servo.get("servotl");
-        servoTR = hardwareMap.servo.get("servotr");
+        //servoTL = hardwareMap.servo.get("servotl");
+        //servoTR = hardwareMap.servo.get("servotr");
 
         try {
             IMU = new AdafruitIMU(hardwareMap, "hydro"

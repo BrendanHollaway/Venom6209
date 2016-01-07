@@ -21,7 +21,7 @@ public class AutonomousSegments extends LinearOpMode2 {
     protected double kD=0.01;
 
 
-    double cm_rotation = 1.5*Math.PI*2.54;
+    double cm_rotation = 4*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
     double inches = 1.5*Math.PI;
     double degrees = 2000.0/90.0;
@@ -219,7 +219,9 @@ public class AutonomousSegments extends LinearOpMode2 {
     }
 
 
+
 //RED INITIAL SEGMENTS
+
 
     public void Close_Red_Buttons() throws InterruptedException {
         move(-2 , 1);
