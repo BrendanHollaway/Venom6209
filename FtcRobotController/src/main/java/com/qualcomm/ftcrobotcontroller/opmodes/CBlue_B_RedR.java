@@ -27,7 +27,7 @@ public class CBlue_B_RedR extends LinearOpMode {
         //auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Close_Blue_Buttons();
-        auto.ButtonClimbers();
+        auto.Climbers();
         auto.BlueButtons_RedRamp();
         auto.ClearRamp();
         auto.ClimbRamp();

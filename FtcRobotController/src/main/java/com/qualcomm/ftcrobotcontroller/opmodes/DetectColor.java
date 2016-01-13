@@ -53,13 +53,15 @@ public class DetectColor extends OpModeCamera {
                         output += color(pixel);
                     }
                 }
-                DbgLog.msg("My Name is Bo, Run #" + ++looped + ": " + output);
+                DbgLog.msg("My Name is Bo, Run #" + ++looped + ": " + output + "ENDBO");
                 int redValue = 0;
                 int blueValue = 0;
                 int greenValue = 0;
 
                 for (int x = 0; x < width / ds2; x++) {
                     for (int y = 0; y < height / ds2; y++) {
+                        telemetry.addData("width", width / ds2);
+                        telemetry.addData("height: ", height/ds2);
                         int pixel = rgbImage.getPixel(x, y);
                         redValue += red(pixel);
                         blueValue += blue(pixel);
@@ -78,14 +80,15 @@ public class DetectColor extends OpModeCamera {
                     case 2:
                         colorString = "BLUE";
                 }
-                telemetry.addData("Color: ", colorString);
-                telemetry.addData("My Name is Bo, Run #", looped +": " + output);
+                //telemetry.addData("Color: ", colorString);
+                //telemetry.addData("My Name is Bo, Run #", looped +": " + output);
             }
         }
         long endTime = System.currentTimeMillis();
-        telemetry.addData("Dims", Integer.toString(width / ds2) + " x " + Integer.toString(height / ds2));
+        /*telemetry.addData("Dims", Integer.toString(width / ds2) + " x " + Integer.toString(height / ds2));
         telemetry.addData("Loop Time", Long.toString(endTime - startTime));
-        telemetry.addData("Loop to Loop Time", Long.toString(endTime - lastLoopTime));
+        telemetry.addData("Loop to Loop Time", Long.toString(endTime - lastLoopTime));*/
+        telemetry.addData("My Name is Bo, Run #", looped);
 
         lastLoopTime = endTime;
     }

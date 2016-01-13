@@ -27,7 +27,7 @@ public class FRed_B_RedR extends LinearOpMode {
         //auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
         auto.Far_Red_Buttons();
-        auto.ButtonClimbers();
+        auto.Climbers();
         auto.RedButtons_RedRamp();
         auto.ClearRamp();
         auto.ClimbRamp();

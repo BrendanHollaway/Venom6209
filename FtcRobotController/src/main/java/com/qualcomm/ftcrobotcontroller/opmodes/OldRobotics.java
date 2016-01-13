@@ -12,7 +12,7 @@ import java.util.*;
  *
  * @author Brendan Hollaway
  */
-public class Robotics {
+public class OldRobotics {
 
     /**
      * @param args the command line arguments
@@ -35,7 +35,7 @@ public class Robotics {
     public static final byte[][] matcher =     {{r,r},
                                                 {r,r},
                                                 {r,r}};
-    public Robotics() {
+    public OldRobotics() {
     }
     public static byte[][] RGB_photo_copy = new byte[RGB_photo.length][RGB_photo[0].length];
     public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.robocol.Telemetry;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -19,7 +21,9 @@ public class AutonomousSegments extends LinearOpMode2 {
     protected double kP=0.008;
     protected double kI=0.008;
     protected double kD=0.01;
-
+    //protected AdafruitIMU IMU;
+    protected AdafruitIMU IMU2;
+    Telemetry tele;
 
     double cm_rotation = 4*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
@@ -44,12 +48,22 @@ public class AutonomousSegments extends LinearOpMode2 {
         //this.IMU = IMU;
     }
 
-    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMU)
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IM)
     {
         this.motorFL = motorFL;
         this.motorBL = motorBL;                     //Actually initializes motors
         this.motorFR = motorFR;
         this.motorBR = motorBR;
+        this.IMU2 = IM;
+    }
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem)
+    {
+        this.motorFL = motorFL;
+        this.motorBL = motorBL;                     //Actually initializes motors
+        this.motorFR = motorFR;
+        this.motorBR = motorBR;
+        this.IMU2 = IMUu;
+        tele = telem;
     }
     /* public void setupMotors () {
         motorFL = hardwareMap.dcMotor.get("motor_1");
@@ -78,9 +92,10 @@ public class AutonomousSegments extends LinearOpMode2 {
 
     public void move(double squares, double speed) throws InterruptedException        //move in a straight line
     {
+        long time = System.currentTimeMillis() + (long) Math.pow(10, 7);
         double position = squares / square_per_rot * 1120; //1120 is number of encoder ticks per rotation
-        int currentPosition = motorBR.getCurrentPosition();                            //measures current encoder value
-        while(Math.abs(motorBR.getCurrentPosition()) < position + currentPosition ) {  //moves until encoders change by value inputted
+        int currentPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition && System.currentTimeMillis() < time) {  //moves until encoders change by value inputted
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
             motorBL.setPower(Math.signum(position) * Math.abs(speed));                 //takes sign of position, so sign of speed does not matter
             motorFR.setPower(Math.signum(position) * Math.abs(speed));
@@ -118,27 +133,92 @@ public class AutonomousSegments extends LinearOpMode2 {
             }*/
         }
     }
-    public void turn(double deg, double speed) throws InterruptedException //pos deg is turn clockwise (Deg measured after transformation)
-    {
-        speed = Range.clip(speed, -1, 1);
-        deg %= 360.0;
-        if(deg > 180)
-        {
-            deg -= 360;
+    public void turn(double deg, double speed) {
+        double tolerance = 2;
+        speed = Range.clip(Math.abs(speed), -1, 1);
+        deg += getGyroYaw();
+        deg %= 180;
+        //deg now between -180 and 180
+        if (getGyroYaw() < deg) {
+            while (getGyroYaw() < deg - 3) {
+                tele.addData("deg: ", getGyroYaw());
+                motorFR.setPower(-speed);
+                motorFL.setPower(speed);
+                motorBR.setPower(-speed);
+                motorBL.setPower(speed);
+            }
+            while (getGyroYaw() < deg) {
+                motorFR.setPower(-speed / 3.0);
+                motorFL.setPower(speed / 3.0);
+                motorBR.setPower(-speed / 3.0);
+                motorBL.setPower(speed / 3.0);
+            }
+        } else {
+            while (getGyroYaw() > deg + 3) {
+                tele.addData("deg: ", getGyroYaw());
+                motorFR.setPower(speed);
+                motorFL.setPower(-speed);
+                motorBR.setPower(speed);
+                motorBL.setPower(-speed);
+            }
+            while (getGyroYaw() > deg) {
+                motorFR.setPower(speed / 3.0);
+                motorFL.setPower(-speed / 3.0);
+                motorBR.setPower(speed / 3.0);
+                motorBL.setPower(-speed / 3.0);
+            }
         }
-        else if(deg < -180)
-        {
-            deg += 360;
-        }
-        while(Math.abs(getGyroYaw()) < Math.abs(deg))
-        {
-            motorFL.setPower(Math.signum(deg) * Math.abs(speed));
-            motorBL.setPower(Math.signum(deg) * Math.abs(speed));
-            motorFR.setPower(-Math.signum(deg) * Math.abs(speed));
-            motorBR.setPower(-Math.signum(deg) * Math.abs(speed));
-        }
+        if (Math.abs(getGyroYaw() - deg) > tolerance)
+            turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
         halt();
     }
+    public void turn(double deg, double speed, double tolerance)
+    {
+        speed = Range.clip(Math.abs(speed), -1, 1);
+        deg += getGyroYaw();
+        deg %= 180;
+        //deg now between -180 and 180
+        if(getGyroYaw() < deg)
+        {
+            while(getGyroYaw() < deg - 3)
+            {
+                tele.addData("deg: ", getGyroYaw());
+                motorFR.setPower(-speed);
+                motorFL.setPower(speed);
+                motorBR.setPower(-speed);
+                motorBL.setPower(speed);
+            }
+            while(getGyroYaw() < deg)
+            {
+                motorFR.setPower(-speed / 3.0);
+                motorFL.setPower(speed / 3.0);
+                motorBR.setPower(-speed / 3.0);
+                motorBL.setPower(speed / 3.0);
+            }
+        }
+        else
+        {
+            while(getGyroYaw() > deg + 3)
+            {
+                tele.addData("deg: ", getGyroYaw());
+                motorFR.setPower(speed);
+                motorFL.setPower(-speed);
+                motorBR.setPower(speed);
+                motorBL.setPower(-speed);
+            }
+            while(getGyroYaw() > deg)
+            {
+                motorFR.setPower(speed / 3.0);
+                motorFL.setPower(-speed / 3.0);
+                motorBR.setPower(speed / 3.0);
+                motorBL.setPower(-speed / 3.0);
+            }
+        }
+        if(Math.abs(getGyroYaw() - deg) > tolerance)
+            turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
+        halt();
+    }
+
     public void encoderTurn(double position, double speed) throws InterruptedException           //left is negative, right is positive
     {
         speed = Range.clip(speed, -1, 1);
@@ -189,7 +269,11 @@ public class AutonomousSegments extends LinearOpMode2 {
         motorBR.setPower(0);
     }
     public double getGyroYaw() {
-        //IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        if(IMU2 == null) {
+            DbgLog.error(" IMU is null");
+            return -1;
+        }
+        IMU2.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
     public void squareTest() throws InterruptedException {
@@ -405,8 +489,8 @@ public class AutonomousSegments extends LinearOpMode2 {
     public void PID_move(double encoder, double target_heading, double speed)
     {
         speed = Range.clip(speed, -1, 1);
-        motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         //All errors are in terms of heading: the robot's yaw
         double prevError;
         double error = 0;
@@ -492,16 +576,18 @@ public class AutonomousSegments extends LinearOpMode2 {
 
 
     public void Close_Blue_Buttons() throws InterruptedException {
-        move(-2 , 1);
-        turn(-45, 1);
+        move(0.75 , 1);
+        tele.addData("we made it: ", "yay");
+        turn(-14, 0.75);//turn(-23, 1);
         //encoderTurn(45, 1);
-        move(-1.5 * (Math.sqrt(2)) , 1);
-        turn(-45, 1);
+        move(4.25 * (Math.sqrt(2)) , 0.75);
+        turn(-18, 0.75);
         //encoderTurn(-45, 1);
-        move(-0.5 , 1);
+        move(0.25 , 0.5);
+        halt();
     }
     public void Far_Blue_Buttons() throws InterruptedException {
-        move(- 1, 1);
+        move(-1, 1);
         turn(-45, 1);
         //encoderTurn(-45, 1);
         move(-2 * (Math.sqrt(2)) , 1);
@@ -577,8 +663,19 @@ public class AutonomousSegments extends LinearOpMode2 {
 
 //BUTTON & CLIMBERS SEGMENT
 
-    public void ButtonClimbers() throws InterruptedException {
+    public void Climbers() throws InterruptedException {
+        if(super.servoClimberArm == null)
+        {
+            DbgLog.error("servo climber Arm is null");
+            super.stop();
+        }
+        super.servoClimberArm.setPosition(0);
 
+        /*sleep(250);
+        servoClimberArm.setPosition(1);*/
+    }
+    public void Buttons() throws InterruptedException {
+        //colory stuf
     }
 
 //BUTTONS TO RAMP SEGMENTS
@@ -597,11 +694,11 @@ public class AutonomousSegments extends LinearOpMode2 {
         //encoderTurn(-45, 1);
     }
     public void BlueButtons_RedRamp() throws InterruptedException {
-        move( 1, 1);
+        move(-1, 1);
         turn(90, 1);
         //encoderTurn(90, 1);
         move(1.5 , 1);
-        turn(45,1);
+        turn(-45,1);
         //encoderTurn(45, 1);
     }
     public void BlueButtons_BlueRamp() throws InterruptedException {

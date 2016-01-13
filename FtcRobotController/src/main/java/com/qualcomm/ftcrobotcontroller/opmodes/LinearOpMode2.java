@@ -14,29 +14,29 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-public abstract class LinearOpMode2 extends LinearOpMode {
+public abstract class LinearOpMode2 extends LinearOpModeCamera {
     private LinearOpMode2.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
 
-    protected DcMotor motorFR;
-    protected DcMotor motorFL;
-    protected DcMotor motorBR;
-    protected DcMotor motorBL;
-    protected DcMotor motorPR;
-    protected DcMotor motorPL;
-    protected Servo servoL;
-    protected Servo servoR;
-    protected Servo servoClimberArm;
-    protected Servo servoLRat;
-    protected Servo servoRRat;
-    protected Servo servoF;
-    protected Servo servoTL;
-    protected Servo servoTR;
-    protected AdafruitIMU IMU;
-    protected volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
-    protected double[] accel = new double[3];
+    protected static DcMotor motorFR;
+    protected static DcMotor motorFL;
+    protected static DcMotor motorBR;
+    protected static DcMotor motorBL;
+    protected static DcMotor motorPR;
+    protected static DcMotor motorPL;
+    protected static Servo servoL;
+    protected static Servo servoR;
+    protected static Servo servoClimberArm;
+    protected static Servo servoLRat;
+    protected static Servo servoRRat;
+    protected static Servo servoF;
+    protected static Servo servoTL;
+    protected static Servo servoTR;
+    protected static AdafruitIMU IMU;
+    protected static volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
+    protected static double[] accel = new double[3];
     int encoderOffset = 0;
 
     protected void map() {
@@ -49,7 +49,7 @@ public abstract class LinearOpMode2 extends LinearOpMode {
         servoLRat = hardwareMap.servo.get("lrat");
         servoRRat = hardwareMap.servo.get("rrat");
         servoClimberArm = hardwareMap.servo.get("arm");
-        servoL = hardwareMap.servo.get("lservo");
+        servoL = hardwareMap.servo.get("lservo"); //yes this is correct
         servoR = hardwareMap.servo.get("rservo");
         servoF = hardwareMap.servo.get("servof");
         //servoTL = hardwareMap.servo.get("servotl");
@@ -69,6 +69,15 @@ public abstract class LinearOpMode2 extends LinearOpMode {
             telemetry.addData("IMU IS DEAD: ", "IT THREW AN ERROR");
         }
         IMU.startIMU();
+        servoRRat.setPosition(0.44);
+        servoLRat.setPosition(0.5);
+        servoClimberArm.setPosition(1);
+        servoL.setPosition(1);
+        servoR.setPosition(0.05);
+        servoF.setPosition(0.5);
+        motorPR.setDirection(DcMotor.Direction.REVERSE);
+        telemetry.addData("Init is Complete: ", "true");
+        telemetry.addData("IMU is null: ", IMU == null);
     }
 
     public LinearOpMode2() {
