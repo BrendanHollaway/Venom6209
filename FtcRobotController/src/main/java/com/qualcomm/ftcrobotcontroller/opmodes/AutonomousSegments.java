@@ -92,14 +92,73 @@ public class AutonomousSegments extends LinearOpMode2 {
 
     public void move(double squares, double speed) throws InterruptedException        //move in a straight line
     {
-        long time = System.currentTimeMillis() + (long) Math.pow(10, 7);
+        long time = System.currentTimeMillis() + (long) Math.pow(10, 4.1);
         double position = squares / square_per_rot * 1120; //1120 is number of encoder ticks per rotation
-        int currentPosition = motorFL.getCurrentPosition();                            //measures current encoder value
-        while(Math.abs(motorFL.getCurrentPosition()) < position + currentPosition && System.currentTimeMillis() < time) {  //moves until encoders change by value inputted
+        motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        /*int currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        int currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        int currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
+        int currentEncoder = 0; //=mid2(currentBLPosition, currentBRPosition, currentFLPosition, currentFRPosition);
+        while(currentEncoder < position && System.currentTimeMillis() < time) {  //moves until encoders change by value inputted
             motorFL.setPower(Math.signum(position) * Math.abs(speed));
             motorBL.setPower(Math.signum(position) * Math.abs(speed));                 //takes sign of position, so sign of speed does not matter
             motorFR.setPower(Math.signum(position) * Math.abs(speed));
             motorBR.setPower(Math.signum(position) * Math.abs(speed));
+            currentEncoder = Math.min(motorBL.getCurrentPosition(), - motorFL.getCurrentPosition()) + Math.max(motorFR.getCurrentPosition(), -motorBR.getCurrentPosition());
+            tele.addData("FR: ", String.format("%d,FL: %d", motorFR.getCurrentPosition(), motorFL.getCurrentPosition()));
+            tele.addData("BR: ", String.format("%d,BL: %d", motorBR.getCurrentPosition(), motorBL.getCurrentPosition()));
+            tele.addData("PowFR: ", String.format("%.2f,FL: %.2f", motorFR.getPower(), motorFL.getPower()));
+            tele.addData("PowBR: ", String.format("%.2f,BL: %.2f", motorBR.getPower(), motorBL.getPower()));
+        }
+        halt();
+    }
+    public static int mid2(int enc1, int enc2, int enc3, int enc4)
+    {
+        int min = Math.min(enc1, Math.min(enc2, Math.min(enc3, enc4)));
+        int max = Math.max(enc1, Math.max(enc2, Math.max(enc3, enc4)));
+        return enc1 + enc2 + enc3 + enc4 - max - min;
+    }
+    public void move2(double squares)
+    {
+        double position = squares / square_per_rot * 1120;
+        double target = position + motorFL.getCurrentPosition();
+        DcMotor.Direction fl = motorFL.getDirection();
+        DcMotor.Direction fr = motorFR.getDirection();
+        DcMotor.Direction bl = motorBL.getDirection();
+        DcMotor.Direction br = motorBR.getDirection();
+        motorFL.setTargetPosition((int) (position + motorFL.getCurrentPosition()));
+        motorFR.setTargetPosition((int) (position + motorFR.getCurrentPosition()));
+        motorBL.setTargetPosition((int) (position + motorBL.getCurrentPosition()));
+        motorBR.setTargetPosition((int) (position + motorBR.getCurrentPosition()));
+        motorFL.setPower(0.8);
+        motorFR.setPower(0.8);
+        motorBL.setPower(0.8);
+        motorBR.setPower(0.8);
+        while(Math.abs(motorFL.getCurrentPosition()) < Math.abs(target) && Math.abs(motorFR.getCurrentPosition()) < target && Math.abs(motorFL.getCurrentPosition()) < target && Math.abs(motorFL.getCurrentPosition()) < target)
+        {
+            try{
+                waitForNextHardwareCycle();
+            }
+            catch(Exception e)
+            {
+
+            }
+            motorFL.setPower(0.8);
+            motorFR.setPower(0.8);
+            motorBL.setPower(0.8);
+            motorBR.setPower(0.8);
+            telemetry.addData("FR: ", String.format("%d,FL: %d", motorFR.getCurrentPosition(), motorFL.getCurrentPosition()));
+            telemetry.addData("BR: ", String.format("%d,BL: %d", motorBR.getCurrentPosition(), motorBL.getCurrentPosition()));
+            telemetry.addData("PowFR: ", String.format("%.2f,FL: %.2f", motorFR.getPower(), motorFL.getPower()));
+            telemetry.addData("PowBR: ", String.format("%.2f,BL: %.2f", motorBR.getPower(), motorBL.getPower()));
         }
         halt();
     }
@@ -134,6 +193,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         }
     }
     public void turn(double deg, double speed) {
+        halt();
         double tolerance = 2;
         speed = Range.clip(Math.abs(speed), -1, 1);
         deg += getGyroYaw();
@@ -214,8 +274,8 @@ public class AutonomousSegments extends LinearOpMode2 {
                 motorBL.setPower(-speed / 3.0);
             }
         }
-        if(Math.abs(getGyroYaw() - deg) > tolerance)
-            turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
+        //if(Math.abs(getGyroYaw() - deg) > tolerance)
+          //  turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
         halt();
     }
 
@@ -575,15 +635,28 @@ public class AutonomousSegments extends LinearOpMode2 {
     //E.g. move(-2,1) means to move two squares backwards
 
 
-    public void Close_Blue_Buttons() throws InterruptedException {
-        move(0.75 , 1);
-        tele.addData("we made it: ", "yay");
+    public void Close_Blue_Buttons2() throws InterruptedException {
+        move2(0.75);// , 1);
+        telemetry.addData("we made it: ", "yay");
+        halt();
+        ssleep(1000);
         turn(-14, 0.75);//turn(-23, 1);
         //encoderTurn(45, 1);
-        move(4.25 * (Math.sqrt(2)) , 0.75);
+        move2(4.25 * (Math.sqrt(2)));// , 0.75);
         turn(-18, 0.75);
         //encoderTurn(-45, 1);
-        move(0.25 , 0.5);
+        move2(0.25);// , 0.5);
+        halt();
+    }
+    public void Close_Blue_Buttons() throws InterruptedException {
+        move(0.75 , 1);
+        tele.addData("we made it: ", "I am tele");
+        turn(-14, 0.75);//turn(-23, 1);
+        //encoderTurn(45, 1);
+        move(4.25 * (Math.sqrt(2)), 0.75);
+        turn(-18, 0.75);
+        //encoderTurn(-45, 1);
+        move(0.25, 0.5);
         halt();
     }
     public void Far_Blue_Buttons() throws InterruptedException {

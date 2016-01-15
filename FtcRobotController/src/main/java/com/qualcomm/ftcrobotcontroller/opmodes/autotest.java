@@ -1,7 +1,9 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import android.graphics.Bitmap;
+
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.opmodes.AutonomousSegments;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
@@ -22,18 +24,41 @@ public class autotest extends LinearOpMode2 {
         /*long time = (long) (System.nanoTime() + Math.pow(10, 9.5));
         while(System.nanoTime() < time)
             telemetry.addData("gyro yaw; ", gyroTest());*/
-        waitForStart();
-        telemetry.addData("autonomous: ", "Started");
-        auto.Close_Blue_Buttons();
-        auto.Climbers();
-        //auto.Buttons();
-        //auto.BlueButtons_RedRamp();
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
-        motorBR.setDirection(DcMotor.Direction.FORWARD);
-        stop();
+        /*if(isCameraAvailable())
+        {
+            setCameraDownsampling(8);
+            startCamera();
+        }*/
+
+        while (!opModeIsActive());
+        if (opModeIsActive()) {
+
+
+            waitForStart();
+            telemetry.addData("autonomous: ", "Started");
+            //long time = System.currentTimeMillis() + (int) Math.pow(10, 3);
+            auto.Close_Blue_Buttons();
+            /*double probability_score = 0;
+            if(imageReady())
+            {
+                Bitmap rgbImage;
+                rgbImage = convertYuvImageToRgb(yuvImage, width, height, 2);
+                probability_score = NewRobotics.probability(rgbImage);
+            }*/
+            //if(probability_score > 0.7)
+            auto.Climbers();
+            //telemetry.addData("Probability = ", probability_score);
+            //DbgLog.error("Probability = " + probability_score);
+            //auto.Buttons();
+            //auto.BlueButtons_RedRamp();
+            motorFR.setDirection(DcMotor.Direction.FORWARD);
+            motorBR.setDirection(DcMotor.Direction.FORWARD);
+            telemetry.addData("Opmode Complete", ": yep");
+            super.stop();
+        }
     }
-    public double gyroTest() {
+    /*public double gyroTest() {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
-    }
+    }*/
 }

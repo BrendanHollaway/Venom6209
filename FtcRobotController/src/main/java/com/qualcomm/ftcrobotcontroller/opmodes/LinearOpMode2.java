@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-public abstract class LinearOpMode2 extends LinearOpModeCamera {
+public abstract class LinearOpMode2 extends LinearOpMode {
     private LinearOpMode2.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();

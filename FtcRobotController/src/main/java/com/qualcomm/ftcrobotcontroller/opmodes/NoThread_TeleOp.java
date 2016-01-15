@@ -126,7 +126,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             if(gamepad1.left_bumper && gamepad1.right_bumper)
             {
                 servoLRat.setPosition(0);
-                servoRRat.setPosition(Range.clip(servoRRat.getPosition() + 0.01, 0, 1));
+                servoRRat.setPosition(Range.clip(servoRRat.getPosition() - 0.01, 0, 1));
             }
             else
                 servoLRat.setPosition(.5);
@@ -204,6 +204,12 @@ public class NoThread_TeleOp extends LinearOpMode2{
             telemetry.addData("encoderBL: ", String.format("%d + %d + %d + %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
+            try {
+                waitOneFullHardwareCycle();
+            } catch(Exception e)
+            {
+
+            }
         }
         telemetry.addData("Program complete", " hi");
     }

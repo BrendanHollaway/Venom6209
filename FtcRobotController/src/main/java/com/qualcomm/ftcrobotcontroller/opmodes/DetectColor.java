@@ -36,61 +36,39 @@ public class DetectColor extends OpModeCamera {
      * This method will be called repeatedly in a loop
      * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
      */
-
+    int count = 0;
     @Override
     public void loop() {
         long startTime = System.currentTimeMillis();
 
-        if (imageReady()) { // only do this if an image has been returned from the camera
-            if(gamepad1.a)
-            {
-                Bitmap rgbImage;
-                rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
-                String output = "";
-                for (int x = 0; x < width / ds2; x++) {
-                    for (int y = 0; y < height / ds2; y++) {
-                        int pixel = rgbImage.getPixel(x, y);
-                        output += color(pixel);
-                    }
+        if (imageReady() && count < 18) { // only do this if an image has been returned from the camera
+            //if(gamepad1.a)
+            //{
+            count++;
+            Bitmap rgbImage;
+            rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
+            String output = "";
+            DbgLog.msg(String.format("width = %d, length = %d", width / ds2, height / ds2));
+            for (int x = 0, cnt = 0; x < width / ds2; x++) {
+                for (int y = 0; y < height / ds2; y++, cnt++) {
+                    int pixel = rgbImage.getPixel(x, y);
+                    int red = (byte) (pixel >> 16 & 0xFF);
+                    int green = (byte) (pixel >> 8 & 0xFF);
+                    int blue = (byte) (pixel & 0xFF);
+                    output += String.format("p%03d%03d%03d", red, green, blue);
                 }
-                DbgLog.msg("My Name is Bo, Run #" + ++looped + ": " + output + "ENDBO");
-                int redValue = 0;
-                int blueValue = 0;
-                int greenValue = 0;
-
-                for (int x = 0; x < width / ds2; x++) {
-                    for (int y = 0; y < height / ds2; y++) {
-                        telemetry.addData("width", width / ds2);
-                        telemetry.addData("height: ", height/ds2);
-                        int pixel = rgbImage.getPixel(x, y);
-                        redValue += red(pixel);
-                        blueValue += blue(pixel);
-                        greenValue += green(pixel);
-                    }
-                }
-                int color = highestColor(redValue, greenValue, blueValue);
-                String colorString = "";
-                switch (color) {
-                    case 0:
-                        colorString = "RED";
-                        break;
-                    case 1:
-                        colorString = "GREEN";
-                        break;
-                    case 2:
-                        colorString = "BLUE";
-                }
-                //telemetry.addData("Color: ", colorString);
-                //telemetry.addData("My Name is Bo, Run #", looped +": " + output);
+                output += "a";
             }
-        }
-        long endTime = System.currentTimeMillis();
-        /*telemetry.addData("Dims", Integer.toString(width / ds2) + " x " + Integer.toString(height / ds2));
-        telemetry.addData("Loop Time", Long.toString(endTime - startTime));
-        telemetry.addData("Loop to Loop Time", Long.toString(endTime - lastLoopTime));*/
-        telemetry.addData("My Name is Bo, Run #", looped);
+            DbgLog.msg("My Name is Bo, Run #" + String.format("%02d",count));
+            telemetry.addData("count: ", count);
+            for (int i = 0; i < output.length(); i += 3500) {
+                DbgLog.msg("My Name is Bo, Run #" + String.format("%02d+%05d", count, i) + output.substring(i, i + 3500 < output.length() ? i + 3500 : output.length()));
+            }
 
-        lastLoopTime = endTime;
+            //}
+            //telemetry.addData("Color: ", colorString);
+            //telemetry.addData("My Name is Bo, Run #", looped +": " + output);
+        }
     }
 
     @Override
