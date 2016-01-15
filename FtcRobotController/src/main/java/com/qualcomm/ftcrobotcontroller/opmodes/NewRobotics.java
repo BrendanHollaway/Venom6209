@@ -216,6 +216,17 @@ public class NewRobotics {
         double loc = answer / probabilities.size();
         return Range.clip(1 - (6 * loc * loc / 100), 0, 1);
     }
+    public static double prob_climbers(Bitmap photo)
+    {
+        float luminosity = 128;
+        int top = photo.getHeight() * 3 / 8;
+        int bottom = photo.getHeight() * 5 / 8;
+        for(int i = top; i < bottom; i++)
+        {
+
+        }
+        return Range.clip(0, 0, 1);
+    }
     public static double compare_color(int pixel1, int pixel2)
     {
         byte red1 = (byte)(pixel1 >> 16 & 0xFF);

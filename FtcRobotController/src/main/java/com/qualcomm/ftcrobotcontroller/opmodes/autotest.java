@@ -53,9 +53,10 @@ public class autotest extends LinearOpMode2 {
             //auto.BlueButtons_RedRamp();
             motorFR.setDirection(DcMotor.Direction.FORWARD);
             motorBR.setDirection(DcMotor.Direction.FORWARD);
-            telemetry.addData("Opmode Complete", ": yep");
+            telemetry.addData("Opmode Complete", ": nope");
             super.stop();
         }
+        telemetry.addData("Opmode Complete", ": yep");
     }
     /*public double gyroTest() {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);

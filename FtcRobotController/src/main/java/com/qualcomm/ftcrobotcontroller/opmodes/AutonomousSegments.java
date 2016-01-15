@@ -76,24 +76,34 @@ public class AutonomousSegments extends LinearOpMode2 {
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
     } */
 
-    public void ssleep(long ms) throws InterruptedException                 //method for sleeping
-    {
-        try {
-            sleep(ms);
+    public void Climbers() throws InterruptedException {
+        if(servoClimberArm == null)
+        {
+            DbgLog.error("servo climber Arm is null");
+            super.stop();
         }
-        catch (Exception E){}
-    }
-    public void updatePosition(double encoderVal) {
-        xPos += (motorBR.getCurrentPosition() - encoderVal)*Math.cos(getGyroYaw()); // encoder ticks
-        yPos += (motorBR.getCurrentPosition() - encoderVal)*Math.sin(getGyroYaw());
-        encoderVal = motorBR.getCurrentPosition();
-    }
-    //public void moveToPosition()
+        servoClimberArm.setPosition(0);
 
+        /*sleep(250);
+        servoClimberArm.setPosition(1);*/
+    }
+    public void Close_Blue_Buttons() throws InterruptedException {
+        move(0.75 , 1);
+        tele.addData("we made it: ", "I am tele");
+        turn(-14, 0.75);//turn(-23, 1);
+        //encoderTurn(45, 1);
+        move(4.25 * (Math.sqrt(2)), 0.75);
+        turn(-18, 0.75);
+        //encoderTurn(-45, 1);
+        move(0.25, 0.5);
+        halt();
+    }
     public void move(double squares, double speed) throws InterruptedException        //move in a straight line
     {
         long time = System.currentTimeMillis() + (long) Math.pow(10, 4.1);
         double position = squares / square_per_rot * 1120; //1120 is number of encoder ticks per rotation
+
+        //============RESET THE ENCODERS================
         motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorFR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -102,6 +112,8 @@ public class AutonomousSegments extends LinearOpMode2 {
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        //==========END RESET THE ENCODERS==============
+
         /*int currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
         int currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
         int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
@@ -112,7 +124,8 @@ public class AutonomousSegments extends LinearOpMode2 {
             motorBL.setPower(Math.signum(position) * Math.abs(speed));                 //takes sign of position, so sign of speed does not matter
             motorFR.setPower(Math.signum(position) * Math.abs(speed));
             motorBR.setPower(Math.signum(position) * Math.abs(speed));
-            currentEncoder = Math.min(motorBL.getCurrentPosition(), - motorFL.getCurrentPosition()) + Math.max(motorFR.getCurrentPosition(), -motorBR.getCurrentPosition());
+            //motorFL and motorBR's encoder values are negative. Don't ask. Idk why.
+            currentEncoder = mid2(motorBL.getCurrentPosition(), - motorFL.getCurrentPosition(), motorFR.getCurrentPosition(), -motorBR.getCurrentPosition());
             tele.addData("FR: ", String.format("%d,FL: %d", motorFR.getCurrentPosition(), motorFL.getCurrentPosition()));
             tele.addData("BR: ", String.format("%d,BL: %d", motorBR.getCurrentPosition(), motorBL.getCurrentPosition()));
             tele.addData("PowFR: ", String.format("%.2f,FL: %.2f", motorFR.getPower(), motorFL.getPower()));
@@ -125,6 +138,78 @@ public class AutonomousSegments extends LinearOpMode2 {
         int min = Math.min(enc1, Math.min(enc2, Math.min(enc3, enc4)));
         int max = Math.max(enc1, Math.max(enc2, Math.max(enc3, enc4)));
         return enc1 + enc2 + enc3 + enc4 - max - min;
+    }
+    public void turn(double deg, double speed) {
+        halt();
+        double tolerance = 1;
+        speed = Range.clip(Math.abs(speed), -1, 1);
+        deg += getGyroYaw();
+        deg %= 180;
+        //deg now between -180 and 180
+        if (getGyroYaw() < deg) {
+            while (getGyroYaw() < deg - 3) {
+                tele.addData("deg: ", getGyroYaw());
+                motorFR.setPower(-speed);
+                motorFL.setPower(speed);
+                motorBR.setPower(-speed);
+                motorBL.setPower(speed);
+                try {
+                    waitOneFullHardwareCycle();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while (getGyroYaw() < deg) {
+                motorFR.setPower(-speed / 3.0);
+                motorFL.setPower(speed / 3.0);
+                motorBR.setPower(-speed / 3.0);
+                motorBL.setPower(speed / 3.0);
+                try {
+                    waitOneFullHardwareCycle();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            while (getGyroYaw() > deg + 3) {
+                tele.addData("deg: ", getGyroYaw());
+                motorFR.setPower(speed);
+                motorFL.setPower(-speed);
+                motorBR.setPower(speed);
+                motorBL.setPower(-speed);
+                try {
+                    waitOneFullHardwareCycle();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            while (getGyroYaw() > deg) {
+                motorFR.setPower(speed / 3.0);
+                motorFL.setPower(-speed / 3.0);
+                motorBR.setPower(speed / 3.0);
+                motorBL.setPower(-speed / 3.0);
+                try {
+                    waitOneFullHardwareCycle();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (Math.abs(getGyroYaw() - deg) > tolerance)
+            turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
+        halt();
+    }
+    public void ssleep(long ms) throws InterruptedException                 //method for sleeping
+    {
+        try {
+            sleep(ms);
+        }
+        catch (Exception E){}
+    }
+    public void updatePosition(double encoderVal) {
+        xPos += (motorBR.getCurrentPosition() - encoderVal)*Math.cos(getGyroYaw()); // encoder ticks
+        yPos += (motorBR.getCurrentPosition() - encoderVal)*Math.sin(getGyroYaw());
+        encoderVal = motorBR.getCurrentPosition();
     }
     public void move2(double squares)
     {
@@ -192,46 +277,6 @@ public class AutonomousSegments extends LinearOpMode2 {
             }*/
         }
     }
-    public void turn(double deg, double speed) {
-        halt();
-        double tolerance = 2;
-        speed = Range.clip(Math.abs(speed), -1, 1);
-        deg += getGyroYaw();
-        deg %= 180;
-        //deg now between -180 and 180
-        if (getGyroYaw() < deg) {
-            while (getGyroYaw() < deg - 3) {
-                tele.addData("deg: ", getGyroYaw());
-                motorFR.setPower(-speed);
-                motorFL.setPower(speed);
-                motorBR.setPower(-speed);
-                motorBL.setPower(speed);
-            }
-            while (getGyroYaw() < deg) {
-                motorFR.setPower(-speed / 3.0);
-                motorFL.setPower(speed / 3.0);
-                motorBR.setPower(-speed / 3.0);
-                motorBL.setPower(speed / 3.0);
-            }
-        } else {
-            while (getGyroYaw() > deg + 3) {
-                tele.addData("deg: ", getGyroYaw());
-                motorFR.setPower(speed);
-                motorFL.setPower(-speed);
-                motorBR.setPower(speed);
-                motorBL.setPower(-speed);
-            }
-            while (getGyroYaw() > deg) {
-                motorFR.setPower(speed / 3.0);
-                motorFL.setPower(-speed / 3.0);
-                motorBR.setPower(speed / 3.0);
-                motorBL.setPower(-speed / 3.0);
-            }
-        }
-        if (Math.abs(getGyroYaw() - deg) > tolerance)
-            turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
-        halt();
-    }
     public void turn(double deg, double speed, double tolerance)
     {
         speed = Range.clip(Math.abs(speed), -1, 1);
@@ -274,8 +319,8 @@ public class AutonomousSegments extends LinearOpMode2 {
                 motorBL.setPower(-speed / 3.0);
             }
         }
-        //if(Math.abs(getGyroYaw() - deg) > tolerance)
-          //  turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
+        if(Math.abs(getGyroYaw() - deg) > tolerance)
+            turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
         halt();
     }
 
@@ -648,17 +693,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         move2(0.25);// , 0.5);
         halt();
     }
-    public void Close_Blue_Buttons() throws InterruptedException {
-        move(0.75 , 1);
-        tele.addData("we made it: ", "I am tele");
-        turn(-14, 0.75);//turn(-23, 1);
-        //encoderTurn(45, 1);
-        move(4.25 * (Math.sqrt(2)), 0.75);
-        turn(-18, 0.75);
-        //encoderTurn(-45, 1);
-        move(0.25, 0.5);
-        halt();
-    }
+
     public void Far_Blue_Buttons() throws InterruptedException {
         move(-1, 1);
         turn(-45, 1);
@@ -736,17 +771,6 @@ public class AutonomousSegments extends LinearOpMode2 {
 
 //BUTTON & CLIMBERS SEGMENT
 
-    public void Climbers() throws InterruptedException {
-        if(super.servoClimberArm == null)
-        {
-            DbgLog.error("servo climber Arm is null");
-            super.stop();
-        }
-        super.servoClimberArm.setPosition(0);
-
-        /*sleep(250);
-        servoClimberArm.setPosition(1);*/
-    }
     public void Buttons() throws InterruptedException {
         //colory stuf
     }
