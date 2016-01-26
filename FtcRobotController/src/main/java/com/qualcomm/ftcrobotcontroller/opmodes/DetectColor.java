@@ -48,7 +48,7 @@ public class DetectColor extends OpModeCamera {
             Bitmap rgbImage;
             rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
             String output = "";
-            DbgLog.msg(String.format("width = %d, length = %d", width / ds2, height / ds2));
+            /*DbgLog.msg(String.format("width = %d, length = %d", width / ds2, height / ds2));
             for (int x = 0, cnt = 0; x < width / ds2; x++) {
                 for (int y = 0; y < height / ds2; y++, cnt++) {
                     int pixel = rgbImage.getPixel(x, y);
@@ -60,10 +60,30 @@ public class DetectColor extends OpModeCamera {
                 output += "a";
             }
             DbgLog.msg("My Name is Bo, Run #" + String.format("%02d",count));
-            telemetry.addData("count: ", count);
+
             for (int i = 0; i < output.length(); i += 3500) {
                 DbgLog.msg("My Name is Bo, Run #" + String.format("%02d+%05d", count, i) + output.substring(i, i + 3500 < output.length() ? i + 3500 : output.length()));
+            }*/
+            String luminosity = "LUMINOSITY1: ";
+            for (int x = 0, cnt = 0; x < width / ds2; x++) {
+                for (int y = 0; y < height / ds2; y++, cnt++) {
+                    int pixel = rgbImage.getPixel(x, y);
+                    int red = (pixel >> 16 & 0xFF);
+                    int green = (pixel >> 8 & 0xFF);
+                    int blue = (pixel & 0xFF);
+                    //output += String.format("%03d", (red + blue) / 2);
+                    if(y > height / ds2 / 5 * 2 && y < height / ds2 / 5 * 3)
+                        luminosity += (red + blue) / 2 + " ";
+                }
+                //output += "a";
+                if(x > width / ds2 / 5 * 2 && x < width / ds2 / 5 * 3)
+                    luminosity += "";
             }
+            //for (int i = 0; i < output.length(); i += 3500) {
+                //DbgLog.msg("My Name is Bo, Run #" + String.format("%02d+%05d", count, i) + output.substring(i, i + 3500 < output.length() ? i + 3500 : output.length()));
+            //}
+            DbgLog.msg(luminosity);
+            telemetry.addData("count: ", count);
 
             //}
             //telemetry.addData("Color: ", colorString);

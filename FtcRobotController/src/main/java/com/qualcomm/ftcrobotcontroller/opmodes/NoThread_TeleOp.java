@@ -49,9 +49,10 @@ public class NoThread_TeleOp extends LinearOpMode2{
             return false;
     }
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         super.map();
-
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.FORWARD);
     /* BUTTON MAPPING
         CONTROLLER 1
             y1 = left tread
@@ -74,21 +75,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
         while(!opModeIsActive());
 
         while(opModeIsActive()) {
-
-        /* if (yButton1) {
-            if (yToggle == 1) {
-                y_toggle_count++;
-            }
-            else if (yToggle == 3) {
-                yToggle = 1;
-            }
-            if(y_toggle_count > 1)
-            {
-                y_toggle_count = 0;
-                yToggle = 3;
-            }
-        } */
-
             // DRIVE CONTROL - Controller 1
             if(enableSOS && gyroPitch() > 50)
             {
@@ -145,29 +131,20 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorPL.setPower(0);
                 motorPR.setPower(gamepad2.left_stick_y);
             }
-            /*else if(gamepad2.right_bumper)
-                motorPR.setPower(-0.25);
-            else if(gamepad2.right_trigger > 0.1)
-                motorPR.setPower(0.25);
-            else if(gamepad2.left_bumper)
-                motorPL.setPower(-0.25);
-            else if(gamepad2.left_trigger > 0.1)
-                motorPL.setPower(0.25);*/
             else
             {
                 motorPL.setPower(0);
                 motorPR.setPower(0);
             }
             // LIFT AND SERVO CONTROL - CONTROLLER 2
-            if (gamepad1.dpad_up)
-                servoClimberArm.setPosition(1);
-            else if (gamepad1.dpad_down)
+            if (gamepad1.dpad_up) {
                 servoClimberArm.setPosition(0);
-            /*if (xButton2) {
-                servoLRat.setPosition(1);
-                servoRRat.setPosition(Range.clip(servoRRat.getPosition() - 0.01, 0, 1));
+                servoClimberHelper.setPosition(0);
             }
-            else*/
+            else if (gamepad1.dpad_down) {
+                servoClimberArm.setPosition(1);
+                servoClimberHelper.setPosition(1);
+            }
             if(gamepad2.x)
                 servoF.setPosition(0);
             else if(gamepad2.y)
@@ -176,42 +153,25 @@ public class NoThread_TeleOp extends LinearOpMode2{
             }
             else
                 servoF.setPosition(0.5);
-            if (gamepad1.x) {
+            if (gamepad2.x) {
                 servoL.setPosition(Range.clip(servoL.getPosition() + 0.015, 0, .98));
-            } else if (gamepad1.y) {
+            } else if (gamepad2.y) {
                 servoL.setPosition(Range.clip(servoL.getPosition() - 0.015, 0, .98));
             }
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 servoR.setPosition(Range.clip(servoR.getPosition() - 0.015, 0, 1));
-            } else if (gamepad1.b) {
+            } else if (gamepad2.b) {
                 servoR.setPosition(Range.clip(servoR.getPosition() + 0.015, 0, 1));
             }
-                //sleep(100);
-                //servoRRat.setPosition(.5);
-
-
-            // LIFT CONTROLS START HERE
-/*
-            if (lBump2 )
-                servoClimberArm.setPosition(0);
-            else if (rBump2 )
-                servoClimberArm.setPosition(1);
-*/
-            //SOScheck();
             telemetry.addData("left: ", String.format("%.2f, r: %.2f", servoL.getPosition(), servoR.getPosition()));
             telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoLRat.getPosition(), servoClimberArm.getPosition()));
             telemetry.addData("servo: ", String.format("rrat: %.2f", servoRRat.getPosition()));
             telemetry.addData("encoderBL: ", String.format("%d + %d + %d + %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
-            try {
-                waitOneFullHardwareCycle();
-            } catch(Exception e)
-            {
-
-            }
+            waitOneFullHardwareCycle();
         }
-        telemetry.addData("Program complete", " hi");
+        telemetry.addData("Program complete", "hi");
     }
     /*double scaleInput(double val)  {
         double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,

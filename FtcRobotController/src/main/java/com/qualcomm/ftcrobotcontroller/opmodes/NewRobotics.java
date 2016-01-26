@@ -8,8 +8,10 @@ import android.graphics.Bitmap;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.Point;
+import com.qualcomm.robotcore.robocol.Telemetry;
 import com.qualcomm.robotcore.util.Range;
 
+import java.lang.reflect.Array;
 import java.util.*;
 /**
  *
@@ -216,16 +218,46 @@ public class NewRobotics {
         double loc = answer / probabilities.size();
         return Range.clip(1 - (6 * loc * loc / 100), 0, 1);
     }
-    public static double prob_climbers(Bitmap photo)
+    public static boolean should_climbers(Bitmap photo, Telemetry telem)
     {
-        float luminosity = 128;
+        float luminosity = 80;
         int top = photo.getHeight() * 3 / 8;
         int bottom = photo.getHeight() * 5 / 8;
-        for(int i = top; i < bottom; i++)
+        ArrayList<Boolean> solutions = new ArrayList<Boolean>();
+        ArrayList<Float> arr = new ArrayList<Float>();
+        for(int r = 0; r < photo.getWidth(); r++)
         {
-
+            float avg = 0;
+            for(int i = top; i < bottom; i++)
+            {
+                int pixel = photo.getPixel(r, i);
+                int red = (pixel >> 16 & 0xFF);
+                int blue = (pixel & 0xFF);
+                avg += (red + blue) / 2.0;
+            }
+            avg /= bottom - top;
+            arr.add(avg);
+            solutions.add(avg > luminosity);
         }
-        return Range.clip(0, 0, 1);
+        int start = 0;
+        for(int i = 0 ; i < solutions.size(); i++)
+        {
+            if(solutions.get(i)) {
+                start = i;
+                break;
+            }
+        }
+        int stop = solutions.size();
+        for(int i = start; i < solutions.size(); i++)
+            if(!solutions.get(i)) {
+                stop = i;
+                break;
+            }
+        boolean answer = false;
+        for(int i = 0; i < arr.size(); i++)
+            DbgLog.error(String.format("col: %d, avg_lum: %2.2f",i, arr.get(i)));
+        telem.addData("start: ",String.format("%d, end: %d", start, stop));
+        return !(start > 10) && !(stop < photo.getWidth() - 10);
     }
     public static double compare_color(int pixel1, int pixel2)
     {

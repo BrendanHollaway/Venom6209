@@ -33,7 +33,7 @@ public class Straight_Auto extends LinearOpMode {
             Thread.sleep(ms);
         }catch(Exception e){}
     }
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
 
         motorBL = hardwareMap.dcMotor.get("bl");
         //motorFL = hardwareMap.dcMotor.get("fl");

@@ -21,6 +21,7 @@ public class LinearDetectColor extends LinearOpModeCamera {
     public void runOpMode() throws InterruptedException {
 
         String colorString = "NONE";
+        String colorStringR = "NONE";
 
         // linear OpMode, so could do stuff like this too.
         /*
@@ -69,7 +70,7 @@ public class LinearDetectColor extends LinearOpModeCamera {
 
                     Bitmap rgbImage;
                     rgbImage = convertYuvImageToRgb(yuvImage, width, height, ds2);
-                    for (int x = 0; x < width / ds2; x++) {
+                    for (int x = 0; x < width / ds2 / 2; x++) {
                         for (int y = 0; y < height / ds2; y++) {
                             int pixel = rgbImage.getPixel(x, y);
                             redValue += red(pixel);
@@ -89,12 +90,36 @@ public class LinearDetectColor extends LinearOpModeCamera {
                         case 2:
                             colorString = "BLUE";
                     }
+                    redValue = 0;
+                    blueValue = 0;
+                    greenValue = 0;
+                    for (int x = width / ds2 / 2; x < width / ds2; x++) {
+                        for (int y = 0; y < height / ds2; y++) {
+                            int pixel = rgbImage.getPixel(x, y);
+                            redValue += red(pixel);
+                            blueValue += blue(pixel);
+                            greenValue += green(pixel);
+                        }
+                    }
+                    color = highestColor(redValue, greenValue, blueValue);
+
+                    switch (color) {
+                        case 0:
+                            colorStringR = "RED";
+                            break;
+                        case 1:
+                            colorStringR = "GREEN";
+                            break;
+                        case 2:
+                            colorStringR = "BLUE";
+                    }
 
                 } else {
                     colorString = "NONE";
                 }
 
-                telemetry.addData("Color:", "Color detected is: " + colorString);
+                telemetry.addData("Right:", "Color detected is: " + colorString);
+                telemetry.addData("Left:", "Color detected is: " + colorStringR);
                 waitOneFullHardwareCycle();
             }
         }

@@ -49,7 +49,8 @@ public class LogcatParser {
                     r++;
                     c = 0;
                 } else //adds a pixel to the array
-                    patterns[z][r][c++] = Integer.parseInt(next.substring(i, i + 3)) << 16 + Integer.parseInt(next.substring(i + 3, i + 6)) << 8 + Integer.parseInt(next.substring(i + 6, i + 9));
+                   // patterns[z][r][c] = Inte
+                    //patterns[z][r][c++] = Integer.parseInt(next.substring(i, i + 3)) << 16 + Integer.parseInt(next.substring(i + 3, i + 6)) << 8 + Integer.parseInt(next.substring(i + 6, i + 9));
                 i++;
             }
         }
