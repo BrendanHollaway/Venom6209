@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Created by viperbots on 1/25/2016.
  */
-public class test_TeleOp extends OpMode {
+public class test_servos extends OpMode {
     Servo test;
     public void init()
     {

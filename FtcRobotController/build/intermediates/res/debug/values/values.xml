@@ -37,6 +37,7 @@
     <item>IR_SEEKER_V3</item>
     <item>ADAFRUIT_COLOR_SENSOR</item>
     <item>COLOR_SENSOR</item>
+    <item>GYRO</item>
     <item>I2C_DEVICE</item>
   </string-array>
     <string-array name="device_interface_module_options_array">
@@ -246,9 +247,11 @@
     <string name="view_logs_menu_item">View logs</string>
     <!-- From: file:/C:/Users/viperbots/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/FtcCommon-release/res/values/values.xml -->
     <eat-comment/>
-    <string name="wifi_direct_update_settings">
-    Please wait while we update the Wifi Direct settings on this device.
+    <string name="wifi_direct_bad_device_name">
+      The Wifi-Direct device name contains non-printable characters. Please go into the Wifi-Direct
+      settings menu and rename this device.
   </string>
+    <string name="wifi_direct_update_settings">Please wait while we update the Wifi Direct settings on this device.</string>
     <string name="writeXML_prompt">Select an XML file to instantiate a Robot from that file</string>
     <string name="writeXML_text">Press this button to write the current configuration to an XML file</string>
     <!-- From: file:/C:/Users/viperbots/Documents/GitHub/Venom6209/FtcRobotController/src/main/res/values/styles.xml -->
