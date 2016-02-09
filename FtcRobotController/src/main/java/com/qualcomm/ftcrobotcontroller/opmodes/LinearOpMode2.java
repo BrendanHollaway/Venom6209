@@ -20,48 +20,68 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
     public boolean inited = false;
-    public static final int ninety = 1/14;
+    public static final float ninety = 1/14.0f; // value required to move winch servo 90 degrees
 
+    //Motors
     protected static DcMotor motorFR;
     protected static DcMotor motorFL;
     protected static DcMotor motorBR;
     protected static DcMotor motorBL;
     protected static DcMotor motorPR;
     protected static DcMotor motorPL;
-    protected static Servo servoL;
-    protected static Servo servoR;
-    protected static Servo servoClimberArm;
-    protected static Servo servoLRat;
-    protected static Servo servoRRat;
-    protected static Servo servoF;
-    protected static Servo servoTL;
-    protected static Servo servoTR;
-    protected static Servo servoClimberHelper;
+    protected static DcMotor motorS; //front, the shield
+    protected static DcMotor motorM; //manipulator
+
+
+    //Servos
+    protected static Servo servoL; //left zipliner
+    protected static Servo servoR; //right zipliner
+    //protected static Servo servoClimberArm;
+    protected static Servo servoRatL;
+    protected static Servo servoRatR;
+    protected static Servo servoTread;
+    protected static Servo servoBasketL;
+    protected static Servo servoBasketR;
+    protected static Servo servoAllClearL; // all clear left
+    protected static Servo servoAllClearR; // all clear right
+
+    //Other
     protected static AdafruitIMU IMU;
     protected static volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     protected static double[] accel = new double[3];
     int encoderOffset = 0;
 
+    @Deprecated
+    protected static Servo servoF;
+    @Deprecated
+    protected static Servo servoClimberHelper;
+    @Deprecated
+    protected static Servo servoLRat;
+    @Deprecated
+    protected static Servo servoRRat;
+
     protected void map() throws InterruptedException {
-        motorBL = hardwareMap.dcMotor.get("bl");
-        motorFL = hardwareMap.dcMotor.get("fl");
-        motorBR = hardwareMap.dcMotor.get("br");
-        motorFR = hardwareMap.dcMotor.get("fr");
-        motorPL = hardwareMap.dcMotor.get("pl");
-        motorPR = hardwareMap.dcMotor.get("pr");
-        servoLRat = hardwareMap.servo.get("lrat");
-        servoRRat = hardwareMap.servo.get("rrat");
-        servoClimberArm = hardwareMap.servo.get("arm");
-        servoL = hardwareMap.servo.get("lservo"); //yes this is correct
-        servoR = hardwareMap.servo.get("rservo");
-        servoF = hardwareMap.servo.get("servof");
-        servoClimberHelper = hardwareMap.servo.get("servoH");
-        //servoTL = hardwareMap.servo.get("servotl");
-        //servoTR = hardwareMap.servo.get("servotr");
+        motorBL = hardwareMap.dcMotor.get("motorBL");
+        motorFL = hardwareMap.dcMotor.get("motorFL");
+        motorBR = hardwareMap.dcMotor.get("motorBR");
+        motorFR = hardwareMap.dcMotor.get("motorFR");
+        motorPL = hardwareMap.dcMotor.get("motorPL");
+        motorPR = hardwareMap.dcMotor.get("motorPR");
+        motorM  = hardwareMap.dcMotor.get("motorM");
+        motorS  = hardwareMap.dcMotor.get("motorS");
+        servoRatL = hardwareMap.servo.get("servoLRat");
+        servoRatR = hardwareMap.servo.get("servoRRat");
+        //servoClimberArm = hardwareMap.servo.get("servoClimberArm");
+        servoL = hardwareMap.servo.get("servoL"); //yes this is correct
+        servoR = hardwareMap.servo.get("servoR");
+        servoBasketL = hardwareMap.servo.get("servoBaskL");
+        servoBasketR = hardwareMap.servo.get("servoBaskR");
+        servoTread = hardwareMap.servo.get("servoTread");
+
 
         if(IMU == null) {
             try {
-                IMU = new AdafruitIMU(hardwareMap, "hydro"
+                IMU = new AdafruitIMU(hardwareMap, "IMU"
 
                         //The following was required when the definition of the "I2cDevice" class was incomplete.
                         //, "cdim", 5
@@ -79,13 +99,13 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
             telemetry.addData("IMU already init:", " true");
         }
         IMU.startIMU();
-        servoRRat.setPosition(0.44);
-        servoLRat.setPosition(0.5);
-        servoClimberArm.setPosition(1);
+        //servoRRat.setPosition(0.44);
+        //servoLRat.setPosition(0.5);
+        //servoClimberArm.setPosition(1);
         servoL.setPosition(1);
         servoR.setPosition(0.05);
-        servoF.setPosition(0.5);
-        servoClimberHelper.setPosition(1);
+        //servoF.setPosition(0.5);
+        //servoClimberHelper.setPosition(1);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
         //==========================RESET THE ENCODERS=========================
         /*motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);

@@ -88,15 +88,15 @@ public class AutonomousSegments extends LinearOpMode2 {
     } */
 
     public void Climbers() throws InterruptedException {
-        if(servoClimberArm == null)
+        /*if(servoClimberArm == null)
         {
             DbgLog.error("servo climber Arm is null");
             super.stop();
-        }
-        servoClimberArm.setPosition(0);
+        }*/
+        //servoClimberArm.setPosition(0);
         servoClimberHelper.setPosition(0);
         sleep(5000);
-        servoClimberArm.setPosition(1);
+        //servoClimberArm.setPosition(1);
         servoClimberHelper.setPosition(1);
         /*sleep(250);
         servoClimberArm.setPosition(1);*/

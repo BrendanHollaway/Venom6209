@@ -59,7 +59,7 @@ public class sostest extends OpMode {
         motorRaiseLiftL = hardwareMap.dcMotor.get("rll");
         servoL = hardwareMap.servo.get("climberArm"); //dont judge
         servoR = hardwareMap.servo.get("topRat");//dont judge
-        servoClimberArm = hardwareMap.servo.get("lServo");
+        //servoClimberArm = hardwareMap.servo.get("lServo");
         servoTopRatchet = hardwareMap.servo.get("rServo");
         //servoBotRatchet1 = hardwareMap.servo.get("botRat1");
         //servoBotRatchet2 = hardwareMap.servo.get("botRat2");

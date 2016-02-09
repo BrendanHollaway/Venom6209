@@ -38,7 +38,7 @@ public class Uh_oh_Auto extends LinearOpMode {
         motorRaiseLiftL = hardwareMap.dcMotor.get("rll");
         servoL = hardwareMap.servo.get("climberArm"); //dont judge
         servoR = hardwareMap.servo.get("topRat");//dont judge
-        servoClimberArm = hardwareMap.servo.get("lServo");
+        //servoClimberArm = hardwareMap.servo.get("lServo");
         servoTopRatchet = hardwareMap.servo.get("rServo");
         //servoBotRatchet1 = hardwareMap.servo.get("botRat1");
         //servoBotRatchet2 = hardwareMap.servo.get("botRat2");
@@ -65,7 +65,7 @@ public class Uh_oh_Auto extends LinearOpMode {
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);*/
         servoTopRatchet.setPosition(1);
-        servoClimberArm.setPosition(1);
+        //servoClimberArm.setPosition(1);
         servoR.setPosition(0);
         servoL.setPosition(.7);
         motorBL.setPower(1);

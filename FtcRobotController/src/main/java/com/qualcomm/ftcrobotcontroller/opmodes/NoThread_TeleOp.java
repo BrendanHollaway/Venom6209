@@ -55,22 +55,30 @@ public class NoThread_TeleOp extends LinearOpMode2{
         motorBR.setDirection(DcMotor.Direction.FORWARD);
     /* BUTTON MAPPING
         CONTROLLER 1
-            y1 = left tread
-            y2 = right tread
-            y_btn = toggle for speed of treads
-            a_btn = toggle for SOS mode
-            left_trigger = swing-out the left zip-line knocker
-            left_bumper = swing-in the left zip-line knocker
-            right_trigger = swing-out the right zip-line knocker
-            right_bumper = swing-in the right zip-line knocker
+            y1 = left wheels
+            y2 = right wheels
+            a_btn = retract climber dumper
+            y_btn = engage climber dumper
+            hold left trigger = spit out blocks
+            hold right trigger = suck up blocks
+            start = stop manipulator
+            hold left and right bumper = release the lift ratchets
 
         CONTROLLER 2
             y1 = extend/retract lift
             y2 = change angle of lift
-            y_btn = hold for top ratchet release
-            a_btn = hold for bot ratchet release
-            left_bumper = retract climber arm towards robot
-            right_bumper = flip climber arm out
+            y_btn = zipliner left out
+            x_btn = zipliner left in
+            b_btn = zipliner right out
+            a_btn = zipliner right in
+            left_bumper = keep blocks in
+            right_bumper = dump blocks
+            right_trigger = turn tread right
+            left_trigger = turn tread left
+            back = stop tread
+            dpad_down = shield down
+            dpad_up = shield up
+
      */
         while(!opModeIsActive());
 
@@ -109,14 +117,32 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBR.setPower(0);
                 motorBL.setPower(0);
             }
-            if(gamepad1.left_bumper && gamepad1.right_bumper)
-            {
-                servoLRat.setPosition(0);
-                servoRRat.setPosition(Range.clip(servoRRat.getPosition() - 0.01, 0, 1));
+            if(gamepad1.left_bumper && gamepad1.right_bumper) {
+                servoRatL.setPosition(0);
+                servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01, 0, 1));
             }
             else
-                servoLRat.setPosition(.5);
-            if(Math.abs(gamepad2.left_stick_y) > 0.1 && Math.abs(gamepad2.right_stick_y) > 0.1)
+                servoRatL.setPosition(.5);
+            if (gamepad1.y) {
+                //servoClimberArm.setPosition(0);
+            }
+            else if (gamepad1.a) {
+                //servoClimberArm.setPosition(1);
+            }
+            if(gamepad1.right_trigger > 0.1)
+                motorM.setPower(1);
+            else if(gamepad1.left_trigger > 0.1)
+                motorM.setPower(-1);
+            else
+                motorM.setPower(0);
+            if(gamepad1.dpad_down)
+                motorS.setPower(-1);
+            else if(gamepad1.dpad_up)
+                motorS.setPower(-1);
+            else if(gamepad1.x && System.currentTimeMillis() % 50 > 25)
+                motorS.setPower(1);
+            else
+            if (Math.abs(gamepad2.left_stick_y) > 0.1 && Math.abs(gamepad2.right_stick_y) > 0.1)
             {
                 motorPL.setPower(gamepad2.right_stick_y);
                 motorPR.setPower(gamepad2.left_stick_y);
@@ -136,23 +162,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorPL.setPower(0);
                 motorPR.setPower(0);
             }
-            // LIFT AND SERVO CONTROL - CONTROLLER 2
-            if (gamepad1.dpad_up) {
-                servoClimberArm.setPosition(0);
-                servoClimberHelper.setPosition(0);
-            }
-            else if (gamepad1.dpad_down) {
-                servoClimberArm.setPosition(1);
-                servoClimberHelper.setPosition(1);
-            }
-            if(gamepad2.x)
-                servoF.setPosition(0);
-            else if(gamepad2.y)
-            {
-                servoF.setPosition(1);
-            }
-            else
-                servoF.setPosition(0.5);
             if (gamepad2.x) {
                 servoL.setPosition(Range.clip(servoL.getPosition() + 0.015, 0, .98));
             } else if (gamepad2.y) {
@@ -163,9 +172,25 @@ public class NoThread_TeleOp extends LinearOpMode2{
             } else if (gamepad2.b) {
                 servoR.setPosition(Range.clip(servoR.getPosition() + 0.015, 0, 1));
             }
+            if(gamepad2.right_bumper)
+            {
+                servoBasketR.setPosition(1);
+                servoBasketL.setPosition(1);
+            }
+            else if(gamepad2.left_bumper)
+            {
+                servoBasketR.setPosition(0);
+                servoBasketL.setPosition(0);
+            }
+            if (gamepad2.right_trigger > 0.1)
+                servoTread.setPosition(1);
+            else if(gamepad2.left_trigger > 0.1)
+                servoTread.setPosition(0);
+            else if(gamepad2.back)
+                servoTread.setPosition(0.5);
             telemetry.addData("left: ", String.format("%.2f, r: %.2f", servoL.getPosition(), servoR.getPosition()));
-            telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoLRat.getPosition(), servoClimberArm.getPosition()));
-            telemetry.addData("servo: ", String.format("rrat: %.2f", servoRRat.getPosition()));
+            //telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
+            telemetry.addData("servo: ", String.format("rrat: %.2f", servoRatR.getPosition()));
             telemetry.addData("encoderBL: ", String.format("%d + %d + %d + %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
