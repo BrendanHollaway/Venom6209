@@ -33,6 +33,9 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:required="true" />
     <uses-permission
+        android:name="android.permission.CAMERA"
+        android:required="true" />
+    <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         android:required="true" />
 

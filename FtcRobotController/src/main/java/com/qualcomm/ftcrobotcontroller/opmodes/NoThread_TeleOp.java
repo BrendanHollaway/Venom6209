@@ -138,10 +138,11 @@ public class NoThread_TeleOp extends LinearOpMode2{
             if(gamepad1.dpad_down)
                 motorS.setPower(-1);
             else if(gamepad1.dpad_up)
-                motorS.setPower(-1);
+                motorS.setPower(1);
             else if(gamepad1.x && System.currentTimeMillis() % 50 > 25)
                 motorS.setPower(1);
             else
+                motorS.setPower(0);
             if (Math.abs(gamepad2.left_stick_y) > 0.1 && Math.abs(gamepad2.right_stick_y) > 0.1)
             {
                 motorPL.setPower(gamepad2.right_stick_y);

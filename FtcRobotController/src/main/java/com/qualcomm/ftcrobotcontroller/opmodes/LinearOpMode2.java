@@ -55,18 +55,14 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     protected static Servo servoF;
     @Deprecated
     protected static Servo servoClimberHelper;
-    @Deprecated
-    protected static Servo servoLRat;
-    @Deprecated
-    protected static Servo servoRRat;
 
     protected void map() throws InterruptedException {
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorFL = hardwareMap.dcMotor.get("motorFL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
         motorFR = hardwareMap.dcMotor.get("motorFR");
-        motorPL = hardwareMap.dcMotor.get("motorPL");
-        motorPR = hardwareMap.dcMotor.get("motorPR");
+        motorPL = hardwareMap.dcMotor.get("motorPR");
+        motorPR = hardwareMap.dcMotor.get("motorPL");
         motorM  = hardwareMap.dcMotor.get("motorM");
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
@@ -102,8 +98,12 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         //servoRRat.setPosition(0.44);
         //servoLRat.setPosition(0.5);
         //servoClimberArm.setPosition(1);
-        servoL.setPosition(1);
-        servoR.setPosition(0.05);
+        servoL.setPosition(.5);
+        servoR.setPosition(.5);
+        servoBasketR.setPosition(.5);
+        servoRatL.setPosition(.5);
+        servoRatR.setPosition(.5);
+        servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         //servoClimberHelper.setPosition(1);
         motorPR.setDirection(DcMotor.Direction.REVERSE);

@@ -84,6 +84,7 @@
     <color name="transparent_color">#00000000</color>
     <color name="very_bright_red">#bf0510</color>
     <color name="white">#FFFFFF</color>
+    <declare-styleable name="CameraBridgeViewBase"><attr format="boolean" name="show_fps"/><attr format="integer" name="camera_id"><enum name="any" value="-1"/><enum name="back" value="99"/><enum name="front" value="98"/></attr></declare-styleable>
     <!-- From: file:/C:/Users/viperbots/Documents/GitHub/Venom6209/FtcRobotController/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="activity_horizontal_margin">16dp</dimen>
