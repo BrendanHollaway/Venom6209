@@ -5,6 +5,7 @@
  */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.Point;
 
 import java.util.*;

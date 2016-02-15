@@ -1,30 +1,27 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftccommon.DbgLog;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.ftcrobotcontroller.DPoint;
+import com.qualcomm.ftcrobotcontroller.NewRobotics;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.IrSeekerSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.robocol.Telemetry;
 import com.qualcomm.robotcore.util.Range;
+
+import org.lasarobotics.vision.ftc.resq.Beacon;
 
 /**
  * Created by Venom6209 on 10/5/2015.
  */
-public class AutonomousSegments extends LinearOpMode2 {
+public class AutonomousSegments extends LinearOpModeCV {
 
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
-    protected double kP=0.008;
-    protected double kI=0.008;
-    protected double kD=0.01;
     //protected AdafruitIMU IMU;
     protected AdafruitIMU IMU2;
     Telemetry tele;
-    LinearOpMode2 parent_op;
+    LinearOpModeCV parent_op;
 
     double cm_rotation = 4*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
@@ -66,7 +63,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         this.IMU2 = IMUu;
         tele = telem;
     }
-    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem, LinearOpMode2 par_op)
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem, LinearOpModeCV par_op)
     {
         this.motorFL = motorFL;
         this.motorBL = motorBL;                     //Actually initializes motors
@@ -261,7 +258,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         motorBR.setPower(0.8);
         while(Math.abs(motorFL.getCurrentPosition() - target) < 10 && Math.abs(motorFR.getCurrentPosition() - target) < 10 && Math.abs(motorBR.getCurrentPosition() - target) < 10 && Math.abs(motorBL.getCurrentPosition() - target) < 10 )//Math.abs(motorFL.getCurrentPosition()) < Math.abs(target) && Math.abs(motorFR.getCurrentPosition()) < target && Math.abs(motorFL.getCurrentPosition()) < target && Math.abs(motorFL.getCurrentPosition()) < target)
         {
-            parent_op.waitForNextHardwareCycle();
+            parent_op.waitOneFullHardwareCycle();
             motorFL.setPower(0.8);
             motorFR.setPower(0.8);
             motorBL.setPower(0.8);
@@ -409,7 +406,7 @@ public class AutonomousSegments extends LinearOpMode2 {
         return yawAngle[0];
     }
     public void squareTest() throws InterruptedException {
-        move( 1, 1);
+        move(1, 1);
     }
     //SOS is deprecated here
     public void SOS(double acc_y, double acc_z)
@@ -433,7 +430,10 @@ public class AutonomousSegments extends LinearOpMode2 {
             motorFR.setPower(0);
         }
     }
-
+    public int squares_to_Encoder(double squares)
+    {
+        return (int)(squares / square_per_rot * 1120);
+    }
 
 
 //RED INITIAL SEGMENTS
@@ -622,11 +622,14 @@ public class AutonomousSegments extends LinearOpMode2 {
     //===========================================================
     //========================PID CONTROL========================
     //===========================================================
-    public void PID_move(double encoder, double target_heading, double speed) throws InterruptedException
+    protected double kP=0.008;
+    protected double kI=0.008;
+    protected double kD=0.01;
+    public void PID_move(double encoder, double target_heading, double speed, boolean enableCamera) throws InterruptedException
     {
         speed = Range.clip(speed, -1, 1);
-        motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFL.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorFL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         //All errors are in terms of heading: the robot's yaw
         double prevError;
         double error = 0;
@@ -662,7 +665,20 @@ public class AutonomousSegments extends LinearOpMode2 {
             left *= speed;
             setRightPower(right);
             setLeftPower(left);
+            if(beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
+            {
+                if(beacon.getAnalysis().getConfidence() > 0.1 && enableCamera) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
+                    target_heading = getHeading();
+                }
+            }
+            else if(beacon.getAnalysis().isBeaconFound() && enableCamera) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
+                target_heading = getHeading();
+            }
         }
+    }
+    public double getHeading()
+    {
+        return NewRobotics.calculate_heading(DPoint.makeDPoint(beacon.getAnalysis().getCenter()));
     }
     public double getKP()
     {
@@ -722,6 +738,21 @@ public class AutonomousSegments extends LinearOpMode2 {
         turn(-18, 0.75);
         //encoderTurn(-45, 1);
         move2(0.25);// , 0.5);
+        halt();
+    }
+    public void Close_Blue_Buttons_CV() throws InterruptedException {
+        PID_move(squares_to_Encoder(0.75), 0, 0.8, false);// , 1);
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(-14, 0.75);//turn(-23, 1);
+        //encoderTurn(45, 1);
+        PID_move(squares_to_Encoder(3.25 * (Math.sqrt(2))), 0, 0.8, false);
+        PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), 0, 0.8, true);
+        turn(-18, 0.75);
+        //encoderTurn(-45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        PID_move(squares_to_Encoder(0.25), 0, 0.8, true);// , 0.5);
         halt();
     }
 

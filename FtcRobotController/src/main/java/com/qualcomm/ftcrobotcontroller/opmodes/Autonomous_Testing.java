@@ -2,9 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import android.graphics.Bitmap;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
 /**
  * Created by viperbots on 9/29/2015.

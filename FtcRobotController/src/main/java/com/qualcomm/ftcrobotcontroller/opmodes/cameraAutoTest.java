@@ -2,7 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import android.graphics.Bitmap;
 
-import com.qualcomm.ftcrobotcontroller.opmodes.NewRobotics;
+import com.qualcomm.ftcrobotcontroller.NewRobotics;
 /**
  * Created by viperbots on 1/12/2016.
  */

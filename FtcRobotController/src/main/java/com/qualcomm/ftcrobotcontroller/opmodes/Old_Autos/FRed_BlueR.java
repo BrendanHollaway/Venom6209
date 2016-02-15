@@ -1,5 +1,6 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package com.qualcomm.ftcrobotcontroller.opmodes.Old_Autos;
 
+import com.qualcomm.ftcrobotcontroller.opmodes.AutonomousSegments;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 /**
  * Created by viperbots on 10/12/2015.
  */
-public class CRed_B_RedR extends LinearOpMode {
+public class FRed_BlueR extends LinearOpMode {
     DcMotor motorFL;
     DcMotor motorBL;
     DcMotor motorFR;
@@ -26,10 +27,10 @@ public class CRed_B_RedR extends LinearOpMode {
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
         //auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR);
 
-        auto.Close_Red_Buttons();
-        auto.Climbers();
-        auto.RedButtons_RedRamp();
+        auto.Far_Red_BlueRamp();
         auto.ClearRamp();
         auto.ClimbRamp();
     }
 }
+
+

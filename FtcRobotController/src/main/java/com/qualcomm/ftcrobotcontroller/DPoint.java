@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package com.qualcomm.ftcrobotcontroller;
 
-
-import com.qualcomm.ftcrobotcontroller.Point;
 
 /**
  *
@@ -45,6 +43,10 @@ public class DPoint extends Point
     public static Point toMaxPoint(DPoint d)
     {
         return new Point((int)Math.ceil(d.x), (int)Math.ceil(d.y));
+    }
+    public static DPoint makeDPoint(org.opencv.core.Point p)
+    {
+        return new DPoint(p.x, p.y);
     }
     @Override
     public String toString()

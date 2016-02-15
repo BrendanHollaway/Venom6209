@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package com.qualcomm.ftcrobotcontroller;
 import android.graphics.Bitmap;
 
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.Point;
 import com.qualcomm.robotcore.robocol.Telemetry;
 import com.qualcomm.robotcore.util.Range;
 
-import java.lang.reflect.Array;
 import java.util.*;
 /**
  *
@@ -296,16 +296,16 @@ public class NewRobotics {
         for(byte[] byt : RGB_photo_copy)
             Arrays.fill(byt, g);
     }
-    public static double calculate_heading(DPoint red_center, DPoint blue_center, int encoder, int max_encoder) //encoder represents distance travelled. max_encoder is target distance
+    public static double calculate_heading(DPoint center) //encoder represents distance travelled. max_encoder is target distance
     {
-        double ratio = 6.0 / 4.0; // width of view divided by distance to object- test with ruler
-        int width_pixels = 60;    
-        //if(max_encoder * 3 > encoder * 4 && red_center.distance(blue_center) > 35) // if you are less than 3/4 of the way to the beacon
-        //    return -1.0; //too far to reliably estimate, likely an error
-        double center_x = (red_center.x + blue_center.x) / 2.0;
-        double width = (max_encoder - encoder) * ratio; // width of the screen, in encoder ticks
-        double x_offset = (center_x - 40) * width / width_pixels; // x_offset is measured in encoder ticks
-        return Math.toDegrees(Math.atan2(x_offset, max_encoder - encoder));
+        double ratio = 1.0 / 1.32; // width of view divided by distance to object- test with ruler
+        int width_pixels = 480; // width of screen'
+        double depth_pixels = width_pixels / ratio; // depth if it was in pixels
+        //double width_deg = Math.atan(ratio) * 2; // field of view of the camera, in degrees
+        double center_x = center.x;
+        double x_offset = center_x - (width_pixels / 2); // in pixels
+        double deg_offset = Math.toDegrees(Math.atan2(x_offset, depth_pixels)); // difference between current heading and target
+        return deg_offset;
     }
     public static double fix_heading(Bitmap photo, int ds2)
     {

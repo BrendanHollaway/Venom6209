@@ -2,8 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import android.graphics.Bitmap;
 
-import com.qualcomm.ftccommon.DbgLog;
-import com.qualcomm.ftcrobotcontroller.opmodes.AutonomousSegments;
+import com.qualcomm.ftcrobotcontroller.NewRobotics;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 

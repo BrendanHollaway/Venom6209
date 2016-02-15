@@ -1,21 +1,18 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.exception.RobotCoreException;
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
-public abstract class LinearOpMode2 extends LinearOpModeCamera {
-    private LinearOpMode2.a a = null;
+import org.lasarobotics.vision.opmode.LinearVisionOpMode;
+
+/**
+ * Created by viperbots on 2/13/2016.
+ */
+public abstract class LinearOpModeCV extends LinearVisionOpMode {
+    private LinearOpModeCV.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
@@ -32,16 +29,15 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     protected static DcMotor motorS; //front, the shield
     protected static DcMotor motorM; //manipulator
 
-
     //Servos
     protected static Servo servoL; //left zipliner
     protected static Servo servoR; //right zipliner
     //protected static Servo servoClimberArm;
     protected static Servo servoRatL;
     protected static Servo servoRatR;
-    //protected static Servo servoTread;
-    //protected static Servo servoBasketL;
-    //protected static Servo servoBasketR;
+    protected static Servo servoTread;
+    protected static Servo servoBasketL;
+    protected static Servo servoBasketR;
     protected static Servo servoAllClearL; // all clear left
     protected static Servo servoAllClearR; // all clear right
 
@@ -68,11 +64,11 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoR");
         //servoClimberArm = hardwareMap.servo.get("servoClimberArm");
-        servoL = hardwareMap.servo.get("servoLRat"); //yes this is correct
+        servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
-        //servoBasketL = hardwareMap.servo.get("servoBaskL");
-        //servoBasketR = hardwareMap.servo.get("servoBaskR");
-        //servoTread = hardwareMap.servo.get("servoTread");
+        servoBasketL = hardwareMap.servo.get("servoBaskL");
+        servoBasketR = hardwareMap.servo.get("servoBaskR");
+        servoTread = hardwareMap.servo.get("servoTread");
 
 
         if(IMU == null) {
@@ -100,10 +96,10 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         //servoClimberArm.setPosition(1);
         servoL.setPosition(.5);
         servoR.setPosition(.5);
-        //servoBasketR.setPosition(.5);
+        servoBasketR.setPosition(.5);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.5);
-        //servoBasketL.setPosition(.5);
+        servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         //servoClimberHelper.setPosition(1);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
@@ -131,12 +127,9 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);*/
         //======================END RESET THE ENCODERS=======================
         //if (IMU != null)
-          //  inited = true;
+        //  inited = true;
         telemetry.addData("Init is Complete: ", "true");
         telemetry.addData("IMU is null: ", IMU == null);
-    }
-
-    public LinearOpMode2() {
     }
     public static boolean isInit()
     {
@@ -194,4 +187,3 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         }
     }
 }
-

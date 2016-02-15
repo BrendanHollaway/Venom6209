@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftcrobotcontroller.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -69,16 +70,22 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("SquareTest", squareTest.class);
       //manager.register("IMUout", IMUoutput.class);
       //manager.register("IMUtest", IMUtest.class);
-      manager.register("redAuto", blue_auto.class);
+      manager.register("redAuto", blue_auto.class); // #dealwithit
+      manager.register("Linear CV Auto Test", Auto_Red_CV.class);
       //manager.register("teleTest", telemetryTest.class);
-      manager.register("Straight_Auto", Straight_Auto.class);
-      manager.register("Dump Test", Autonomous_Testing.class);
+      //manager.register("Straight_Auto", Straight_Auto.class);
+      //manager.register("Dump Test", Autonomous_Testing.class);
       manager.register("blueAuto", autotest.class);
       //manager.register("sostest", sostest.class);
       //manager.register("tank_test", tankdrive_test.class);
       //manager.register("servo test", ServoTesssst.class);
       manager.register("DetectColor", DetectColor.class);
-      manager.register("LinearDetectColor", LinearDetectColor.class);
+      //manager.register("LinearDetectColor", LinearDetectColor.class);
+      //manager.register("NullOp", com.qualcomm.ftcrobotcontroller.NullOp.class);
+      manager.register("Basic Vision Sample", BasicVisionSample.class);
+      manager.register("Linear Vision Sample", LinearVisionSample.class);
+      manager.register("Straight Auto", Straight_Auto.class);
+      //manager.register("Manual Vision Sample", ManualVisionSample.class);
       //manager.register("Log Camera", CameraTest.class);
       /*manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
       manager.register("CBlue_B_RedR", CBlue_B_RedR.class);

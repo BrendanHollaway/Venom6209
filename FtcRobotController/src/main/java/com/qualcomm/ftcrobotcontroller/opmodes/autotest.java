@@ -31,7 +31,7 @@ public class autotest extends LinearOpMode2 {
         waitOneFullHardwareCycle();*/
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
-        auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR, IMU, telemetry, this);
+        auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR, IMU, telemetry/*, this*/);
         /*long time = (long) (System.nanoTime() + Math.pow(10, 9.5));
         while(System.nanoTime() < time)
             telemetry.addData("gyro yaw; ", gyroTest());*/
