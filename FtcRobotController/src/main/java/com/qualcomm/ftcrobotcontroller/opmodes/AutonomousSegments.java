@@ -622,8 +622,8 @@ public class AutonomousSegments extends LinearOpModeCV {
     //===========================================================
     //========================PID CONTROL========================
     //===========================================================
-    protected double kP=0.008;
-    protected double kI=0.008;
+    protected double kP=0.02;
+    protected double kI=0.025;
     protected double kD=0.01;
     public void PID_move(double encoder, double target_heading, double speed, boolean enableCamera) throws InterruptedException
     {
@@ -656,8 +656,8 @@ public class AutonomousSegments extends LinearOpModeCV {
             dError = (error - prevError) / dt;
             iError = Range.clip(iError + error * dt,-125,125);
             PID_change = kP * error + kD * dError + kI * iError;
-            right = speed - PID_change;
-            left = speed + PID_change;
+            right = speed + PID_change;
+            left = speed / 4.0 - PID_change;
             max = Math.max(right, left);
             right /= max;
             right *= speed;
@@ -665,13 +665,15 @@ public class AutonomousSegments extends LinearOpModeCV {
             left *= speed;
             setRightPower(right);
             setLeftPower(left);
-            if(beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
+            DbgLog.error(String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
+            DbgLog.error(String.format("left: %.2f, right: %.2f, gyro: %.2f", left, right, getGyroYaw()));
+            if(enableCamera && beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
             {
-                if(beacon.getAnalysis().getConfidence() > 0.1 && enableCamera) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
+                if(beacon.getAnalysis().getConfidence() > 0.1) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
                     target_heading = getHeading();
                 }
             }
-            else if(beacon.getAnalysis().isBeaconFound() && enableCamera) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
+            else if(enableCamera && beacon.getAnalysis().isBeaconFound()) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
                 target_heading = getHeading();
             }
         }

@@ -59,11 +59,11 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorPL = hardwareMap.dcMotor.get("motorPR");
         motorPR = hardwareMap.dcMotor.get("motorPL");
-        //motorM  = hardwareMap.dcMotor.get("motorM");
+        motorM  = hardwareMap.dcMotor.get("motorM");
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoR");
-        //servoClimberArm = hardwareMap.servo.get("servoClimberArm");
+        servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
@@ -102,8 +102,6 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         //servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         servoClimberArm.setPosition(0.06);
-        //servoF.setPosition(0.5);
-        //servoClimberHelper.setPosition(1);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
         //==========================RESET THE ENCODERS=========================
         /*motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
@@ -132,6 +130,8 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         //  inited = true;
         telemetry.addData("Init is Complete: ", "true");
         telemetry.addData("IMU is null: ", IMU == null);
+        waitOneFullHardwareCycle();
+        waitOneFullHardwareCycle();
     }
     public static boolean isInit()
     {
