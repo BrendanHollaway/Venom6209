@@ -92,20 +92,20 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBL.setPower(-1);
             }
             else if (Math.abs(gamepad1.left_stick_y) > 0.1 && Math.abs(gamepad1.right_stick_y) > 0.1) {
-                motorFR.setPower(gamepad1.left_stick_y);
-                motorFL.setPower(-gamepad1.right_stick_y);
-                motorBR.setPower(gamepad1.left_stick_y);
-                motorBL.setPower(-gamepad1.right_stick_y);
-            } else if (Math.abs(gamepad1.left_stick_y) > 0.1) {
-                motorFR.setPower(gamepad1.left_stick_y);
-                motorFL.setPower(0);
-                motorBR.setPower(gamepad1.left_stick_y);
-                motorBL.setPower(0);
+                motorFR.setPower(-gamepad1.right_stick_y);
+                motorFL.setPower(gamepad1.left_stick_y);
+                motorBR.setPower(-gamepad1.right_stick_y);
+                motorBL.setPower(gamepad1.left_stick_y);
             } else if (Math.abs(gamepad1.right_stick_y) > 0.1) {
+                motorFR.setPower(-gamepad1.right_stick_y);
+                motorFL.setPower(0);
+                motorBR.setPower(-gamepad1.right_stick_y);
+                motorBL.setPower(0);
+            } else if (Math.abs(gamepad1.left_stick_y) > 0.1) {
                 motorFR.setPower(0);
-                motorFL.setPower(-gamepad1.right_stick_y);
+                motorFL.setPower(gamepad1.left_stick_y);
                 motorBR.setPower(0);
-                motorBL.setPower(-gamepad1.right_stick_y);
+                motorBL.setPower(gamepad1.left_stick_y);
             } else if(gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1)
             {
                 motorBR.setPower(gamepad1.right_trigger > 0.1? gamepad1.right_trigger : 0);
@@ -117,24 +117,18 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBR.setPower(0);
                 motorBL.setPower(0);
             }
-            if(gamepad1.left_bumper && gamepad1.right_bumper) {
+            if(gamepad1.left_trigger > .1 && gamepad1.right_trigger > .1) {
                 servoRatL.setPosition(0);
-                servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01, 0, 1));
+                servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
             }
             else
                 servoRatL.setPosition(.5);
             if (gamepad1.y) {
-                //servoClimberArm.setPosition(0);
+                servoClimberArm.setPosition(.19);
             }
             else if (gamepad1.a) {
-                //servoClimberArm.setPosition(1);
+                servoClimberArm.setPosition(.06);
             }
-            if(gamepad1.right_trigger > 0.1)
-                motorM.setPower(1);
-            else if(gamepad1.left_trigger > 0.1)
-                motorM.setPower(-1);
-            else
-                motorM.setPower(0);
             if(gamepad1.dpad_down)
                 motorS.setPower(-1);
             else if(gamepad1.dpad_up)
@@ -163,37 +157,19 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorPL.setPower(0);
                 motorPR.setPower(0);
             }
-            if (gamepad2.x) {
-                servoL.setPosition(Range.clip(servoL.getPosition() + 0.015, 0, .98));
-            } else if (gamepad2.y) {
-                servoL.setPosition(Range.clip(servoL.getPosition() - 0.015, 0, .98));
-            }
-            if (gamepad2.a) {
+            if (gamepad2.right_bumper) {
+                servoR.setPosition(.85);
+            } else if (gamepad2.right_trigger > .1) {
                 servoR.setPosition(0);
-            } else if (gamepad2.b) {
-                servoR.setPosition(1);
             }
-            else {
-                servoR.setPosition(.5);
+            if (gamepad2.left_bumper) {
+                servoL.setPosition(0);
+            } else if (gamepad2.left_trigger > .1) {
+                servoL.setPosition(.94);
             }
-            if(gamepad2.right_bumper)
-            {
-                //servoBasketR.setPosition(1);
-                //servoBasketL.setPosition(1);
-            }
-            else if(gamepad2.left_bumper)
-            {
-                //servoBasketR.setPosition(0);
-                //servoBasketL.setPosition(0);
-            }
-            //if (gamepad2.right_trigger > 0.1)
-                //servoTread.setPosition(1);
-            //else if(gamepad2.left_trigger > 0.1)
-                //servoTread.setPosition(0);
-            //else if(gamepad2.back)
-                //servoTread.setPosition(0.5);
+
             telemetry.addData("left: ", String.format("%.2f, r: %.2f", servoL.getPosition(), servoR.getPosition()));
-            //telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
+            telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
             telemetry.addData("servo: ", String.format("rrat: %.2f", servoRatR.getPosition()));
             telemetry.addData("encoderBL: ", String.format("%d + %d + %d + %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());

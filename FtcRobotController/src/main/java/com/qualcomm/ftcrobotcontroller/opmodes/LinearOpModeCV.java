@@ -32,7 +32,7 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
     //Servos
     protected static Servo servoL; //left zipliner
     protected static Servo servoR; //right zipliner
-    //protected static Servo servoClimberArm;
+    protected static Servo servoClimberArm;
     protected static Servo servoRatL;
     protected static Servo servoRatR;
     protected static Servo servoTread;
@@ -59,16 +59,16 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorPL = hardwareMap.dcMotor.get("motorPR");
         motorPR = hardwareMap.dcMotor.get("motorPL");
-        motorM  = hardwareMap.dcMotor.get("motorM");
+        //motorM  = hardwareMap.dcMotor.get("motorM");
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoR");
         //servoClimberArm = hardwareMap.servo.get("servoClimberArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
-        servoBasketL = hardwareMap.servo.get("servoBaskL");
-        servoBasketR = hardwareMap.servo.get("servoBaskR");
-        servoTread = hardwareMap.servo.get("servoTread");
+        //servoBasketL = hardwareMap.servo.get("servoBaskL");
+        //servoBasketR = hardwareMap.servo.get("servoBaskR");
+        //servoTread = hardwareMap.servo.get("servoTread");
 
 
         if(IMU == null) {
@@ -94,12 +94,14 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         //servoRRat.setPosition(0.44);
         //servoLRat.setPosition(0.5);
         //servoClimberArm.setPosition(1);
-        servoL.setPosition(.5);
-        servoR.setPosition(.5);
-        servoBasketR.setPosition(.5);
+        servoL.setPosition(0);
+        servoR.setPosition(.85);
+        //servoBasketR.setPosition(.5);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.5);
-        servoBasketL.setPosition(.5);
+        //servoBasketL.setPosition(.5);
+        //servoF.setPosition(0.5);
+        servoClimberArm.setPosition(0.06);
         //servoF.setPosition(0.5);
         //servoClimberHelper.setPosition(1);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
