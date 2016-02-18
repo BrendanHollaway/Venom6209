@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +17,9 @@ public class Straight_Auto extends LinearOpModeCV {
         super.map();
         waitForStart();
         auto = new AutonomousSegments(motorFL, motorBL, motorFR, motorBR, IMU, telemetry, this);
-        auto.PID_move(10000, 0, 1, false);
+        int encoder = motorFR.getCurrentPosition();
+        //auto.Close_Blue_Buttons_CV();
+        auto.PID_move(10000 + encoder, 0, 1, false);
         /*motorFR.setPower(.8);
         motorFL.setPower(-.2);
         motorBL.setPower(-.2);

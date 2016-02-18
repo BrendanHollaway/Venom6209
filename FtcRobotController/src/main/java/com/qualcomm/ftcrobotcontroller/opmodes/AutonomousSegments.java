@@ -30,15 +30,6 @@ public class AutonomousSegments extends LinearOpModeCV {
     double xPos = 0;
     double yPos = 0;
 
-
-    public AutonomousSegments()
-    {
-        this.motorFL = null;
-        this.motorBL = null;                        //"Why not!?" -Brendan
-        this.motorFR = null;
-        this.motorBR = null;
-    }
-
     public AutonomousSegments(DcMotor motorBL, DcMotor motorBR, AdafruitIMU IMU)
     {
         this.motorBL = motorBL;
@@ -156,6 +147,10 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public static int mid2(int enc1, int enc2, int enc3, int enc4)
     {
+        enc1 = Math.abs(enc1);
+        enc2 = Math.abs(enc2);
+        enc3 = Math.abs(enc3);
+        enc4 = Math.abs(enc4);
         int min = Math.min(enc1, Math.min(enc2, Math.min(enc3, enc4)));
         int max = Math.max(enc1, Math.max(enc2, Math.max(enc3, enc4)));
         return (enc1 + enc2 + enc3 + enc4 - max - min) / 2;
@@ -164,6 +159,8 @@ public class AutonomousSegments extends LinearOpModeCV {
         tele.addData("turn has ", "begun");
         tele.addData("deg: ", getGyroYaw());
         //halt();
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
         motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
@@ -208,6 +205,8 @@ public class AutonomousSegments extends LinearOpModeCV {
         }
         //if (Math.abs(getGyroYaw() - deg) > tolerance)
           //  turn(deg - getGyroYaw(), 0.8, tolerance * 1.2);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.FORWARD);
         halt();
     }
     public void ssleep(long ms) throws InterruptedException                 //method for sleeping
@@ -398,11 +397,11 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public double getGyroYaw() throws InterruptedException{
         parent_op.waitOneFullHardwareCycle();
-        if(IMU2 == null) {
+        if(IMU == null) {
             DbgLog.error(" IMU is null");
             return -1;
         }
-        IMU2.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
     public void squareTest() throws InterruptedException {
@@ -622,61 +621,95 @@ public class AutonomousSegments extends LinearOpModeCV {
     //===========================================================
     //========================PID CONTROL========================
     //===========================================================
-    protected double kP=0.02;
-    protected double kI=0.025;
-    protected double kD=0.01;
+    protected double kP=0.06;
+    protected double kI=0.02;
+    protected double kD=0.005;
+    double error = 0;
+    double iError = 0;
+    double dError;
     public void PID_move(double encoder, double target_heading, double speed, boolean enableCamera) throws InterruptedException
     {
         speed = Range.clip(speed, -1, 1);
-        motorFL.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motorFL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        //motorFL.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        //motorFL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         //All errors are in terms of heading: the robot's yaw
         double prevError;
-        double error = 0;
-        double iError = 0;
-        double dError;
         double max;
         double min;
         double dt;
         resetStartTime();
         double time = getRuntime();
+        double safety_time = System.currentTimeMillis() + 10 * Math.pow(10, 6);
         double PID_change;
         double right;
         double left;
-        while(Math.abs(motorBR.getCurrentPosition()) < encoder)
+        motorFL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        //motorBR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        int currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        int currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        //int currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
+        int currentEncoder = 0; //=mid2(currentBLPosition, currentBRPosition, currentFLPosition, currentFRPosition);
+        while(Math.abs(currentEncoder) < Math.abs(encoder) && System.currentTimeMillis() < safety_time)  //moves until encoders change by value inputted
         {
             dt = getRuntime() - time;
             time = getRuntime();
             prevError = error;
-            max = Math.max(target_heading, getGyroYaw());
+            if(Math.abs(target_heading - getGyroYaw() + 360) < Math.abs(target_heading - getGyroYaw()))
+                error = target_heading - getGyroYaw() + 360;
+            else
+                error = target_heading - getGyroYaw();
+            // OLD PID METHOD OF FINDING ERROR
+            /*max = Math.max(target_heading, getGyroYaw());
             min = Math.min(target_heading, getGyroYaw());
             error = Math.min(max-min, min + 360 - max);
             if(error == min + 360 - max)
-                error *= -1;
+                error *= -1;*/
             dError = (error - prevError) / dt;
-            iError = Range.clip(iError + error * dt,-125,125);
+            iError = Range.clip(iError + error * dt, -125, 125);
             PID_change = kP * error + kD * dError + kI * iError;
             right = speed + PID_change;
-            left = speed / 4.0 - PID_change;
-            max = Math.max(right, left);
+            left = speed / 3.0 - PID_change;
+            max = Math.max(Math.abs(right), Math.abs(left));
+            //This standardizes the speeds, so that they are correct relative to each other,
+            //and that one of the two will be equivalent, and neither greater, than "speed"
             right /= max;
             right *= speed;
             left /= max;
             left *= speed;
             setRightPower(right);
             setLeftPower(left);
+            tele.addData("a: ", String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
+            tele.addData("b: ", String.format("left: %.2f, right: %.2f, gyro: %.2f", left, right, getGyroYaw()));
             DbgLog.error(String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
             DbgLog.error(String.format("left: %.2f, right: %.2f, gyro: %.2f", left, right, getGyroYaw()));
+            currentEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorFR.getCurrentPosition() - currentFRPosition, motorFR.getCurrentPosition() - currentFRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
+            DbgLog.error("currentEncoder: " + currentEncoder + "target: " + String.format("%.2f",encoder));
+            DbgLog.error("FR: "+ String.format("%d,FL: %d", motorFR.getCurrentPosition() - currentFRPosition, motorFL.getCurrentPosition() - currentFLPosition));
+            DbgLog.error("BR: " + String.format("%d,BL: %d", motorBR.getCurrentPosition() - 0/*currentBRPosition*/, motorBL.getCurrentPosition() - currentBLPosition));
+            //tele.addData("PowFR: ", String.format("%.2f,FL: %.2f", motorFR.getPower(), motorFL.getPower()));
+            //tele.addData("PowBR: ", String.format("%.2f,BL: %.2f", motorBR.getPower(), motorBL.getPower()));
+            //DbgLog.error("Encoder BR, BL, FR, FL" + motorBR.getCurrentPosition() + " " + motorBL.getCurrentPosition() + " " + motorFR.getCurrentPosition() + " " + motorFL.getCurrentPosition());
+            parent_op.waitOneFullHardwareCycle();
+            //waitOneFullHardwareCycle();
+            if(currentEncoder > long_encoder)
+                enableCamera = true;
+
             if(enableCamera && beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
             {
                 if(beacon.getAnalysis().getConfidence() > 0.1) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
                     target_heading = getHeading();
+                    DbgLog.error("new heading target: " + String.format("%.2f", getHeading()));
                 }
             }
             else if(enableCamera && beacon.getAnalysis().isBeaconFound()) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
                 target_heading = getHeading();
             }
         }
+        DbgLog.error("Done with drive forward");
+        halt();
     }
     public double getHeading()
     {
@@ -742,22 +775,65 @@ public class AutonomousSegments extends LinearOpModeCV {
         move2(0.25);// , 0.5);
         halt();
     }
+    double long_encoder = Double.MAX_VALUE;
     public void Close_Blue_Buttons_CV() throws InterruptedException {
-        PID_move(squares_to_Encoder(0.75), 0, 0.8, false);// , 1);
+        PID_move(squares_to_Encoder(0.75), 0, 1, false);// , 1);
         tele.addData("we made it: ", "yay");
         //halt();
         //ssleep(1000);
-        turn(-14, 0.75);//turn(-23, 1);
+
+        turn(-30, 0.75);//turn(-23, 1);
+        resetStartTime();
+        while(getRuntime() < 2) // wait 2 seconds
+            parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
-        PID_move(squares_to_Encoder(3.25 * (Math.sqrt(2))), 0, 0.8, false);
-        PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), 0, 0.8, true);
-        turn(-18, 0.75);
+        double heading = getGyroYaw();
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        double long_encoder = 1.5 * Math.sqrt(2);
+        PID_move(squares_to_Encoder(long_encoder + 1 * Math.sqrt(2)), heading, 1, false);
+        resetStartTime();
+        while(getRuntime() < 2) // wait 2 seconds
+            parent_op.waitOneFullHardwareCycle();
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(getRuntime() < 2) // wait 2 seconds*/
+        turn(-20, 0.75);
+        resetStartTime();
+        while(getRuntime() < 2) // wait 2 seconds
+            parent_op.waitOneFullHardwareCycle();
+        //encoderTurn(-45, 1);
+        PID_move(squares_to_Encoder(1.5), getGyroYaw(), 1, true);// , 0.5);
+        halt();
+        dump_Climbers();
+    }
+    public void Close_Red_Buttons_CV() throws InterruptedException {
+        PID_move(squares_to_Encoder(0.75), 0, 1, false);// , 1);
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(14, 0.75);//turn(-23, 1);
+        //encoderTurn(45, 1);
+        PID_move(squares_to_Encoder(3.25 * (Math.sqrt(2))), 0, 1, false);
+        PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), 0, 1, true);
+        turn(18, 0.75);
         //encoderTurn(-45, 1);
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
-        PID_move(squares_to_Encoder(0.25), 0, 0.8, true);// , 0.5);
+        PID_move(squares_to_Encoder(0.25), 0, 1, true);// , 0.5);
         halt();
+        dump_Climbers();
     }
-
+    public void dump_Climbers() throws InterruptedException
+    {
+        parent_op.waitOneFullHardwareCycle();
+        servoClimberArm.setPosition(climberDump);
+        resetStartTime();
+        while(getRuntime() < 2) // wait 2 seconds
+            parent_op.waitOneFullHardwareCycle();
+        servoClimberArm.setPosition(climberReturn);
+        resetStartTime();
+        while(getRuntime() < 1) // wait 1 seconds
+            parent_op.waitOneFullHardwareCycle();
+    }
     public void Far_Blue_Buttons() throws InterruptedException {
         move(-1, 1);
         turn(-45, 1);

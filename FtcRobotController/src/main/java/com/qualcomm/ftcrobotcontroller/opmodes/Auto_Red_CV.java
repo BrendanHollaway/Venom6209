@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
@@ -52,8 +53,10 @@ public class Auto_Red_CV extends LinearOpModeCV {
     @Override
     public void runOpMode() throws InterruptedException {
         //Wait for vision to initialize - this should be the first thing you do
+        super.map();
         waitForVisionStart();
-        auto = new AutonomousSegments();
+        DbgLog.error("Ready to start");
+        auto = new AutonomousSegments(motorFL, motorBL, motorFR, motorBR, IMU, telemetry, this);
         //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
         //Set the frame size
@@ -83,6 +86,7 @@ public class Auto_Red_CV extends LinearOpModeCV {
         //Main loop
         //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
         //This loop will exit once the opmode is closed
+        auto.Close_Blue_Buttons_CV();
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());

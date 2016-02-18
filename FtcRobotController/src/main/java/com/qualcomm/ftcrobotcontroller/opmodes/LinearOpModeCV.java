@@ -33,6 +33,8 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
     protected static Servo servoL; //left zipliner
     protected static Servo servoR; //right zipliner
     protected static Servo servoClimberArm;
+    protected static final float climberDump = .19f;
+    protected static final float climberReturn = .06f;
     protected static Servo servoRatL;
     protected static Servo servoRatR;
     protected static Servo servoTread;
@@ -69,7 +71,7 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
-
+        telemetry.addData("init begun:", "true");
 
         if(IMU == null) {
             try {
@@ -81,6 +83,7 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
                         , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
                         //addressing
                         , (byte) AdafruitIMU.OPERATION_MODE_IMU);
+                IMU.startIMU();
                 telemetry.addData("IMU IS ALIVE: ", "NO ERRORS!");
             } catch (RobotCoreException e) {
                 telemetry.addData("IMU IS DEAD: ", "IT THREW AN ERROR");
@@ -90,7 +93,6 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         {
             telemetry.addData("IMU already init:", " true");
         }
-        IMU.startIMU();
         //servoRRat.setPosition(0.44);
         //servoLRat.setPosition(0.5);
         //servoClimberArm.setPosition(1);
