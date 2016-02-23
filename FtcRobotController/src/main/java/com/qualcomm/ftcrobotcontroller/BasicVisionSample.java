@@ -75,7 +75,6 @@ public class BasicVisionSample extends VisionOpMode {
     @Override
     public void loop() {
         super.loop();
-
         telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
         telemetry.addData("Beacon Location (Center)", String.format("x: %.2f y: %.2f", (beacon.getAnalysis().getCenter().y) / (double) height, (beacon.getAnalysis().getCenter().x) / (double) width)); // my phone is upright
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());

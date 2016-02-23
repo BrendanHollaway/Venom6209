@@ -14,6 +14,8 @@ public class NoThread_TeleOp extends LinearOpMode2{
     double[] accel = new double[3];
     //double yToggle = 1.0;
     boolean enableSOS = true;
+    boolean PID_enabled = true;
+    AutonomousSegments auto = new AutonomousSegments(telemetry, this);
     //boolean SOSactive = false;
     //boolean rat360moved = false;
     
@@ -53,6 +55,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
         super.map();
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
+
     /* BUTTON MAPPING
         CONTROLLER 1
             y1 = left wheels
@@ -81,7 +84,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
 
      */
         while(!opModeIsActive());
-
         while(opModeIsActive()) {
             // DRIVE CONTROL - Controller 1
             if(enableSOS && gyroPitch() > 50)
@@ -111,12 +113,22 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBR.setPower(gamepad1.right_trigger > 0.1? gamepad1.right_trigger : 0);
                 motorBL.setPower(gamepad1.left_trigger > 0.1? -gamepad1.left_trigger : 0);
             }
+            else if(gamepad1.left_bumper && gamepad1.right_bumper) {
+                PID_enabled = true;
+                motorFR.setPower(-0.75);
+                motorFL.setPower(0.75);
+                motorBR.setPower(-0.75);
+                motorBL.setPower(0.75);
+            }
             else {
+                PID_enabled = false;
+                auto.resetPID();
                 motorFR.setPower(0);
                 motorFL.setPower(0);
                 motorBR.setPower(0);
                 motorBL.setPower(0);
             }
+
             if(gamepad1.left_trigger > .1 && gamepad1.right_trigger > .1) {
                 servoRatL.setPosition(0);
                 servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
@@ -125,9 +137,11 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 servoRatL.setPosition(.5);
             if (gamepad1.y) {
                 servoClimberArm.setPosition(.19);
+                //servoClimberArm.setPosition(1);
             }
             else if (gamepad1.a) {
                 servoClimberArm.setPosition(.06);
+                //servoClimberArm.setPosition(0);
             }
             if(gamepad1.dpad_down)
                 motorS.setPower(-1);
@@ -158,14 +172,14 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorPR.setPower(0);
             }
             if (gamepad2.right_bumper) {
-                servoR.setPosition(.85);
+                servoR.setPosition(.82);
             } else if (gamepad2.right_trigger > .1) {
                 servoR.setPosition(0);
             }
             if (gamepad2.left_bumper) {
-                servoL.setPosition(0);
+                servoL.setPosition(.22);
             } else if (gamepad2.left_trigger > .1) {
-                servoL.setPosition(.94);
+                servoL.setPosition(1);
             }
 
             telemetry.addData("left: ", String.format("%.2f, r: %.2f", servoL.getPosition(), servoR.getPosition()));

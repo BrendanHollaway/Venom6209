@@ -37,7 +37,6 @@ allprojects {
 }
 
 dependencies {
-    compile project(':ftc-visionlib')
     compile project(':opencv-java')
     compile files('libs/android-support-v4.jar')
     compile(name: 'RobotCore-release', ext: 'aar')

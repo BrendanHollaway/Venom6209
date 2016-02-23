@@ -82,7 +82,9 @@ public class Auto_Red_CV extends LinearOpModeCV {
 
         //Wait for the match to begin
         waitForStart();
-
+        resetStartTime();
+        while(getRuntime() < 8)
+            waitOneFullHardwareCycle();
         //Main loop
         //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
         //This loop will exit once the opmode is closed

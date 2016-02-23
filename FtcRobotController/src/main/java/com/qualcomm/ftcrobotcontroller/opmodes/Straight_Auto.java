@@ -17,20 +17,7 @@ public class Straight_Auto extends LinearOpModeCV {
         super.map();
         waitForStart();
         auto = new AutonomousSegments(motorFL, motorBL, motorFR, motorBR, IMU, telemetry, this);
-        int encoder = motorFR.getCurrentPosition();
-        //auto.Close_Blue_Buttons_CV();
-        auto.PID_move(10000 + encoder, 0, 1, false);
-        /*motorFR.setPower(.8);
-        motorFL.setPower(-.2);
-        motorBL.setPower(-.2);
-        motorBR.setPower(.8);
-        long time = System.nanoTime() + 10 * (long) Math.pow(10, 9);
-        while(System.nanoTime() < time)
-            waitOneFullHardwareCycle();
-        motorFR.setPower(0);
-        motorFL.setPower(0);
-        motorBL.setPower(0);
-        motorBR.setPower(0);*/
+        auto.Regionals_Straight();
     }
 }
 

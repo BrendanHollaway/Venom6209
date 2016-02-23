@@ -98,14 +98,15 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         //servoRRat.setPosition(0.44);
         //servoLRat.setPosition(0.5);
         //servoClimberArm.setPosition(1);
-        servoL.setPosition(0);
-        servoR.setPosition(.85);
+        servoL.setPosition(.13);
+        servoR.setPosition(.82);
         //servoBasketR.setPosition(.5);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.5);
         //servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         servoClimberArm.setPosition(0.06);
+        //servoClimberArm.setPosition(.5);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
         //==========================RESET THE ENCODERS=========================
         /*motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
