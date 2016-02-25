@@ -23,7 +23,7 @@ public class AutonomousSegments extends LinearOpModeCV {
     //protected AdafruitIMU IMU;
     protected AdafruitIMU IMU2;
     Telemetry tele;
-    LinearOpMode parent_op;
+    LinearOpModeCV parent_op;
 
     double cm_rotation = 4*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
@@ -56,7 +56,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         this.IMU2 = IMUu;
         tele = telem;
     }
-    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem, LinearOpMode par_op)
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem, LinearOpModeCV par_op)
     {
         this.motorFL = motorFL;
         this.motorBL = motorBL;                     //Actually initializes motors
@@ -66,10 +66,14 @@ public class AutonomousSegments extends LinearOpModeCV {
         tele = telem;
         parent_op = par_op;
     }
-    public AutonomousSegments(Telemetry telem, LinearOpMode par_op)
+    public AutonomousSegments(Telemetry telem, LinearOpModeCV par_op)
     {
         tele = telem;
         parent_op = par_op;
+    }
+    public AutonomousSegments(Telemetry telem)
+    {
+        tele = telem;
     }
     /* public void setupMotors () {
         motorFL = hardwareMap.dcMotor.get("motor_1");
