@@ -219,13 +219,13 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 lZipRun = false;
                 LZipAdd = 0;
                 if(LZipOut){
-                    servoL.setPosition(0);
+                    servoL.setPosition(1);
                     LZipOut = false;
                 }
                 else
                 {
                     LZipOut = true;
-                    ServoL.setPosition(0.82);
+                    ServoL.setPosition(0.22);
                 }
             }
 
