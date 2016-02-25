@@ -91,8 +91,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
         CONTROLLER 1
             Left Stick = left wheels
             Right Stick = right wheels
-            A Button = retract climber dumper
-            Y Button = engage climber dumper
+            Y Button = climber dumper toggle
             Left and Right Trigger = release the lift ratchets
             DPad Down = shield down
             DPad Up = shield up
