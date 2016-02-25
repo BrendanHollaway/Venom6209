@@ -127,6 +127,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorFL.setPower(0);
                 motorBR.setPower(0);
                 motorBL.setPower(0);
+
             }
 
             if(gamepad1.left_trigger > .1 && gamepad1.right_trigger > .1) {
