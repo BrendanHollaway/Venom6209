@@ -7,12 +7,16 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class NoThread_TeleOp extends LinearOpMode2{
 
     //TODO: implement PID control
 
+
     //Variables for PID Control
+    double PID_Offset;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
     //double yToggle = 1.0;
@@ -26,19 +30,17 @@ public class NoThread_TeleOp extends LinearOpMode2{
     double climberDump = 0.19;
     double climberRetract = 0.06;
     double deadzone = 0.1;
-    int togglespeed = 25;
+    double toggle_delay = (double) TimeUnit.SECONDS.toNanos(1L) * 0.25;
 
     //Toggle for Zipliners
-    boolean rZipRun = false;
-    boolean lZipRun = false;
     boolean RZipOut = false;
     boolean LZipOut = false;
-    int RZipAdd = 0;
-    int LZipAdd = 0;
+    double rZipTimer = getRuntime();
+    double lZipTimer = getRuntime();
 
     //Toggle for Climbers
-    boolean climberrun = false;
-    int climberadd = 0;
+    boolean dump = false;
+    double climberTimer = getRuntime();
 
 
     public NoThread_TeleOp() {
@@ -66,6 +68,8 @@ public class NoThread_TeleOp extends LinearOpMode2{
         super.map();
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
 
         //Saving buttons as variables for greater efficiency
         //Controller 1 variables
@@ -111,9 +115,9 @@ public class NoThread_TeleOp extends LinearOpMode2{
             if(enableSOS && gyroPitch() > 50)
             {
                 motorFR.setPower(1);
-                motorFL.setPower(-1);
+                motorFL.setPower(1);
                 motorBR.setPower(1);
-                motorBL.setPower(-1);
+                motorBL.setPower(1);
             }
             else if (Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone)
             {
@@ -131,14 +135,13 @@ public class NoThread_TeleOp extends LinearOpMode2{
             }
             */
             else if(LB && RB) {
-                PID_enabled = true;
-                motorFR.setPower(-0.75);
+                PID_Offset = auto.get_PID();
+                motorFR.setPower(0.75);
                 motorFL.setPower(0.75);
-                motorBR.setPower(-0.75);
+                motorBR.setPower(0.75);
                 motorBL.setPower(0.75);
             }
             else {
-                PID_enabled = false;
                 auto.resetPID();
                 motorFR.setPower(0);
                 motorFL.setPower(0);
@@ -156,18 +159,14 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 servoRatL.setPosition(.5);
 
             //Climber dump toggle
-            if(Y)
-                climberrun = true;
-            if(climberrun)
-                climberadd+=1;
-            if(climberadd >= togglespeed)
+            if(getRuntime() > climberTimer && Y)
             {
-                climberrun = false;
-                climberadd = 0;
+                climberTimer = getRuntime() + toggle_delay;
                 if(dump)
                     servoClimberArm.setPosition(climberRetract);
                 else
                     servoClimberArm.setPosition(climberDump);
+                dump = !dump;
             }
 
             //Shield controls
@@ -175,9 +174,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorS.setPower(-1);
             else if(up)
                 motorS.setPower(1);
-                /* Seems useless?
-            else if(X && System.currentTimeMillis() % 50 > 25)
-                motorS.setPower(1);*/
             else
                 motorS.setPower(0);
 
@@ -188,47 +184,23 @@ public class NoThread_TeleOp extends LinearOpMode2{
             motorPR.setPower(Math.abs(RightY2) > deadzone ? RightY2 : 0);
 
             //zipliner toggles
-            if (RB2) {
-                rZipRun = true;
-            }
-            if(rZipRun)
+            if(getRuntime() > rZipTimer && LB2)
             {
-                RZipAdd+=1;
-            }
-            if(RZipAdd >= togglespeed)
-            {
-                rZipRun = false;
-                RZipAdd = 0;
-                if(RZipOut){
+                rZipTimer = getRuntime() + toggle_delay;
+                if(RZipOut)
                     servoR.setPosition(0);
-                    RZipOut = false;
-                }
                 else
-                {
-                    RZipOut = true;
-                    ServoR.setPosition(0.82);
-                }
+                    servoR.setPosition(0.82);
+                RZipOut = !RZipOut;
             }
-            if (LB2) {
-                lZipRun = true;
-            }
-            if(lZipRun)
+            if(getRuntime() > lZipTimer && RB2)
             {
-                LZipAdd+=1;
-            }
-            if(LZipAdd >= togglespeed)
-            {
-                lZipRun = false;
-                LZipAdd = 0;
-                if(LZipOut){
-                    servoL.setPosition(1);
-                    LZipOut = false;
-                }
+                lZipTimer = getRuntime() + toggle_delay;
+                if(LZipOut)
+                    servoR.setPosition(1);
                 else
-                {
-                    LZipOut = true;
-                    ServoL.setPosition(0.22);
-                }
+                    servoR.setPosition(0.22);
+                LZipOut = !LZipOut;
             }
 
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
