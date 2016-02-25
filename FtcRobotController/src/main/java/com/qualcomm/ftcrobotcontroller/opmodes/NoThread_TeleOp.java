@@ -24,6 +24,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
     double climberDump = 0.19;
     double climberRetract = 0.06;
     double deadzone = 0.1;
+    int togglespeed = 25;
 
     //Toggle for Zipliners
     boolean rZipRun = false;
@@ -32,6 +33,10 @@ public class NoThread_TeleOp extends LinearOpMode2{
     boolean LZipOut = false;
     int RZipAdd = 0;
     int LZipAdd = 0;
+
+    //Toggle for Climbers
+    boolean climberrun = false;
+    int climberadd = 0;
 
 
     public NoThread_TeleOp() {
@@ -66,7 +71,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
         double RightY = gamepad1.right_stick_y;
         double LT = gamepad1.left_trigger;
         double RT = gamepad1.right_trigger;
-        boolean A = gamepad1.a;
         boolean Y = gamepad1.y;
         boolean X = gamepad1.x;
         boolean LB = gamepad1.left_bumper;
@@ -149,12 +153,19 @@ public class NoThread_TeleOp extends LinearOpMode2{
             else
                 servoRatL.setPosition(.5);
 
-            //Climber arms (I WANT TO MAKE IT A TOGGLE)
-            if (Y) {
-                servoClimberArm.setPosition(climberDump);
-            }
-            else if (A) {
-                servoClimberArm.setPosition(climberRetract);
+            //Climber dump toggle
+            if(Y)
+                climberrun = true;
+            if(climberrun)
+                climberadd+=1;
+            if(climberadd >= togglespeed)
+            {
+                climberrun = false;
+                climberadd = 0;
+                if(dump)
+                    servoClimberArm.setPosition(climberRetract);
+                else
+                    servoClimberArm.setPosition(climberDump);
             }
 
             //Shield controls
@@ -162,8 +173,9 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorS.setPower(-1);
             else if(up)
                 motorS.setPower(1);
+                /* Seems useless?
             else if(X && System.currentTimeMillis() % 50 > 25)
-                motorS.setPower(1);
+                motorS.setPower(1);*/
             else
                 motorS.setPower(0);
 
@@ -181,7 +193,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             {
                 RZipAdd+=1;
             }
-            if(RZipAdd >= 25)
+            if(RZipAdd >= togglespeed)
             {
                 rZipRun = false;
                 RZipAdd = 0;
@@ -202,7 +214,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             {
                 LZipAdd+=1;
             }
-            if(LZipAdd >= 25)
+            if(LZipAdd >= togglespeed)
             {
                 lZipRun = false;
                 LZipAdd = 0;
