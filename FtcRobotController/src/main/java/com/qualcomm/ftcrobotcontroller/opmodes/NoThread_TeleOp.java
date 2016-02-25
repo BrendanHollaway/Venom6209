@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.util.Range;
 
 public class NoThread_TeleOp extends LinearOpMode2{
 
+    //TODO: implement PID control
+
+    //Variables for PID Control
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
     //double yToggle = 1.0;
@@ -18,7 +21,24 @@ public class NoThread_TeleOp extends LinearOpMode2{
     AutonomousSegments auto = new AutonomousSegments(telemetry, this);
     //boolean SOSactive = false;
     //boolean rat360moved = false;
-    
+
+    //instantiate constants for easy access
+    double climberDump = 0.19;
+    double climberRetract = 0.06;
+    double deadzone = 0.1;
+    int togglespeed = 25;
+
+    //Toggle for Zipliners
+    boolean rZipRun = false;
+    boolean lZipRun = false;
+    boolean RZipOut = false;
+    boolean LZipOut = false;
+    int RZipAdd = 0;
+    int LZipAdd = 0;
+
+    //Toggle for Climbers
+    boolean climberrun = false;
+    int climberadd = 0;
 
 
     public NoThread_TeleOp() {
@@ -40,52 +60,54 @@ public class NoThread_TeleOp extends LinearOpMode2{
         catch (Exception E) {}
 
     }
-    public boolean buttonheld(boolean button) {
-        int holdTime = 0;
-        while (button) {
-            holdTime++;
 
-            if (holdTime > 4)
-                return true;
-        }
-            return false;
-    }
     @Override
     public void runOpMode() throws InterruptedException{
         super.map();
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
 
+        //Saving buttons as variables for greater efficiency
+        //Controller 1 variables
+        double LeftY = gamepad1.left_stick_y;
+        double RightY = gamepad1.right_stick_y;
+        double LT = gamepad1.left_trigger;
+        double RT = gamepad1.right_trigger;
+        boolean Y = gamepad1.y;
+        boolean X = gamepad1.x;
+        boolean LB = gamepad1.left_bumper;
+        boolean RB = gamepad1.right_bumper;
+        boolean up = gamepad1.dpad_up;
+        boolean down = gamepad1.dpad_down;
+
+        //Controller 2 variables
+        double LeftY2 = gamepad2.left_stick_y;
+        double RightY2 = gamepad2.right_stick_y;
+        boolean LB2 = gamepad2.left_bumper;
+        boolean RB2 = gamepad2.right_bumper;
+
+
     /* BUTTON MAPPING
         CONTROLLER 1
-            y1 = left wheels
-            y2 = right wheels
-            a_btn = retract climber dumper
-            y_btn = engage climber dumper
-            hold left trigger = spit out blocks
-            hold right trigger = suck up blocks
-            start = stop manipulator
-            hold left and right bumper = release the lift ratchets
+            Left Stick = left wheels
+            Right Stick = right wheels
+            Y Button = climber dumper toggle
+            Left and Right Trigger = release the lift ratchets
+            DPad Down = shield down
+            DPad Up = shield up
 
         CONTROLLER 2
-            y1 = extend/retract lift
-            y2 = change angle of lift
-            y_btn = zipliner left out
-            x_btn = zipliner left in
-            b_btn = zipliner right out
-            a_btn = zipliner right in
-            left_bumper = keep blocks in
-            right_bumper = dump blocks
-            right_trigger = turn tread right
-            left_trigger = turn tread left
-            back = stop tread
-            dpad_down = shield down
-            dpad_up = shield up
+            Left Stick = extend/retract lift
+            Right Stick = change angle of lift
+            Left Bumper = zipliner left toggle
+            Right Bumper = zipliner right toggle
 
      */
         while(!opModeIsActive());
         while(opModeIsActive()) {
             // DRIVE CONTROL - Controller 1
+
+            //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
             {
                 motorFR.setPower(1);
@@ -93,27 +115,22 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBR.setPower(1);
                 motorBL.setPower(-1);
             }
-            else if (Math.abs(gamepad1.left_stick_y) > 0.1 && Math.abs(gamepad1.right_stick_y) > 0.1) {
-                motorFR.setPower(-gamepad1.right_stick_y);
-                motorFL.setPower(gamepad1.left_stick_y);
-                motorBR.setPower(-gamepad1.right_stick_y);
-                motorBL.setPower(gamepad1.left_stick_y);
-            } else if (Math.abs(gamepad1.right_stick_y) > 0.1) {
-                motorFR.setPower(-gamepad1.right_stick_y);
-                motorFL.setPower(0);
-                motorBR.setPower(-gamepad1.right_stick_y);
-                motorBL.setPower(0);
-            } else if (Math.abs(gamepad1.left_stick_y) > 0.1) {
-                motorFR.setPower(0);
-                motorFL.setPower(gamepad1.left_stick_y);
-                motorBR.setPower(0);
-                motorBL.setPower(gamepad1.left_stick_y);
-            } else if(gamepad1.left_trigger > 0.1 || gamepad1.right_trigger > 0.1)
+            else if (Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone)
             {
-                motorBR.setPower(gamepad1.right_trigger > 0.1? gamepad1.right_trigger : 0);
-                motorBL.setPower(gamepad1.left_trigger > 0.1? -gamepad1.left_trigger : 0);
+                motorFR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
+                motorFL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                motorBR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
+                motorBL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
             }
-            else if(gamepad1.left_bumper && gamepad1.right_bumper) {
+            /*
+             * Removing because it seems to conflict with Ratchet
+            else if(LT > deadzone || RT > deadzone)
+            {
+                motorBR.setPower(RT > deadzone? RT : 0);
+                motorBL.setPower(LT > deadzone? -LT : 0);
+            }
+            */
+            else if(LB && RB) {
                 PID_enabled = true;
                 motorFR.setPower(-0.75);
                 motorFL.setPower(0.75);
@@ -130,94 +147,100 @@ public class NoThread_TeleOp extends LinearOpMode2{
 
             }
 
-            if(gamepad1.left_trigger > .1 && gamepad1.right_trigger > .1) {
+            //Ratchet Controls
+            if(LT > deadzone && RT > deadzone) {
                 servoRatL.setPosition(0);
                 servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
             }
             else
                 servoRatL.setPosition(.5);
-            if (gamepad1.y) {
-                servoClimberArm.setPosition(.19);
-                //servoClimberArm.setPosition(1);
-            }
-            else if (gamepad1.a) {
-                servoClimberArm.setPosition(.06);
-                //servoClimberArm.setPosition(0);
-            }
-            if(gamepad1.dpad_down)
-                motorS.setPower(-1);
-            else if(gamepad1.dpad_up)
-                motorS.setPower(1);
-            else if(gamepad1.x && System.currentTimeMillis() % 50 > 25)
-                motorS.setPower(1);
-            else
-                motorS.setPower(0);
-            if (Math.abs(gamepad2.left_stick_y) > 0.1 && Math.abs(gamepad2.right_stick_y) > 0.1)
+
+            //Climber dump toggle
+            if(Y)
+                climberrun = true;
+            if(climberrun)
+                climberadd+=1;
+            if(climberadd >= togglespeed)
             {
-                motorPL.setPower(gamepad2.right_stick_y);
-                motorPR.setPower(gamepad2.left_stick_y);
-            }
-            else if(Math.abs(gamepad2.right_stick_y) > 0.1)
-            {
-                motorPL.setPower(gamepad2.right_stick_y);
-                motorPR.setPower(0);
-            }
-            else if(Math.abs(gamepad2.left_stick_y) > 0.1)
-            {
-                motorPL.setPower(0);
-                motorPR.setPower(gamepad2.left_stick_y);
-            }
-            else
-            {
-                motorPL.setPower(0);
-                motorPR.setPower(0);
-            }
-            if (gamepad2.right_bumper) {
-                servoR.setPosition(.82);
-            } else if (gamepad2.right_trigger > .1) {
-                servoR.setPosition(0);
-            }
-            if (gamepad2.left_bumper) {
-                servoL.setPosition(.22);
-            } else if (gamepad2.left_trigger > .1) {
-                servoL.setPosition(1);
+                climberrun = false;
+                climberadd = 0;
+                if(dump)
+                    servoClimberArm.setPosition(climberRetract);
+                else
+                    servoClimberArm.setPosition(climberDump);
             }
 
-            telemetry.addData("left: ", String.format("%.2f, r: %.2f", servoL.getPosition(), servoR.getPosition()));
-            telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
-            telemetry.addData("servo: ", String.format("rrat: %.2f", servoRatR.getPosition()));
-            telemetry.addData("encoderBL: ", String.format("%d + %d + %d + %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
+            //Shield controls
+            if(down)
+                motorS.setPower(-1);
+            else if(up)
+                motorS.setPower(1);
+                /* Seems useless?
+            else if(X && System.currentTimeMillis() % 50 > 25)
+                motorS.setPower(1);*/
+            else
+                motorS.setPower(0);
+
+            //LIFT CONTROL - Controller 2
+
+            //Pulley controls
+            motorPL.setPower(Math.abs(LeftY2) > deadzone ? LeftY2 : 0);
+            motorPR.setPower(Math.abs(RightY2) > deadzone ? RightY2 : 0);
+
+            //zipliner toggles
+            if (RB2) {
+                rZipRun = true;
+            }
+            if(rZipRun)
+            {
+                RZipAdd+=1;
+            }
+            if(RZipAdd >= togglespeed)
+            {
+                rZipRun = false;
+                RZipAdd = 0;
+                if(RZipOut){
+                    servoR.setPosition(0);
+                    RZipOut = false;
+                }
+                else
+                {
+                    RZipOut = true;
+                    ServoR.setPosition(0.82);
+                }
+            }
+            if (LB2) {
+                lZipRun = true;
+            }
+            if(lZipRun)
+            {
+                LZipAdd+=1;
+            }
+            if(LZipAdd >= togglespeed)
+            {
+                lZipRun = false;
+                LZipAdd = 0;
+                if(LZipOut){
+                    servoL.setPosition(1);
+                    LZipOut = false;
+                }
+                else
+                {
+                    LZipOut = true;
+                    ServoL.setPosition(0.22);
+                }
+            }
+
+            telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
+            telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
+            telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));
+            telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
             waitOneFullHardwareCycle();
         }
         telemetry.addData("Program complete", "hi");
     }
-    /*double scaleInput(double val)  {
-        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 };
-
-
-
-
-        // get the corresponding index for the  array.
-        int index = (int) (val * 16.0);
-        if (index < 0) {
-            index = -index;
-        } else if (index > 16) {
-            index = 16;
-        }
-
-
-        if (val < 0) {
-            dScale = -scaleArray[index];
-        } else {
-            dScale = scaleArray[index];
-        }
-        //if ()
-
-        return dScale;
-    } */
 /*
     void SOScheck() {
         if (gyroPitch() < -55 ) {
