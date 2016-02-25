@@ -230,10 +230,10 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 }
             }
 
-            telemetry.addData("left: ", String.format("%.2f, righ: %.2f", servoL.getPosition(), servoR.getPosition()));
-            telemetry.addData("ratL: ", String.format("%.2f, climb: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
-            telemetry.addData("servo: ", String.format("rrat: %.2f", servoRatR.getPosition()));
-            telemetry.addData("encoderBL: ", String.format("%d + %d + %d + %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
+            telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
+            telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
+            telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));
+            telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
             waitOneFullHardwareCycle();
