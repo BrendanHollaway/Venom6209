@@ -123,7 +123,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorBL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
             }
             /*
-             * Removing because it seems to conflict with Rachet
+             * Removing because it seems to conflict with Ratchet
             else if(LT > deadzone || RT > deadzone)
             {
                 motorBR.setPower(RT > deadzone? RT : 0);
