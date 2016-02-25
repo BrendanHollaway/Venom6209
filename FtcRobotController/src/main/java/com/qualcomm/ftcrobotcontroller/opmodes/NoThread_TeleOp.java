@@ -180,7 +180,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             else
                 motorS.setPower(0);
 
-            //Stuff Control - Controller 2
+            //LIFT CONTROL - Controller 2
 
             //Pulley controls
             motorPL.setPower(Math.abs(LeftY2) > deadzone ? LeftY2 : 0);
