@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.Range;
 
 public class NoThread_TeleOp extends LinearOpMode2{
 
+    //TODO: implement PID control
+
     //Variables for PID Control
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
     double[] accel = new double[3];
