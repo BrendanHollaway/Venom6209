@@ -124,9 +124,9 @@ public class NoThread_TeleOp extends LinearOpMode2{
             else if (Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone)
             {
                 motorFR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
-                motorFL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                motorFL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
                 motorBR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
-                motorBL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                motorBL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
             }
             /*
              * Removing because it seems to conflict with Ratchet
