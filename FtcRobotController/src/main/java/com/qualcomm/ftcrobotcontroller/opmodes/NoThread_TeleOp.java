@@ -30,7 +30,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
     double climberDump = 0.19;
     double climberRetract = 0.06;
     double deadzone = 0.1;
-    double toggle_delay = (double) TimeUnit.SECONDS.toNanos(1L) * 0.25;
+    double toggle_delay = 0.25;
 
     //Toggle for Zipliners
     boolean RZipOut = false;
