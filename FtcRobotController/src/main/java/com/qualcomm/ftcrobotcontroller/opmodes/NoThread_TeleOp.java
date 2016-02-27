@@ -22,7 +22,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
     //double yToggle = 1.0;
     boolean enableSOS = true;
     boolean PID_enabled = true;
-    AutonomousSegments auto = new AutonomousSegments(telemetry);
+    AutonomousSegments auto = new AutonomousSegments(telemetry, this);
     //boolean SOSactive = false;
     //boolean rat360moved = false;
 
@@ -89,8 +89,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
         double RightY2 = gamepad2.right_stick_y;
         boolean LB2 = gamepad2.left_bumper;
         boolean RB2 = gamepad2.right_bumper;
-        boolean up2 = gamepad2.dpad_up;
-        boolean down2 = gamepad2.dpad_up;
 
 
     /* BUTTON MAPPING
@@ -138,7 +136,10 @@ public class NoThread_TeleOp extends LinearOpMode2{
             */
             else if(LB && RB) {
                 PID_Offset = auto.get_PID();
-                PID_motors_set(0.8, PID_Offset);
+                motorFR.setPower(0.75);
+                motorFL.setPower(0.75);
+                motorBR.setPower(0.75);
+                motorBL.setPower(0.75);
             }
             else {
                 auto.resetPID();
@@ -172,10 +173,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
             if(down)
                 motorS.setPower(-1);
             else if(up)
-                motorS.setPower(1);
-            else if(down2)
-                motorS.setPower(-1);
-            else if(up2)
                 motorS.setPower(1);
             else
                 motorS.setPower(0);
@@ -216,22 +213,21 @@ public class NoThread_TeleOp extends LinearOpMode2{
         }
         telemetry.addData("Program complete", "hi");
     }
-    public void PID_motors_set(double speed, double PID_change)
-    {
-        double right = speed + PID_change;
-        double left = speed - PID_change;
-        double max = Math.max(Math.abs(right), Math.abs(left));
-        //This standardizes the speeds, so that they are correct relative to each other,
-        //and that one of the two will be equivalent, and neither greater, than "speed"
-        right /= max;
-        right *= speed;
-        left /= max;
-        left *= speed;
-        motorBL.setPower(left);
-        motorFL.setPower(left);
-        motorBR.setPower(right);
-        motorFR.setPower(right);
-    }
+/*
+    void SOScheck() {
+        if (gyroPitch() < -55 ) {
+            SOSactive = true;
+            motorBL.setPower(-1);
+            motorBR.setPower(1);
+            motorFL.setPower(-1);
+            motorFR.setPower(1);
+            //If the robot is flipping over, then driver control is
+            //motorFL.setPower(0);
+            //motorFR.setPower(0);
+        }
+        else
+            SOSactive = false;
+    }*/
 }
 
 
