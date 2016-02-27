@@ -30,7 +30,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
     double climberDump = 0.19;
     double climberRetract = 0.06;
     double deadzone = 0.1;
-    double toggle_delay = (double) TimeUnit.SECONDS.toNanos(1L) * 0.25;
+    double toggle_delay = 0.25;
 
     //Toggle for Zipliners
     boolean RZipOut = false;
@@ -122,9 +122,9 @@ public class NoThread_TeleOp extends LinearOpMode2{
             else if (Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone)
             {
                 motorFR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
-                motorFL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                motorFL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
                 motorBR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
-                motorBL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                motorBL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
             }
             /*
              * Removing because it seems to conflict with Ratchet
