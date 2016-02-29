@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class LinearOpMode2 extends LinearOpModeCamera {
@@ -39,11 +38,11 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     protected static Servo servoClimberArm;
     protected static Servo servoRatL;
     protected static Servo servoRatR;
-    //protected static Servo servoTread;
-    //protected static Servo servoBasketL;
-    //protected static Servo servoBasketR;
     protected static Servo servoAllClearL; // all clear left
     protected static Servo servoAllClearR; // all clear right
+    protected static Servo servoUpperL;
+    protected static Servo servoUpperR;
+    protected static Servo servoUpperF;
 
     //Other
     protected static AdafruitIMU IMU;
@@ -70,6 +69,9 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
+        servoUpperL = hardwareMap.servo.get("servoUpperL");
+        servoUpperR = hardwareMap.servo.get("servoUpperR");
+        servoUpperF = hardwareMap.servo.get("servoUpperF");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
