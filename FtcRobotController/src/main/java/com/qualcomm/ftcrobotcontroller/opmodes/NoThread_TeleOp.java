@@ -73,22 +73,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
 
         //Saving buttons as variables for greater efficiency
         //Controller 1 variables
-        double LeftY = gamepad1.left_stick_y;
-        double RightY = gamepad1.right_stick_y;
-        double LT = gamepad1.left_trigger;
-        double RT = gamepad1.right_trigger;
-        boolean Y = gamepad1.y;
-        boolean X = gamepad1.x;
-        boolean LB = gamepad1.left_bumper;
-        boolean RB = gamepad1.right_bumper;
-        boolean up = gamepad1.dpad_up;
-        boolean down = gamepad1.dpad_down;
-
-        //Controller 2 variables
-        double LeftY2 = gamepad2.left_stick_y;
-        double RightY2 = gamepad2.right_stick_y;
-        boolean LB2 = gamepad2.left_bumper;
-        boolean RB2 = gamepad2.right_bumper;
+        
 
 
     /* BUTTON MAPPING
@@ -109,6 +94,22 @@ public class NoThread_TeleOp extends LinearOpMode2{
      */
         while(!opModeIsActive());
         while(opModeIsActive()) {
+            double LeftY = gamepad1.left_stick_y;
+            double RightY = gamepad1.right_stick_y;
+            double LT = gamepad1.left_trigger;
+            double RT = gamepad1.right_trigger;
+            boolean Y = gamepad1.y;
+            boolean X = gamepad1.x;
+            boolean LB = gamepad1.left_bumper;
+            boolean RB = gamepad1.right_bumper;
+            boolean up = gamepad1.dpad_up;
+            boolean down = gamepad1.dpad_down;
+    
+            //Controller 2 variables
+            double LeftY2 = gamepad2.left_stick_y;
+            double RightY2 = gamepad2.right_stick_y;
+            boolean LB2 = gamepad2.left_bumper;
+            boolean RB2 = gamepad2.right_bumper;
             // DRIVE CONTROL - Controller 1
 
             //Base Driving Controls
