@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class LinearOpMode2 extends LinearOpModeCamera {
@@ -39,13 +38,17 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     protected static Servo servoClimberArm;
     protected static Servo servoRatL;
     protected static Servo servoRatR;
-    //protected static Servo servoTread;
-    //protected static Servo servoBasketL;
-    //protected static Servo servoBasketR;
     protected static Servo servoAllClearL; // all clear left
     protected static Servo servoAllClearR; // all clear right
+<<<<<<< HEAD
     protected static Servo servoButtonL;
     protected static Servo servoButtonR;
+=======
+    protected static Servo servoUpperL;
+    protected static Servo servoUpperR;
+    protected static Servo servoPushL;
+    protected static Servo servoPushR;
+>>>>>>> origin/master
 
     //Other
     protected static AdafruitIMU IMU;
@@ -72,11 +75,18 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
+<<<<<<< HEAD
         //TODO: Add in left and right servos once they are attached
         servoAllClearL = hardwareMap.servo.get("servoAllClearR");
         servoAllClearR = hardwareMap.servo.get("servoAllClearR");
         servoButtonL = hardwareMap.servo.get("servoButtonL");
         servoButtonR = hardwareMap.servo.get("servoButtonL");
+=======
+        servoUpperL = hardwareMap.servo.get("servoUpperL");
+        servoUpperR = hardwareMap.servo.get("servoUpperR");
+        servoPushL = hardwareMap.servo.get("servoPushL");
+        servoPushR = hardwareMap.servo.get("servoPushR");
+>>>>>>> origin/master
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
