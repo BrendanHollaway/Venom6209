@@ -98,11 +98,11 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         //servoRRat.setPosition(0.44);
         //servoLRat.setPosition(0.5);
         //servoClimberArm.setPosition(1);
-        servoL.setPosition(.13);
+        servoL.setPosition(.17);
         servoR.setPosition(.82);
         //servoBasketR.setPosition(.5);
         servoRatL.setPosition(.5);
-        servoRatR.setPosition(.5);
+        servoRatR.setPosition(.2);
         //servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         servoClimberArm.setPosition(0.06);

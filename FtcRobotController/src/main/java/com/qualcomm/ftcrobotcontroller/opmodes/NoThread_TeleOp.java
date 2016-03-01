@@ -73,22 +73,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
 
         //Saving buttons as variables for greater efficiency
         //Controller 1 variables
-        double LeftY = gamepad1.left_stick_y;
-        double RightY = gamepad1.right_stick_y;
-        double LT = gamepad1.left_trigger;
-        double RT = gamepad1.right_trigger;
-        boolean Y = gamepad1.y;
-        boolean X = gamepad1.x;
-        boolean LB = gamepad1.left_bumper;
-        boolean RB = gamepad1.right_bumper;
-        boolean up = gamepad1.dpad_up;
-        boolean down = gamepad1.dpad_down;
-
-        //Controller 2 variables
-        double LeftY2 = gamepad2.left_stick_y;
-        double RightY2 = gamepad2.right_stick_y;
-        boolean LB2 = gamepad2.left_bumper;
-        boolean RB2 = gamepad2.right_bumper;
+        telemetry.addData("hi: ", " before the thingy");
 
 
     /* BUTTON MAPPING
@@ -110,6 +95,25 @@ public class NoThread_TeleOp extends LinearOpMode2{
         while(!opModeIsActive());
         while(opModeIsActive()) {
             // DRIVE CONTROL - Controller 1
+            double LeftY = gamepad1.left_stick_y;
+            telemetry.addData("hi: ", " after the thingy");
+            double RightY = gamepad1.right_stick_y;
+            double LT = gamepad1.left_trigger;
+            double RT = gamepad1.right_trigger;
+            boolean Y = gamepad1.y;
+            boolean X = gamepad1.x;
+            boolean LB = gamepad1.left_bumper;
+            boolean RB = gamepad1.right_bumper;
+            boolean up = gamepad1.dpad_up;
+            boolean down = gamepad1.dpad_down;
+            boolean up2 = gamepad2.dpad_up;
+            boolean down2 = gamepad2.dpad_down;
+
+            //Controller 2 variables
+            double LeftY2 = gamepad2.left_stick_y;
+            double RightY2 = gamepad2.right_stick_y;
+            boolean LB2 = gamepad2.left_bumper;
+            boolean RB2 = gamepad2.right_bumper;
 
             //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
@@ -174,6 +178,10 @@ public class NoThread_TeleOp extends LinearOpMode2{
                 motorS.setPower(-1);
             else if(up)
                 motorS.setPower(1);
+            else if(down2)
+                motorS.setPower(-1);
+            else if(up2)
+                motorS.setPower(1);
             else
                 motorS.setPower(0);
 
@@ -184,7 +192,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             motorPR.setPower(Math.abs(RightY2) > deadzone ? RightY2 : 0);
 
             //zipliner toggles
-            if(getRuntime() > rZipTimer && LB2)
+            if(getRuntime() > rZipTimer && RB2)
             {
                 rZipTimer = getRuntime() + toggle_delay;
                 if(RZipOut)
@@ -193,13 +201,13 @@ public class NoThread_TeleOp extends LinearOpMode2{
                     servoR.setPosition(0.82);
                 RZipOut = !RZipOut;
             }
-            if(getRuntime() > lZipTimer && RB2)
+            if(getRuntime() > lZipTimer && LB2)
             {
                 lZipTimer = getRuntime() + toggle_delay;
                 if(LZipOut)
-                    servoR.setPosition(1);
+                    servoL.setPosition(1);
                 else
-                    servoR.setPosition(0.22);
+                    servoL.setPosition(0.13);
                 LZipOut = !LZipOut;
             }
 

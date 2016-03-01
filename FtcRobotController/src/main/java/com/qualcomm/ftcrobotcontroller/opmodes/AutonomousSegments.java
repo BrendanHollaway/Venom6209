@@ -23,7 +23,8 @@ public class AutonomousSegments extends LinearOpModeCV {
     //protected AdafruitIMU IMU;
     protected AdafruitIMU IMU2;
     Telemetry tele;
-    LinearOpMode parent_op;
+    LinearOpModeCV parent_op;
+    LinearOpMode par_op;
 
     double cm_rotation = 4*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
@@ -40,6 +41,7 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
 
     public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IM)
+
     {
         this.motorFL = motorFL;
         this.motorBL = motorBL;                     //Actually initializes motors
@@ -64,23 +66,23 @@ public class AutonomousSegments extends LinearOpModeCV {
         this.motorBR = motorBR;
         this.IMU2 = IMUu;
         tele = telem;
+        this.par_op = par_op;
+    }
+    public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem, LinearOpModeCV par_op)
+    {
+        this.motorFL = motorFL;
+        this.motorBL = motorBL;                     //Actually initializes motors
+        this.motorFR = motorFR;
+        this.motorBR = motorBR;
+        this.IMU2 = IMUu;
+        tele = telem;
         parent_op = par_op;
     }
     public AutonomousSegments(Telemetry telem, LinearOpMode par_op)
     {
         tele = telem;
-        parent_op = par_op;
+        this.par_op = par_op;
     }
-    /* public void setupMotors () {
-        motorFL = hardwareMap.dcMotor.get("motor_1");
-        motorBL = hardwareMap.dcMotor.get("motor_2");
-        motorFR = hardwareMap.dcMotor.get("motor_3");
-        motorBR = hardwareMap.dcMotor.get("motor_4");
-        motorFL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-    } */
 
     public void Climbers() throws InterruptedException {
         /*if(servoClimberArm == null)
@@ -276,36 +278,6 @@ public class AutonomousSegments extends LinearOpModeCV {
         }
         halt();
     }
-    public void moveCheck(double position, double speed) throws InterruptedException   //move while checking for other robots
-    {
-        int currentPosition = motorBR.getCurrentPosition();
-        while(Math.abs(motorBR.getCurrentPosition()) < position + currentPosition ) {
-            checkObject();
-            motorFL.setPower(Math.signum(position) * Math.abs(speed));
-            motorBL.setPower(Math.signum(position) * Math.abs(speed));
-            motorFR.setPower(Math.signum(position) * Math.abs(speed));
-            motorBR.setPower(Math.signum(position) * Math.abs(speed));
-        }
-        halt();
-    }
-    public void checkObject() throws InterruptedException
-    {
-        if (frontUltra.getUltrasonicLevel() < 10)
-        {
-            halt();
-            ssleep(3000);                                 //waits for robot to get out of the way
-            /*if (frontUltra.getUltrasonicLevel() < 10)
-            {
-                turn(90, 1);
-                move(30 * inches, 1);
-                turn(-90, 1);
-                move(48 * inches, 1);
-                turn(-90, 1);
-                move(30 * inches, 1);
-                turn(90, 1);
-            }*/
-        }
-    }
     public void turn(double deg, double speed, double tolerance) throws InterruptedException
     {
         speed = Range.clip(Math.abs(speed), -1, 1);
@@ -411,31 +383,6 @@ public class AutonomousSegments extends LinearOpModeCV {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
-    public void squareTest() throws InterruptedException {
-        move(1, 1);
-    }
-    //SOS is deprecated here
-    public void SOS(double acc_y, double acc_z)
-    {
-        //IMU.getAccel(accel);
-        acc_y = accel[1];
-        acc_z = accel[2];
-        if (acc_y < -8.88 && acc_z > -4.14)
-        {
-            motorBL.setPower(-1);
-            motorBR.setPower(-1);
-            motorFL.setPower(-1);
-            motorFR.setPower(-1);
-            try {
-                wait(500);
-            }
-            catch (Exception E){}
-            motorBL.setPower(0);
-            motorBR.setPower(0);
-            motorFL.setPower(0);
-            motorFR.setPower(0);
-        }
-    }
     public int squares_to_Encoder(double squares)
     {
         return (int)(squares / square_per_rot * 1120);
@@ -494,6 +441,76 @@ public class AutonomousSegments extends LinearOpModeCV {
         move(3.5, 1);
         turn(45, 1);
         //encoderTurn(45, 1);
+    }
+    //Polar-written movement. USeful for converting old methods to new format
+    public void PID_move_displacement_polar(double r, double theta, double speed) throws InterruptedException
+    {
+        speed = Range.clip(speed, -1, 1);
+        double x = xPos + r * Math.cos(theta);
+        double y = yPos + r * Math.sin(theta);
+        double target_heading;
+        double target_x;
+        double target_y;
+        double left_speed;
+        double right_speed;
+        double old_x_acc = 0;
+        double curr_x_acc = 0;
+        double old_y_acc = 0;
+        double curr_y_acc = 0;                                //x is currently forwards and backwards
+        double x_vel = 0;                                     //moves robot to position using encoder values, gyro, accelerometer, and magnetometer
+        double y_vel = 0;
+        double oldEncoder;
+        double currEncoder = motorBR.getCurrentPosition();
+        double dE;
+        double dEx = 0;
+        double dEy = 0;
+        double oldTime;
+        double currTime = getRuntime();
+        double dt = 0;
+        double[] accs = new double[3];
+        motorFL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBL.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        int currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        int currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        int currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value
+        while(Math.abs(x-xPos) > .1 || Math.abs(y-yPos) > .1)
+        {
+            //TARGET HEADING CALCULATIONS
+            target_x = x - xPos;
+            target_y = y - yPos;
+            target_heading = Math.atan2(target_y, target_x);
+            target_heading = target_heading > 0? target_heading : target_heading + 2 * Math.PI; // makes it positive, from 0 to 2pi
+            target_heading = Math.toDegrees(target_heading); // rad -> deg; 0 to 360
+            if(speed < 0) // makes it negative for negative movement... not sure if this will work. Don't back up :D
+                target_heading = -target_heading;
+            //TIME CALCULATIONS
+            oldTime = currTime;
+            currTime = getRuntime();
+            dt = currTime - oldTime; // puts time in seconds
+            //ECNCODER VALUE CALCULATIONS
+            oldEncoder = currEncoder;
+            //MotorFR is in here twice bc the encoder on MotorBR doesn't work currently
+            currEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorFR.getCurrentPosition() - currentFRPosition, motorFR.getCurrentPosition() - currentFRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
+            dE = currEncoder - oldEncoder;
+            dEx = dE * Math.cos(Math.toRadians(getGyroYaw()));
+            dEy = dE * Math.sin(Math.toRadians(getGyroYaw()));
+            // ACCELERATION VALUE CALCULATIONS
+            //IMU.getAccel(accs);
+            old_x_acc = curr_x_acc;
+            old_y_acc = curr_y_acc;
+            curr_x_acc = accs[0];
+            curr_y_acc = accs[1];
+            //VELOCITY
+            x_vel += 0.5 * (old_x_acc + curr_x_acc) * dt;
+            y_vel += 0.5 * (old_y_acc + curr_y_acc) * dt;
+            //CALCULATE POSITION
+            xPos += dEx;
+            yPos += dEy;
+            //CALCULATE SPEED
+        }
     }
 
     public void move_pos(double x, double y, double speed) throws InterruptedException
