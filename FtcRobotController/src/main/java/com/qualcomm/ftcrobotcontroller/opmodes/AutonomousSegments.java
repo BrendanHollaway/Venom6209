@@ -23,8 +23,8 @@ public class AutonomousSegments extends LinearOpModeCV {
     //protected AdafruitIMU IMU;
     protected AdafruitIMU IMU2;
     Telemetry tele;
-    LinearOpModeCV parent_op;
-    LinearOpMode par_op;
+    LinearOpModeCV par_op;
+    LinearOpMode parent_op;
 
     double cm_rotation = 4*Math.PI*2.54;
     double square_per_rot = 60.0/cm_rotation;                  //different units used for measuring distance moved
@@ -66,7 +66,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         this.motorBR = motorBR;
         this.IMU2 = IMUu;
         tele = telem;
-        this.par_op = par_op;
+        this.parent_op = par_op;
     }
     public AutonomousSegments(DcMotor motorFL, DcMotor motorBL, DcMotor motorFR, DcMotor motorBR, AdafruitIMU IMUu, Telemetry telem, LinearOpModeCV par_op)
     {
@@ -76,9 +76,9 @@ public class AutonomousSegments extends LinearOpModeCV {
         this.motorBR = motorBR;
         this.IMU2 = IMUu;
         tele = telem;
-        parent_op = par_op;
+        par_op = par_op;
     }
-    public AutonomousSegments(Telemetry telem, LinearOpMode par_op)
+    public AutonomousSegments(Telemetry telem, LinearOpModeCV par_op)
     {
         tele = telem;
         this.par_op = par_op;
@@ -375,7 +375,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         motorBR.setPower(0);
     }
     public double getGyroYaw() throws InterruptedException{
-        parent_op.waitOneFullHardwareCycle();
+        par_op.waitOneFullHardwareCycle();
         if(IMU == null) {
             DbgLog.error(" IMU is null");
             return -1;
@@ -958,11 +958,11 @@ public class AutonomousSegments extends LinearOpModeCV {
     public void dump_Climbers() throws InterruptedException
     {
         parent_op.waitOneFullHardwareCycle();
-        servoClimberArm.setPosition(climberDump);
+        servoClimberArm.setPosition(0.06);
         resetStartTime();
         while(getRuntime() < 2) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
-        servoClimberArm.setPosition(climberReturn);
+        servoClimberArm.setPosition(0.17);
         resetStartTime();
         while(getRuntime() < 1) // wait 1 seconds
             parent_op.waitOneFullHardwareCycle();

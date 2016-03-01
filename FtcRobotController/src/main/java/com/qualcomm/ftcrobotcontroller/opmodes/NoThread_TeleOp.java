@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.concurrent.TimeUnit;
 
 
-public class NoThread_TeleOp extends LinearOpMode2{
+public class NoThread_TeleOp extends LinearOpModeCV {
 
     //TODO: implement PID control
 
@@ -119,6 +119,14 @@ public class NoThread_TeleOp extends LinearOpMode2{
             boolean up2 = gamepad2.dpad_up;
             boolean down2 = gamepad2.dpad_down;
 
+            if(gamepad2.dpad_left)
+            {
+                servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01,0,1));
+            }
+            else if(gamepad2.dpad_right)
+            {
+                servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01,0,1));
+            }
             //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
             {
@@ -161,7 +169,7 @@ public class NoThread_TeleOp extends LinearOpMode2{
             //Ratchet Controls
             if(LT > deadzone && RT > deadzone) {
                 servoRatL.setPosition(0);
-                servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
+                servoRatR.setPosition(.58);
             }
             else
                 servoRatL.setPosition(.5);
@@ -192,8 +200,8 @@ public class NoThread_TeleOp extends LinearOpMode2{
             //LIFT CONTROL - Controller 2
 
             //Pulley controls
-            motorPL.setPower(Math.abs(LeftY2) > deadzone ? LeftY2 : 0);
-            motorPR.setPower(Math.abs(RightY2) > deadzone ? RightY2 : 0);
+            motorPR.setPower(Math.abs(LeftY2) > deadzone ? LeftY2 : 0);
+            motorPL.setPower(Math.abs(RightY2) > deadzone ? RightY2 : 0);
 
             //zipliner toggles
             if(getRuntime() > rZipTimer && RB2)

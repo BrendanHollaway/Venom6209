@@ -73,7 +73,7 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
         //TODO: Add in left and right servos once they are attached
-        servoAllClearL = hardwareMap.servo.get("servoAllClearR");
+        servoAllClearL = hardwareMap.servo.get("servoAllClearL");
         servoAllClearR = hardwareMap.servo.get("servoAllClearR");
         servoButtonL = hardwareMap.servo.get("servoButtonL");
         servoButtonR = hardwareMap.servo.get("servoButtonL");
@@ -109,7 +109,7 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoR.setPosition(.82);
         //servoBasketR.setPosition(.5);
         servoRatL.setPosition(.5);
-        servoRatR.setPosition(.2);
+        servoRatR.setPosition(.44);
         //servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         servoClimberArm.setPosition(0.06);
