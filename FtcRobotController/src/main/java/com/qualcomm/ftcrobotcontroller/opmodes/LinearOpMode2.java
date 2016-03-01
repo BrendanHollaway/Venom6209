@@ -44,6 +44,8 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     //protected static Servo servoBasketR;
     protected static Servo servoAllClearL; // all clear left
     protected static Servo servoAllClearR; // all clear right
+    protected static Servo servoButtonL;
+    protected static Servo servoButtonR;
 
     //Other
     protected static AdafruitIMU IMU;
@@ -70,6 +72,11 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
+        //TODO: Add in left and right servos once they are attached
+        servoAllClearL = hardwareMap.servo.get("servoAllClearR");
+        servoAllClearR = hardwareMap.servo.get("servoAllClearR");
+        servoButtonL = hardwareMap.servo.get("servoButtonL");
+        servoButtonR = hardwareMap.servo.get("servoButtonL");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
@@ -106,6 +113,7 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         //servoBasketL.setPosition(.5);
         //servoF.setPosition(0.5);
         servoClimberArm.setPosition(0.06);
+        servoButtonL.setPosition(.5);
         //servoClimberArm.setPosition(.5);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
         //==========================RESET THE ENCODERS=========================
