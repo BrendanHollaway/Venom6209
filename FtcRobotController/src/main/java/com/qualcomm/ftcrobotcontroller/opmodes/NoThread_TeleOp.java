@@ -73,11 +73,8 @@ public class NoThread_TeleOp extends LinearOpMode2{
 
         //Saving buttons as variables for greater efficiency
         //Controller 1 variables
-<<<<<<< HEAD
+
         telemetry.addData("hi: ", " before the thingy");
-=======
-        
->>>>>>> origin/master
 
 
     /* BUTTON MAPPING
@@ -98,26 +95,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
      */
         while(!opModeIsActive());
         while(opModeIsActive()) {
-            double LeftY = gamepad1.left_stick_y;
-            double RightY = gamepad1.right_stick_y;
-            double LT = gamepad1.left_trigger;
-            double RT = gamepad1.right_trigger;
-            boolean Y = gamepad1.y;
-            boolean X = gamepad1.x;
-            boolean LB = gamepad1.left_bumper;
-            boolean RB = gamepad1.right_bumper;
-            boolean up = gamepad1.dpad_up;
-            boolean down = gamepad1.dpad_down;
-            boolean left = gamepad1.dpad_left;
-            boolean right = gamepad1.dpad_right;
-            boolean A = gamepad1.a;
-            boolean B = gamepad1.b;
-    
-            //Controller 2 variables
-            double LeftY2 = gamepad2.left_stick_y;
-            double RightY2 = gamepad2.right_stick_y;
-            boolean LB2 = gamepad2.left_bumper;
-            boolean RB2 = gamepad2.right_bumper;
             // DRIVE CONTROL - Controller 1
             double LeftY = gamepad1.left_stick_y;
             double RightY = gamepad1.right_stick_y;
@@ -239,7 +216,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
             }
             
             if(A) {
-<<<<<<< HEAD
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);
             }
@@ -262,30 +238,6 @@ public class NoThread_TeleOp extends LinearOpMode2{
             else {
                 servoButtonL.setPosition(.5);
                 servoButtonR.setPosition(.5);
-=======
-                servoUpperL.setPosition(1);
-                servoUpperR.setPosition(0);
-            }
-            else if(B) {
-                servoUpperL.setPosition(0);
-                servoUpperR.setPosition(1);
-            }
-            else {
-                servoUpperL.setPosition(.5);
-                servoUpperR.setPosition(.5);
-            }
-            if(left) {
-                servoPushL.setPosition(1);
-                servoPushR.setPosition(0);
-            }
-            else if(right) {
-                servoPushL.setPosition(0);
-                servoPushR.setPosition(1);
-            }
-            else {
-                servoPushL.setPosition(.5);
-                servoPushR.setPosition(.5);
->>>>>>> origin/master
             }
 
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
