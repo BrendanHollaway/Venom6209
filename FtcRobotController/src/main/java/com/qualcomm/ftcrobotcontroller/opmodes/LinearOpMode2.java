@@ -42,7 +42,8 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
     protected static Servo servoAllClearR; // all clear right
     protected static Servo servoUpperL;
     protected static Servo servoUpperR;
-    protected static Servo servoUpperF;
+    protected static Servo servoPushL;
+    protected static Servo servoPushR;
 
     //Other
     protected static AdafruitIMU IMU;
@@ -71,7 +72,8 @@ public abstract class LinearOpMode2 extends LinearOpModeCamera {
         servoR = hardwareMap.servo.get("servoRRat");
         servoUpperL = hardwareMap.servo.get("servoUpperL");
         servoUpperR = hardwareMap.servo.get("servoUpperR");
-        servoUpperF = hardwareMap.servo.get("servoUpperF");
+        servoPushL = hardwareMap.servo.get("servoPushL");
+        servoPushR = hardwareMap.servo.get("servoPushR");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
