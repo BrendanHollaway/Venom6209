@@ -248,6 +248,8 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 servoButtonR.setPosition(.5);
             }
 
+            IMU.getAccel(accel);
+            telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]))
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
             telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
             telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));
