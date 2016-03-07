@@ -233,6 +233,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         motorFR.setDirection(FR);
         motorBR.setDirection(BR);
         halt();
+        DbgLog.error(String.format("post-halt: deg:%.2f, gyro:%.2f", deg, getGyroYaw()));
     }
     public void ssleep(long ms) throws InterruptedException                 //method for sleeping
     {
