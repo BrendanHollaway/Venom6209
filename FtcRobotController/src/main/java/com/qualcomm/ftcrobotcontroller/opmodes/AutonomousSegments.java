@@ -228,6 +228,7 @@ public class AutonomousSegments extends LinearOpModeCV {
             }
         }
         DbgLog.error(String.format("end: deg:%.2f, gyro:%.2f",deg, getGyroYaw()));
+        this.target_heading = getGyroYaw();
         //if(Math.abs(getGyroYaw() - deg) > tolerance && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
           //  turn(deg - getGyroYaw(), 0.8, tolerance * 1.2, (timeout - System.currentTimeMillis()) / Math.pow(10, 3)));
         motorFR.setDirection(FR);
@@ -706,7 +707,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         turn(theta - getGyroYaw(), 0.5);
         vector_x = target_x - xPos;
         vector_y = target_y - yPos;
-        PID_move(Math.hypot(vector_x, vector_y), getGyroYaw(), 0.4, false, 4000);
+        PID_move(Math.hypot(vector_x, vector_y), target_heading, 0.4, false, 4000);
         DbgLog.error("done with cartesian move");
     }
     public void PID_move(double encoder, double target_heading, double speed, boolean enableCamera) throws InterruptedException
