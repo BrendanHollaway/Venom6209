@@ -29,12 +29,19 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller;
+package com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files;
+
+import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.ftcrobotcontroller.DPoint;
+import com.qualcomm.ftcrobotcontroller.NewRobotics;
+import com.qualcomm.ftcrobotcontroller.opmodes.AutonomousSegments;
+import com.qualcomm.ftcrobotcontroller.opmodes.LinearOpModeCV;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
@@ -42,12 +49,16 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class BasicVisionSample extends VisionOpMode {
+public class Red_Ramp extends LinearOpModeCV {
+    AutonomousSegments auto;
 
     @Override
-    public void init() {
-        super.init();
-
+    public void runOpMode() throws InterruptedException {
+        //Wait for vision to initialize - this should be the first thing you do
+        super.map();
+        waitForVisionStart();
+        DbgLog.error("Ready to start");
+        auto = new AutonomousSegments(motorFL, motorBL, motorFR, motorBR, IMU, telemetry, this);
         //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
         //Set the frame size
@@ -70,22 +81,42 @@ public class BasicVisionSample extends VisionOpMode {
         //Set the beacon analysis method
         //Try them all and see what works!
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
-    }
 
-    @Override
-    public void loop() {
-        super.loop();
-        telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-        telemetry.addData("Beacon Location (Center)", String.format("x: %.2f y: %.2f", (beacon.getAnalysis().getCenter().y) / (double) height, (beacon.getAnalysis().getCenter().x) / (double) width)); // my phone is upright
-        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-        telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
-        telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
-        telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
-        telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint((int) beacon.getAnalysis().getCenter().y, (int) beacon.getAnalysis().getCenter().x), 0));
-    }
+        //Wait for the match to begin
+        waitForStart();
+        resetStartTime();
+        /*while(getRuntime() < 8)
+            waitOneFullHardwareCycle();*/
+        //Main loop
+        //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
+        //This loop will exit once the opmode is closed
+        auto.Regionals_Red_Side_Ramp();
+        while (opModeIsActive()) {
+            //Log a few things
+            telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
+            telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
+            telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+            telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)));
+            telemetry.addData("Relative ", String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().y / height, beacon.getAnalysis().getCenter().x / width));
+            //telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
+            //telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
+            telemetry.addData("Frame Size", "Width: " + width + " Height: " + height); // width = 864, height = 480
 
-    @Override
-    public void stop() {
-        super.stop();
+            //You can access the most recent frame data and modify it here using getFrameRgba() or getFrameGray()
+            //Vision will run asynchronously (parallel) to any user code so your programs won't hang
+            //You can use hasNewFrame() to test whether vision processed a new frame
+            //Once you copy the frame, discard it immediately with discardFrame()
+            if (hasNewFrame()) {
+                //Get the frame
+                //Mat rgba = getFrameRgba();
+                //Mat gray = getFrameGray();
+
+                //Discard the current frame to allow for the next one to render
+                discardFrame();
+            }
+
+            //Wait for a hardware cycle to allow other processes to run
+            waitOneFullHardwareCycle();
+        }
     }
 }

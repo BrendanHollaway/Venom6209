@@ -74,8 +74,6 @@ public class NoThread_TeleOp extends LinearOpModeCV {
         //Saving buttons as variables for greater efficiency
         //Controller 1 variables
 
-        telemetry.addData("hi: ", " before the thingy");
-
 
     /* BUTTON MAPPING
         CONTROLLER 1
@@ -119,14 +117,6 @@ public class NoThread_TeleOp extends LinearOpModeCV {
             boolean up2 = gamepad2.dpad_up;
             boolean down2 = gamepad2.dpad_down;
 
-            if(gamepad2.dpad_left)
-            {
-                servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01,0,1));
-            }
-            else if(gamepad2.dpad_right)
-            {
-                servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01,0,1));
-            }
             //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
             {
@@ -142,20 +132,12 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 motorBR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
                 motorBL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
             }
-            /*
-             * Removing because it seems to conflict with Ratchet
-            else if(LT > deadzone || RT > deadzone)
-            {
-                motorBR.setPower(RT > deadzone? RT : 0);
-                motorBL.setPower(LT > deadzone? -LT : 0);
-            }
-            */
-            else if(LB && RB) {
+            else if(up) {
                 PID_Offset = auto.get_PID();
-                motorFR.setPower(0.75);
-                motorFL.setPower(0.75);
-                motorBR.setPower(0.75);
-                motorBL.setPower(0.75);
+                motorFR.setPower(-0.75 - PID_Offset);
+                motorFL.setPower(-0.75 + PID_Offset);
+                motorBR.setPower(-0.75 - PID_Offset);
+                motorBL.setPower(-0.75 + PID_Offset);
             }
             else {
                 auto.resetPID();
@@ -185,10 +167,11 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 dump = !dump;
             }
 
+
             //Shield controls
-            if(down)
+            if(LB)
                 motorS.setPower(-1);
-            else if(up)
+            else if(RB)
                 motorS.setPower(1);
             else if(down2)
                 motorS.setPower(-1);
@@ -213,16 +196,31 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                     servoR.setPosition(0.82);
                 RZipOut = !RZipOut;
             }
+            else if(gamepad2.x)
+            {
+                servoR.setPosition(Range.clip(servoR.getPosition() + 0.01, 0, 1));
+            }
+            else if(gamepad2.y)
+            {
+                servoR.setPosition(Range.clip(servoR.getPosition() - 0.01, 0, 1));
+            }
             if(getRuntime() > lZipTimer && LB2)
             {
                 lZipTimer = getRuntime() + toggle_delay;
                 if(LZipOut)
                     servoL.setPosition(1);
                 else
-                    servoL.setPosition(0.13);
+                    servoL.setPosition(0.25);
                 LZipOut = !LZipOut;
             }
-            
+            else if(gamepad2.a)
+            {
+                servoL.setPosition(Range.clip(servoL.getPosition() + 0.01, 0, 1));
+            }
+            else if(gamepad2.b)
+            {
+                servoL.setPosition(Range.clip(servoL.getPosition() - 0.01, 0, 1));
+            }
             if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);
@@ -247,9 +245,7 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 servoButtonL.setPosition(.5);
                 servoButtonR.setPosition(.5);
             }
-
-            IMU.getAccel(accel);
-            telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]))
+            telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
             telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
             telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));

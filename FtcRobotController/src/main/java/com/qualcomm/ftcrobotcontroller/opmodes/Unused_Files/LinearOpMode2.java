@@ -1,25 +1,23 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
 
-import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.LinearOpMode2;
-import com.qualcomm.robotcore.exception.RobotCoreException;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+package com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files;
+
+import com.qualcomm.ftcrobotcontroller.opmodes.AdafruitIMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.*;
 
-import org.lasarobotics.vision.opmode.LinearVisionOpMode;
-
-/**
- * Created by viperbots on 2/13/2016.
- */
-public abstract class LinearOpModeCV extends LinearVisionOpMode {
-    private LinearOpModeCV.a a = null;
+public abstract class LinearOpMode2 extends LinearOpModeCamera {
+    private LinearOpMode2.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
     public boolean inited = false;
     public static final float ninety = 1/14.0f; // value required to move winch servo 90 degrees
-    public long global_timeout = Long.MAX_VALUE;
 
     //Motors
     protected static DcMotor motorFR;
@@ -76,7 +74,7 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         servoAllClearL = hardwareMap.servo.get("servoAllClearL");
         servoAllClearR = hardwareMap.servo.get("servoAllClearR");
         servoButtonL = hardwareMap.servo.get("servoButtonL");
-        servoButtonR = hardwareMap.servo.get("servoButtonR");
+        servoButtonR = hardwareMap.servo.get("servoButtonL");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
@@ -102,24 +100,50 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
             telemetry.addData("IMU already init:", " true");
         }
         IMU.startIMU();
-        servoL.setPosition(.2);
-        servoR.setPosition(.85);
+        //servoRRat.setPosition(0.44);
+        //servoLRat.setPosition(0.5);
+        //servoClimberArm.setPosition(1);
+        servoL.setPosition(.17);
+        servoR.setPosition(.82);
+        //servoBasketR.setPosition(.5);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.44);
+        //servoBasketL.setPosition(.5);
+        //servoF.setPosition(0.5);
         servoClimberArm.setPosition(0.06);
         servoButtonL.setPosition(.5);
-        servoAllClearL.setPosition(.5);
-        servoAllClearR.setPosition(.5);
-        servoButtonL.setPosition(0.5);
-        servoButtonR.setPosition(0.5);
+        //servoClimberArm.setPosition(.5);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
+        //==========================RESET THE ENCODERS=========================
+        /*motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorFR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorBL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        while(motorFL.getCurrentPosition() != 0 || motorFR.getCurrentPosition() != 0 || motorBR.getCurrentPosition() != 0 || motorBL.getCurrentPosition() != 0) {
+            waitOneFullHardwareCycle();
+        }*/
+        /*motorFL.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+
+        /*motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        waitOneFullHardwareCycle();
+        motorFL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);*/
+        //======================END RESET THE ENCODERS=======================
+        //if (IMU != null)
+          //  inited = true;
         telemetry.addData("Init is Complete: ", "true");
         telemetry.addData("IMU is null: ", IMU == null);
     }
-    protected void force_map() throws InterruptedException
-    {
-        IMU = null;
-        map();
+
+    public LinearOpMode2() {
     }
     public static boolean isInit()
     {
@@ -177,3 +201,4 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         }
     }
 }
+

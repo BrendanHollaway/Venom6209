@@ -32,6 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.*;
+import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.BlueNoDumpAuto;
+import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.RedNoDumpAuto;
+import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.Red_Ramp;
+import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.test_servos;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 
@@ -55,17 +59,9 @@ public class FtcOpModeRegister implements OpModeRegister {
      *
      * If two or more op modes are registered with the same name, the app will display an error.
      */
-      //manager.register("NullOp", NullOp.class);
-      //manager.register("Drive_TeleOp", Drive_TeleOp.class);
-      //manager.register("K9TeleOp", K9TeleOp.class);
-      //manager.register ("PushBotManual", PushBotManual.class);
-      //manager.register("Threaded_TeleOp", Threaded_TeleOp.class);      //manager.register ("PushBotAuto", PushBotAuto.class);
-
-      //manager.register("servotest", servotest.class);
-      //manager.register("ColorSensorTest", ColorSensorTest.class);
-      //manager.register("UltraODStest", TestUltrasonicODS.class);
       manager.register("TeleOp", NoThread_TeleOp.class);
       manager.register("ServoTest", test_servos.class);
+      manager.register("BeaconTest", BeaconTeset.class);
      // manager.register("Temp", tempTele.class);
       //manager.register("SquareTest", squareTest.class);
       //manager.register("IMUout", IMUoutput.class);
@@ -73,39 +69,16 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("redAuto", blue_auto.class); // #dealwithit
       manager.register("LEGIT BLUE AUTO", Auto_Red_CV.class);
       manager.register("LEGIT RED AUTO", REGIONALBLUEAUTO.class);
-      //manager.register("teleTest", telemetryTest.class);
-      //manager.register("Straight_Auto", Straight_Auto.class);
-      //manager.register("Dump Test", Autonomous_Testing.class);
-      //manager.register("blueAuto", autotest.class);
+      manager.register("Blue Polar Auto", ActualBlueAutoPolar.class);
+      manager.register("Straight_Auto", Straight_Auto.class);
       //manager.register("sostest", sostest.class);
-      //manager.register("tank_test", tankdrive_test.class);
-      //manager.register("servo test", ServoTesssst.class);
       //manager.register("DetectColor", DetectColor.class);
       //manager.register("LinearDetectColor", LinearDetectColor.class);
       //manager.register("NullOp", com.qualcomm.ftcrobotcontroller.NullOp.class);
       manager.register("Basic Vision Sample", BasicVisionSample.class);
-      //manager.register("Linear Vision Sample", LinearVisionSample.class);
       manager.register("Straight Auto", Straight_Auto.class);
       manager.register("BLUE AUTO NO DUMP", BlueNoDumpAuto.class);
       manager.register("RED AUTO NO DUMP", RedNoDumpAuto.class);
       manager.register("RED AUTO RAMP", Red_Ramp.class);
-      //manager.register("Manual Vision Sample", ManualVisionSample.class);
-      //manager.register("Log Camera", CameraTest.class);
-      /*manager.register("CBlue_B_BlueR", CBlue_B_BlueR.class);
-      manager.register("CBlue_B_RedR", CBlue_B_RedR.class);
-      manager.register("CBlue_BlueR", CBlue_BlueR.class);
-      manager.register("CBlue_RedR", CBlue_RedR.class);
-      manager.register("FBlue_B_BlueR", FBlue_B_BlueR.class);
-      manager.register("FBlue_B_RedR", FBlue_B_RedR.class);
-      manager.register("FBlue_BlueR", FBlue_BlueR.class);
-      manager.register("FBlue_RedR", FBlue_RedR.class);
-      manager.register("CRed_B_BlueR", CRed_B_BlueR.class);
-      manager.register("CRed_B_RedR", CRed_B_RedR.class);
-      manager.register("CRed_BlueR", CRed_BlueR.class);
-      manager.register("CRed_RedR", CRed_RedR.class);
-      manager.register("FRed_B_BlueR", FRed_B_BlueR.class);
-      manager.register("FRed_B_RedR", FRed_B_RedR.class);
-      manager.register("FRed_BlueR", FRed_BlueR.class);
-      manager.register("FRed_RedR", FRed_RedR.class); */
   }
 }

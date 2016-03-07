@@ -1,34 +1,19 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files;
 
 import android.graphics.Bitmap;
 
 import com.qualcomm.ftcrobotcontroller.NewRobotics;
+import com.qualcomm.ftcrobotcontroller.opmodes.AutonomousSegments;
 import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.LinearOpMode2;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 
-public class blue_auto extends LinearOpMode2 {
+public class red_auto extends LinearOpMode2 {
     AutonomousSegments auto;
 
     public void runOpMode() throws InterruptedException {
 
         super.map();
-        motorFL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motorFR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motorBL.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        motorBR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        while(motorFL.getCurrentPosition() != 0 || motorFR.getCurrentPosition() != 0 || motorBR.getCurrentPosition() != 0 || motorBL.getCurrentPosition() != 0) {
-            waitOneFullHardwareCycle();
-        }
-        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        waitOneFullHardwareCycle();
-        motorFL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motorFR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motorBL.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        motorBR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         auto = new AutonomousSegments(motorFL, motorBL, motorBR, motorFR, IMU, telemetry);
