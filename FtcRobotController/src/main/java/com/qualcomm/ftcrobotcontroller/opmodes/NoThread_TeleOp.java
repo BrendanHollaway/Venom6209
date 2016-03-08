@@ -91,6 +91,7 @@ public class NoThread_TeleOp extends LinearOpModeCV {
             Right Bumper = zipliner right toggle
 
      */
+        boolean encoder_enabled = true;
         while(!opModeIsActive());
         while(opModeIsActive()) {
             // DRIVE CONTROL - Controller 1
@@ -134,10 +135,10 @@ public class NoThread_TeleOp extends LinearOpModeCV {
             }
             else if(up) {
                 PID_Offset = auto.get_PID();
-                motorFR.setPower(-0.75 - PID_Offset);
-                motorFL.setPower(-0.75 + PID_Offset);
-                motorBR.setPower(-0.75 - PID_Offset);
-                motorBL.setPower(-0.75 + PID_Offset);
+                motorFR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
+                motorFL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
+                motorBR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
+                motorBL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
             }
             else {
                 auto.resetPID();
@@ -154,7 +155,11 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 servoRatR.setPosition(.58);
             }
             else
+            {
                 servoRatL.setPosition(.5);
+                servoRatR.setPosition(.44);
+            }
+
 
             //Climber dump toggle
             if(getRuntime() > climberTimer && Y)
@@ -169,17 +174,19 @@ public class NoThread_TeleOp extends LinearOpModeCV {
 
 
             //Shield controls
-            if(LB)
-                motorS.setPower(-1);
-            else if(RB)
+            if(gamepad1.back)
+                encoder_enabled = false;
+            if(LB && (!encoder_enabled || motorS.getCurrentPosition() < 500))
                 motorS.setPower(1);
-            else if(down2)
+            else if(RB && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
                 motorS.setPower(-1);
-            else if(up2)
+            else if(down2 && (!encoder_enabled || motorS.getCurrentPosition() < 500))
                 motorS.setPower(1);
+            else if(up2 && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
+                motorS.setPower(-1);
             else
                 motorS.setPower(0);
-
+            telemetry.addData("motorS position: ", motorS.getCurrentPosition());
             //LIFT CONTROL - Controller 2
 
             //Pulley controls

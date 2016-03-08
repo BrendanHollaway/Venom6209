@@ -33,6 +33,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftcrobotcontroller.*;
 import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.BlueNoDumpAuto;
+import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.IMUtest;
 import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.RedNoDumpAuto;
 import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.Red_Ramp;
 import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.test_servos;
@@ -65,7 +66,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      // manager.register("Temp", tempTele.class);
       //manager.register("SquareTest", squareTest.class);
       //manager.register("IMUout", IMUoutput.class);
-      //manager.register("IMUtest", IMUtest.class);
+      manager.register("IMUtest", IMUtest.class);
       //manager.register("redAuto", blue_auto.class); // #dealwithit
       manager.register("LEGIT BLUE AUTO", Auto_Red_CV.class);
       manager.register("LEGIT RED AUTO", REGIONALBLUEAUTO.class);

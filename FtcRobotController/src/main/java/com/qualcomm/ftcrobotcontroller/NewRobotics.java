@@ -311,9 +311,9 @@ public class NewRobotics {
         //double width_deg = Math.atan(ratio) * 2; // field of view of the camera, in degrees
         double center_x = center.x;
         double x_offset_pix = center_x - (width_pixels / 2); // in pixels
-        double x_offset_inches = (x_offset_pix * width_inches / width_pixels) - 1; // phone is one inch from center
+        double x_offset_inches = (x_offset_pix * width_inches / width_pixels); // phone is one inch from center
         double deg_offset = Math.toDegrees(Math.atan2(x_offset_inches, depth_inches)); // difference between current heading and target
-        return Range.clip(deg_offset, -5, 5);
+        return -Range.clip(deg_offset, -10, 10);
     }
     public static double fix_heading(Bitmap photo, int ds2)
     {

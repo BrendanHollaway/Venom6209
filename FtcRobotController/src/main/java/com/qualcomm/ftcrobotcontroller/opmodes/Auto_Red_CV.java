@@ -56,7 +56,7 @@ public class Auto_Red_CV extends LinearOpModeCV {
         super.map();
         waitForVisionStart();
         DbgLog.error("Ready to start");
-        auto = new AutonomousSegments(motorFL, motorBL, motorFR, motorBR, IMU, telemetry, this);
+        auto = new AutonomousSegments(telemetry, this);
         //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
         //Set the frame size
@@ -83,7 +83,7 @@ public class Auto_Red_CV extends LinearOpModeCV {
         //Wait for the match to begin
         waitForStart();
         resetStartTime();
-        while(getRuntime() < 8)
+        while(getRuntime() < 0)
             waitOneFullHardwareCycle();
         //Main loop
         //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible

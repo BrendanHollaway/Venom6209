@@ -31,7 +31,7 @@ public class IMUtest extends OpMode {
     telemetry.addData("Init: ", "Init begins");
     systemTime = System.nanoTime();
     try {
-      boschBNO055 = new AdafruitIMU(hardwareMap, "hydro"
+      boschBNO055 = new AdafruitIMU(hardwareMap, "IMU"
 
         //The following was required when the definition of the "I2cDevice" class was incomplete.
         //, "cdim", 5

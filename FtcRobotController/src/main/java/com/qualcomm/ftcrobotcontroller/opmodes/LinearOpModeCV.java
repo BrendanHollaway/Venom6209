@@ -3,6 +3,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.ftcrobotcontroller.opmodes.Unused_Files.LinearOpMode2;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -113,6 +114,7 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         servoButtonL.setPosition(0.5);
         servoButtonR.setPosition(0.5);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
+        motorS.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         telemetry.addData("Init is Complete: ", "true");
         telemetry.addData("IMU is null: ", IMU == null);
     }

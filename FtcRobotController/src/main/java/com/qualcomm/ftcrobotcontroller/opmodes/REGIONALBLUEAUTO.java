@@ -83,7 +83,7 @@ public class REGIONALBLUEAUTO extends LinearOpModeCV {
         //Wait for the match to begin
         waitForStart();
         resetStartTime();
-        while(getRuntime() < 8)
+        while(getRuntime() < 0)
             waitOneFullHardwareCycle();
         //Main loop
         //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
