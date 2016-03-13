@@ -12,7 +12,7 @@ package com.qualcomm.ftcrobotcontroller;
  */
 public class DPoint extends Point
 {
-    double x, y;
+    public double x, y;
     public DPoint(double a, double b)
     {
         x = a;

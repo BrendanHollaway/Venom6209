@@ -310,9 +310,10 @@ public class NewRobotics {
         double width_inches = depth_inches * ratio;
         //double width_deg = Math.atan(ratio) * 2; // field of view of the camera, in degrees
         double center_x = center.x;
-        double x_offset_pix = center_x - (width_pixels / 2); // in pixels
+        double x_offset_pix = center_x * width_pixels - (width_pixels / 2); // in pixels
         double x_offset_inches = (x_offset_pix * width_inches / width_pixels); // phone is one inch from center
         double deg_offset = Math.toDegrees(Math.atan2(x_offset_inches, depth_inches)); // difference between current heading and target
+        DbgLog.error(String.format("head: %.2f, x_off_in: %.2f, depth: %.2f",deg_offset, x_offset_inches, depth_inches));
         return -Range.clip(deg_offset, -10, 10);
     }
     public static double fix_heading(Bitmap photo, int ds2)

@@ -157,8 +157,10 @@ public class AutonomousSegments extends LinearOpModeCV {
         tele.addData("made it to the end of loop", " done");
         halt();
     }
-    public static int mid2(int enc1, int enc2, int enc3, int enc4)
+    public int mid2(int enc1, int enc2, int enc3, int enc4)
     {
+        if(!parent_op.opModeIsActive())
+            return -1;
         enc1 = Math.abs(enc1);
         enc2 = Math.abs(enc2);
         enc3 = Math.abs(enc3);
@@ -175,6 +177,8 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public void turn(double deg, double speed, double tolerance, double timeout) throws InterruptedException
     {
+        if(!parent_op.opModeIsActive())
+            return;
         speed = Range.clip(Math.abs(speed), -1, 1);
         tele.addData("turn has ", "begun");
         tele.addData("deg: ", getGyroYaw());
@@ -188,16 +192,22 @@ public class AutonomousSegments extends LinearOpModeCV {
         motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        if(!parent_op.opModeIsActive())
+            return;
         //Range.clip(Math.abs(speed), -1, 1);
         double gyro = getGyroYaw();
+        tele.addData("gryo:", String.format("%.2f, deg: %.2f", gyro, deg));
         deg += gyro;
         deg %= 180;
+        tele.addData("deg:", deg);
         //deg now between -180 and 180
         String format;
         DbgLog.error(String.format("start: deg:%.2f, gyro:%.2f", deg, getGyroYaw()));
         if(gyro < deg)
         {
-            while(gyro < deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+            if(!parent_op.opModeIsActive())
+                return;
+            while(gyro < deg - 3 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())
             {
                 format = String.format("inside fast loop, gyro:%.2f, deg:%.2f", gyro, deg);
                 tele.addData("tele: ", format);
@@ -208,7 +218,9 @@ public class AutonomousSegments extends LinearOpModeCV {
                 motorBL.setPower(speed);
                 gyro = getGyroYaw();
             }
-            /*while(gyro < deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+            if(!parent_op.opModeIsActive())
+                return;
+            /*while(gyro < deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && !parent_op.opModeIsActive())
             {
                 format = String.format("inside slow loop, gyro:%.2f, deg:%.2f", gyro, deg);
                 tele.addData("tele: ", format);
@@ -222,7 +234,9 @@ public class AutonomousSegments extends LinearOpModeCV {
         }
         else
         {
-            while(gyro > deg + 3 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+            if(!parent_op.opModeIsActive())
+                return;
+            while(gyro > deg + 3 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())
             {
                 format = String.format("inside fast loop, gyro:%.2f, deg:%.2f", gyro, deg);
                 tele.addData("tele: ", format);
@@ -233,7 +247,9 @@ public class AutonomousSegments extends LinearOpModeCV {
                 motorBL.setPower(-speed);
                 gyro = getGyroYaw();
             }
-            /*while(gyro > deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+            if(!parent_op.opModeIsActive())
+                return;
+            /*while(gyro > deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && !parent_op.opModeIsActive())
             {
                 format = String.format("inside slow loop, gyro:%.2f, deg:%.2f", gyro, deg);
                 tele.addData("tele: ", format);
@@ -246,15 +262,155 @@ public class AutonomousSegments extends LinearOpModeCV {
             }*/
         }
         gyro = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
         DbgLog.error(String.format("end: deg:%.2f, gyro:%.2f",deg, gyro));
         this.target_heading = gyro;
         //if(Math.abs(getGyroYaw() - deg) > tolerance && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
           //  turn(deg - getGyroYaw(), 0.8, tolerance * 1.2, (timeout - System.currentTimeMillis()) / Math.pow(10, 3)));
         motorFR.setDirection(FR);
         motorBR.setDirection(BR);
+        if(!parent_op.opModeIsActive())
+            return;
         halt();
         resetPID();
+        if(!parent_op.opModeIsActive())
+            return;
         DbgLog.error(String.format("post-halt: deg:%.2f, gyro:%.2f", deg, getGyroYaw()));
+        if(Math.abs(deg-  getGyroYaw()) > 5 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+            turn(deg-getGyroYaw(), 0.05);
+    }
+    public void timed_turn(double deg, double speed, double tolerance, double timeout) throws InterruptedException
+    {
+        if(!parent_op.opModeIsActive())
+            return;
+        speed = Range.clip(Math.abs(speed), -1, 1);
+        tele.addData("turn has ", "begun");
+        tele.addData("deg: ", getGyroYaw());
+        timeout = timeout * Math.pow(10, 3) + System.currentTimeMillis();
+        //halt();
+        DcMotor.Direction FR = motorFR.getDirection();
+        DcMotor.Direction BR = motorBR.getDirection();
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
+        motorFL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorFR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBL.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorBR.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        if(!parent_op.opModeIsActive())
+            return;
+        //Range.clip(Math.abs(speed), -1, 1);
+        double gyro = getGyroYaw();
+        tele.addData("gryo:", String.format("%.2f, deg: %.2f", gyro, deg));
+        deg += gyro;
+        deg %= 180;
+        tele.addData("deg:", deg);
+        //deg now between -180 and 180
+        String format;
+        DbgLog.error(String.format("start: deg:%.2f, gyro:%.2f", deg, getGyroYaw()));
+        resetStartTime();
+        if(gyro < deg)
+        {
+            if(!parent_op.opModeIsActive())
+                return;
+            while(gyro < deg - 20 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())
+            {
+                format = String.format("inside fast loop, gyro:%.2f, deg:%.2f", gyro, deg);
+                tele.addData("tele: ", format);
+                DbgLog.error(format);
+                motorFR.setPower(-speed / 3.0);
+                motorFL.setPower(speed / 3.0);
+                motorBR.setPower(-speed);
+                motorBL.setPower(speed);
+                gyro = getGyroYaw();
+            }
+            DbgLog.error("Done with fast");
+            while(gyro < deg - 3 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())
+            {
+                format = String.format("inside fast loop, gyro:%.2f, deg:%.2f", gyro, deg);
+                tele.addData("tele: ", format);
+                DbgLog.error(format);
+                motorFR.setPower(-.06);
+                motorFL.setPower(.06);
+                motorBR.setPower(-.12);
+                motorBL.setPower(.12);
+                gyro = getGyroYaw();
+            }
+            DbgLog.error("Done with slow");
+            if(!parent_op.opModeIsActive())
+                return;
+            /*while(gyro < deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && !parent_op.opModeIsActive())
+            {
+                format = String.format("inside slow loop, gyro:%.2f, deg:%.2f", gyro, deg);
+                tele.addData("tele: ", format);
+                DbgLog.error(format);
+                motorFR.setPower(-0.4);
+                motorFL.setPower(0.4);
+                motorBR.setPower(-0.4);
+                motorBL.setPower(0.4);
+                gyro = getGyroYaw();
+            }*/
+        }
+        else
+        {
+            if(!parent_op.opModeIsActive())
+                return;
+            while(gyro > deg + 20 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())
+            {
+                format = String.format("inside fast loop, gyro:%.2f, deg:%.2f", gyro, deg);
+                tele.addData("tele: ", format);
+                DbgLog.error(format);
+                motorFR.setPower(speed / 3.0);
+                motorFL.setPower(-speed / 3.0);
+                motorBR.setPower(speed);
+                motorBL.setPower(-speed);
+                gyro = getGyroYaw();
+            }
+            DbgLog.error("Done with fast");
+            while(gyro > deg + 3 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())
+            {
+                format = String.format("inside slow loop, gyro:%.2f, deg:%.2f", gyro, deg);
+                tele.addData("tele: ", format);
+                DbgLog.error(format);
+                motorFR.setPower(-.06);
+                motorFL.setPower(.06);
+                motorBR.setPower(-.12);
+                motorBL.setPower(.12);
+                gyro = getGyroYaw();
+            }
+            DbgLog.error("Done with slow");
+            if(!parent_op.opModeIsActive())
+                return;
+            /*while(gyro > deg && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout && !parent_op.opModeIsActive())
+            {
+                format = String.format("inside slow loop, gyro:%.2f, deg:%.2f", gyro, deg);
+                tele.addData("tele: ", format);
+                DbgLog.error(format);
+                motorFR.setPower(0.4);
+                motorFL.setPower(-0.4);
+                motorBR.setPower(0.4);
+                motorBL.setPower(-0.4);
+                gyro = getGyroYaw();
+            }*/
+        }
+        gyro = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error(String.format("end: deg:%.2f, gyro:%.2f",deg, gyro));
+        this.target_heading = gyro;
+        //if(Math.abs(getGyroYaw() - deg) > tolerance && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+        //  turn(deg - getGyroYaw(), 0.8, tolerance * 1.2, (timeout - System.currentTimeMillis()) / Math.pow(10, 3)));
+        motorFR.setDirection(FR);
+        motorBR.setDirection(BR);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        resetPID();
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error(String.format("post-halt: deg:%.2f, gyro:%.2f", deg, getGyroYaw()));
+        if(Math.abs(deg-  getGyroYaw()) > 5 && System.currentTimeMillis() < timeout && System.currentTimeMillis() < global_timeout)
+            turn(deg-getGyroYaw(), 0.05);
     }
     public void ssleep(long ms) throws InterruptedException                 //method for sleeping
     {
@@ -334,6 +490,8 @@ public class AutonomousSegments extends LinearOpModeCV {
         halt();
     }*/
     public void halt() throws InterruptedException{
+        if(!parent_op.opModeIsActive())
+            return;
         motorFL.setPower(0);
         motorBL.setPower(0);
         motorFR.setPower(0);
@@ -341,6 +499,8 @@ public class AutonomousSegments extends LinearOpModeCV {
         parent_op.waitOneFullHardwareCycle();
     }
     public double getGyroYaw() throws InterruptedException{
+        if(!parent_op.opModeIsActive())
+            return -1;
         if(IMU == null) {
             DbgLog.error(" IMU is null");
             return -1;
@@ -444,7 +604,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         double left;
         //double max;
         double target = deg + getGyroYaw();
-        while(Math.abs(getGyroYaw() - target) > tolerance && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
+        while(Math.abs(getGyroYaw() - target) > tolerance && parent_op.opModeIsActive() && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
         {
             PID_change = get_PID(kP, kI, kD);
             //keep the absolute value of the motors above 0.3 and less than 0.7
@@ -456,6 +616,8 @@ public class AutonomousSegments extends LinearOpModeCV {
             DbgLog.error(String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
             DbgLog.error(String.format("gyro:%.2f, target:%.2f, PID (right):%.2f", getGyroYaw(), target, PID_change));
         }
+        if(!parent_op.opModeIsActive())
+            return;
         halt();
         halt();
         halt();
@@ -682,8 +844,19 @@ public class AutonomousSegments extends LinearOpModeCV {
         DbgLog.error("Done with drive forward");
         halt();
     }
-    public void PID_move_camera(double encoder, double target_heading, double speed, boolean enableCamera, long timeout) throws InterruptedException {
+    public void PID_move_new(double encoder, double target_heading, double speed) throws InterruptedException
+    {
+        PID_move_new(encoder,target_heading,speed, false, 12000);
+    }
+    public void PID_move_new(double encoder, double target_heading, double speed, boolean enableCamera) throws InterruptedException
+    {
+        PID_move_new(encoder,target_heading,speed, enableCamera, 12000);
+    }
+    public void PID_move_new(double encoder, double target_heading, double speed, boolean enableCamera, long timeout) throws InterruptedException {
+        if(!parent_op.opModeIsActive())
+            return;
         DbgLog.error("PID_move begin, target_heading: " + String.format("%.2f, gyro: %.2f",target_heading, getGyroYaw()));
+        tele.addData("inside ", "the PID_move_new");
         speed = Range.clip(Math.abs(speed), 0, 1);
         this.target_heading = target_heading;
         //encoder *= 2;   // after I fixed some encoders, I realized that the
@@ -694,10 +867,12 @@ public class AutonomousSegments extends LinearOpModeCV {
         //All errors are in terms of heading: the robot's yaw
         double max;
         double gyro_yaw = getGyroYaw();
-        double new_yaw = gyro_yaw;
+        double new_yaw;
         resetStartTime();
         double safety_time = System.currentTimeMillis() + timeout;
         double start_time = System.currentTimeMillis();
+        if(!parent_op.opModeIsActive())
+            return;
         double PID_change = 0;
         double right;
         double left;
@@ -713,8 +888,10 @@ public class AutonomousSegments extends LinearOpModeCV {
         int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
         int currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
         int currentEncoder = 0; //=mid2(currentBLPosition, currentBRPosition, currentFLPosition, currentFRPosition);
+        if(!parent_op.opModeIsActive())
+            return;
         resetPID();
-        while(Math.abs(currentEncoder) < Math.abs(encoder) && System.currentTimeMillis() < safety_time && System.currentTimeMillis() < global_timeout)  //moves until encoders change by value inputted
+        while(Math.abs(currentEncoder) < Math.abs(encoder) && System.currentTimeMillis() < safety_time && System.currentTimeMillis() < global_timeout && parent_op.opModeIsActive())  //moves until encoders change by value inputted
         {
             DbgLog.error(String.format("i start: %.2f", iError));
             new_yaw = getGyroYaw();
@@ -722,16 +899,16 @@ public class AutonomousSegments extends LinearOpModeCV {
             {
                 gyro_yaw = new_yaw;
                 if (!enableCamera)
-                    PID_change = get_PID();
+                    PID_change = get_PID(gyro_yaw);
                 else {
-                    kP = this.kP * 1.2;
+                    kP = this.kP;
                     kI = this.kI;
-                    kD = this.kD;
-                    PID_change = get_PID(kP, kI, kD) * 1.2 * speed; // scales it to be proportional to the speed
+                    kD = this.kD * 1.5;
+                    PID_change = get_PID(gyro_yaw, kP, kI, kD) * 2 * speed; // scales it to be proportional to the speed
                 }
             }
             right = speed + PID_change;
-            left = speed / 1.5 - PID_change;
+            left = speed / 1.4 - PID_change;
             max = Math.max(Math.abs(right), Math.abs(left));
             //This standardizes the speeds, so that they are correct relative to each other,
             //and that one of the two will be equivalent, and neither greater, than "speed"
@@ -752,12 +929,16 @@ public class AutonomousSegments extends LinearOpModeCV {
             tele.addData("a: ", String.format("k*error: %.2f, k*dError: %.2f, k*iError: %.2f", kP * error, kD * dError, kI * iError));
             tele.addData("b: ", String.format("left: %.2f, right: %.2f", left, right));
             tele.addData(" ", String.format("gyro yaw: %.2f, target: %.2f", gyro_yaw, this.target_heading));
+            if(!parent_op.opModeIsActive())
+                return;
             DbgLog.error(String.format("k*error: %.2f, k*dError: %.2f, k*iError: %.2f, PID: %.2f", kP * error, kD * dError, kI * iError, PID_change));
             DbgLog.error(String.format("left: %.2f, right: %.2f, gyro: %.2f, target: %.2f", left, right, gyro_yaw, this.target_heading));
             currentEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorBR.getCurrentPosition() - currentBRPosition, motorBR.getCurrentPosition() - currentBRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
             DbgLog.error("currentEncoder: " + currentEncoder + ", target_enc: " + String.format("%.2f",encoder));
             DbgLog.error("FR: "+ String.format("%d, FL: %d", motorFR.getCurrentPosition() - currentFRPosition, motorFL.getCurrentPosition() - currentFLPosition));
             DbgLog.error("BR: " + String.format("%d, BL: %d", motorBR.getCurrentPosition() - currentBRPosition, motorBL.getCurrentPosition() - currentBLPosition));
+            if(!parent_op.opModeIsActive())
+                return;
             //END DEBUG LOGGING
 
             parent_op.waitOneFullHardwareCycle();
@@ -781,12 +962,21 @@ public class AutonomousSegments extends LinearOpModeCV {
                 DbgLog.error(String.format("new heading target: %.2f, old heading: %.2f", gyro_yaw +  getHeading(System.currentTimeMillis() - start_time), gyro_yaw));
             }*/
         }
+        if(!parent_op.opModeIsActive())
+            return;
         DbgLog.error("Done with drive forward");
+        halt();
+        parent_op.waitOneFullHardwareCycle();
+        halt();
         halt();
     }
     public double get_PID() throws InterruptedException
     {
         return get_PID(getGyroYaw(), kP, kI, kD);
+    }
+    public double get_PID(double gyro) throws InterruptedException
+    {
+        return get_PID(gyro, kP, kI, kD);
     }
     public double get_PID(double kP, double kI, double kD) throws InterruptedException
     {
@@ -794,6 +984,8 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public double get_PID(double gyro, double kP, double kI, double kD) throws InterruptedException
     {
+        if(!parent_op.opModeIsActive())
+            return 0;
         dt = getRuntime() - time;
         time = getRuntime();
         prevError = error;
@@ -808,6 +1000,8 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public void resetPID() throws InterruptedException
     {
+        if(!parent_op.opModeIsActive())
+            return;
         if(Math.abs(target_heading - getGyroYaw() + 360) < Math.abs(target_heading - getGyroYaw()))
             error = target_heading - getGyroYaw() + 360;
         else
@@ -825,8 +1019,28 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public double getHeading(double millis) throws InterruptedException
     {
-        return NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().x, beacon.getAnalysis().getCenter().y), millis / Math.pow(10, 3));
+        if(!parent_op.opModeIsActive())
+            return -1;
+        return this.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x), millis / Math.pow(10, 3));
         //return NewRobotics.calculate_heading(DPoint.makeDPoint(beacon.getAnalysis().getCenter()), t / Math.pow(10, 6));
+    }
+    //x=.36, x=.54
+    //.57, .34
+    public double calculate_heading(DPoint center, double time) //encoder represents distance travelled. max_encoder is target distance
+    {
+        if(time > 3) // it is too close to the beacon by this point
+            return 0;
+        double ratio = 1.0 / 1.32; // width of view divided by distance to object- test with ruler
+        int width_pixels = 480; // width of screen
+        double depth_inches = 18 * (1 - (time / 4)); //18
+        double width_inches = depth_inches * ratio; // 13.64
+        //double width_deg = Math.atan(ratio) * 2; // field of view of the camera, in degrees
+        double center_x = center.x;
+        double x_offset_pix = center_x - (width_pixels / 2); // in pixels
+        double x_offset_inches = (x_offset_pix * width_inches / width_pixels); // phone is one inch from center
+        double deg_offset = Math.toDegrees(Math.atan(x_offset_inches*2 / depth_inches)); // difference between current heading and target
+        tele.addData("head: ", String.format("%.2f, x_off_in: %.2f, depth_in: %.2f, x_off_pix: %.2f",deg_offset, x_offset_inches, depth_inches, x_offset_pix));
+        return Range.clip(deg_offset, -15, 15) / 1.8;
     }
     public double getKP()
     {
@@ -855,49 +1069,92 @@ public class AutonomousSegments extends LinearOpModeCV {
     //===========================================================
     //====================END PID CONTROL========================
     //===========================================================
-    public double find_Beacon_Heading() throws InterruptedException
+    double red_left_cnt = 0;
+    double blue_left_cnt = 0;
+    public double find_Beacon() throws InterruptedException
     {
+        if(!parent_op.opModeIsActive())
+            return -1;
         resetStartTime();
         double total_heading = 0;
         double cnt = 0;
         double gyro_yaw;
-        while(getRuntime() < 5)
+        while(parent_op.opModeIsActive() && getRuntime() < 5)
         {
             if(beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
             {
                 gyro_yaw = getGyroYaw();
-                DbgLog.error("Beacon Color" + beacon.getAnalysis().getColorString());
-                DbgLog.error("Beacon Location (Center)" + beacon.getAnalysis().getLocationString());
-                DbgLog.error("Beacon Confidence" + beacon.getAnalysis().getConfidenceString());
-                //DbgLog.error("New Heading: " + NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)) + String.format(" old: %.2f", getGyroYaw()));
-                DbgLog.error("Relative " + String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().y / 480.0, beacon.getAnalysis().getCenter().x / 864.0));
-                //DbgLog.error("New Heading" + NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)));
-                DbgLog.error(String.format("new heading target xy: %.2f, new yx: %.2f, old heading: %.2f", gyro_yaw +  getHeading(), gyro_yaw + NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().x, beacon.getAnalysis().getCenter().y), 0), gyro_yaw));
-                if(beacon.getAnalysis().getConfidence() > 0.2) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
-                    total_heading += gyro_yaw + getHeading(0);
+                if(beacon.getAnalysis().getConfidence() > 0.1) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
+                    if(!parent_op.opModeIsActive())
+                        return -1;
+                    tele.addData("beacon: ", String.format("change: %.2f", getHeading()));
+                    DbgLog.error("Beacon Color" + beacon.getAnalysis().getColorString());
+                    DbgLog.error("Beacon Location (Center)" + beacon.getAnalysis().getLocationString());
+                    DbgLog.error("Beacon Confidence" + beacon.getAnalysis().getConfidenceString());
+                    //DbgLog.error("New Heading: " + NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)) + String.format(" old: %.2f", getGyroYaw()));
+                    DbgLog.error("Relative " + String.format("y: %.2f x: %.2f", beacon.getAnalysis().getCenter().y / 480.0, beacon.getAnalysis().getCenter().x / 864.0));
+                    //DbgLog.error("New Heading" + NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)));
+                    DbgLog.error(String.format("new heading target xy: %.2f, new yx: %.2f, old heading: %.2f", gyro_yaw +  getHeading(), 0.0, gyro_yaw));
+                    if(!parent_op.opModeIsActive())
+                        return -1;
+                    total_heading += getHeading(0);
+                    if(!parent_op.opModeIsActive())
+                        return -1;
                     cnt++;
+                    if(beacon.getAnalysis().isLeftKnown() && beacon.getAnalysis().isLeftRed())
+                    {
+                        red_left_cnt++;
+                    }
+                    else if(beacon.getAnalysis().isLeftKnown() && beacon.getAnalysis().isLeftBlue())
+                    {
+                        blue_left_cnt++;
+                    }
                 }
+                parent_op.waitOneFullHardwareCycle();
+                //halt();
             }
             parent_op.waitOneFullHardwareCycle();
         }
         if(cnt > 0)
             return (total_heading / cnt);
         else
-            return getGyroYaw();
+            return 0;
     }
+
+    //x=.36
+    //x=.56
+
     double makePositive(double heading_Deg)
     {
         return heading_Deg < 0? heading_Deg + 360: heading_Deg;
     }
     void setRightPower(double power)
     {
+        if(!parent_op.opModeIsActive())
+            return;
         motorBR.setPower(Range.clip(power, -1, 1));
         motorFR.setPower(Range.clip(power, -1, 1));
     }
+    void setRightPower(double powerF, double powerB)
+    {
+        if(!parent_op.opModeIsActive())
+            return;
+        motorBR.setPower(Range.clip(powerB, -1, 1));
+        motorFR.setPower(Range.clip(powerF, -1, 1));
+    }
     void setLeftPower(double power)
     {
+        if(!parent_op.opModeIsActive())
+            return;
         motorBL.setPower(Range.clip(-power, -1, 1));
         motorFL.setPower(Range.clip(-power, -1, 1));
+    }
+    void setLeftPower(double powerF, double powerB)
+    {
+        if(!parent_op.opModeIsActive())
+            return;
+        motorBL.setPower(Range.clip(-powerB, -1, 1));
+        motorFL.setPower(Range.clip(-powerF, -1, 1));
     }
 
     //==================BLUE INITIAL SEGMENTS==================
@@ -927,22 +1184,22 @@ public class AutonomousSegments extends LinearOpModeCV {
 
         turn(-30, 0.2);//turn(-23, 1);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         double heading = getGyroYaw();
         PID_move(squares_to_Encoder(8 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
-        while(getRuntime() < 2) // wait 2 seconds*/
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
         turn(-12, 0.2);
         tele.addData(" ", String.format("gyro yaw: %.2f", getGyroYaw()));
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(-45, 1);
         DbgLog.error(String.format("%.2f", getGyroYaw()));
@@ -951,6 +1208,103 @@ public class AutonomousSegments extends LinearOpModeCV {
         halt();
         dump_Climbers();
         halt();
+    }
+    public void Close_Blue_Buttons_CV_new_PID() throws InterruptedException {
+        PID_move_new(squares_to_Encoder(3.1 * 57.0 /72), 0, 1, false);// , 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(-54, 0.04);//turn(-23, 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        //encoderTurn(45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        double heading = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(7.5 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
+        turn(-38, 0.04);
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        double head = getGyroYaw() + find_Beacon();
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
+        target_heading = head;
+        tele.addData("head: ", head);
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 1700);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        reverse_blue();
+        if(!(blue_left_cnt > red_left_cnt))
+        {
+            push_Right();
+        }
+        else if(!(red_left_cnt > blue_left_cnt)) // if they are equal, neither will run
+        {
+            push_Left();
+        }
+    }
+    public void Close_Blue_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
+        PID_move_new(squares_to_Encoder(3 * 57.0 /72), 0, 1, false);// , 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(-50, 0.04);//turn(-23, 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        //encoderTurn(45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        double heading = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(6.8 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
+        turn(-39, 0.04);
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        double head = getGyroYaw() + find_Beacon();
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
+        target_heading = head;
+        tele.addData("head:", head);
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 3000);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        //dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        if(blue_left_cnt > red_left_cnt)
+        {
+            push_Right();
+        }
+        else if(red_left_cnt > blue_left_cnt) // if they are equal, neither will run
+        {
+            push_Left();
+        }
     }
     public void Close_Blue_Buttons_Polar() throws InterruptedException {
         double speed = 0.6;
@@ -961,42 +1315,31 @@ public class AutonomousSegments extends LinearOpModeCV {
         turn(-22, speed - 0.2);//turn(-23, 1);
         //PID_turn(-22, 2);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         PID_move_displacement_cartesian(1500, -1800, speed, 10);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //turn(-20, speed - 0.2);
         PID_turn(-20, 2);
         tele.addData(" ", String.format("gyro yaw: %.2f", getGyroYaw()));
         tele.addData("Before the move into the beacon", " ");
         resetStartTime();
-        while(getRuntime() < 8) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 8) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         double curr_heading = getGyroYaw();
         DbgLog.error(String.format("curr: %.2f", curr_heading));
-        PID_move(squares_to_Encoder(2.5), curr_heading, speed, true, 4000);// , 0.5);
+        PID_move(squares_to_Encoder(2.5), curr_heading, speed, true, 3000);// , 0.5);
         resetStartTime();
         halt();
         dump_Climbers();
-        halt(); halt(); halt();
+        halt();
         resetStartTime();
-        while (getRuntime() < 5) // wait 2 seconds
-            parent_op.waitOneFullHardwareCycle();
-        DbgLog.error(String.format("curr: %.2f", curr_heading));
-        PID_move(-squares_to_Encoder(0.3), curr_heading, 0.3, false, 1000);
-        resetStartTime();
-        while(getRuntime() < 5) // wait 2 seconds
-            parent_op.waitOneFullHardwareCycle();
-        //turn(curr_heading - getGyroYaw(), speed - 0.2);
-        DbgLog.error(String.format("curr - gyro:%.2f", curr_heading - getGyroYaw()));
-        PID_turn(curr_heading - getGyroYaw(), 3);
-        resetStartTime();
-        while(getRuntime() < 5) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 5) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         if(beacon.getAnalysis().isLeftKnown() && beacon.getAnalysis().isLeftBlue())
         {
@@ -1007,9 +1350,112 @@ public class AutonomousSegments extends LinearOpModeCV {
             push_Left();
         }
     }
-    public void Close_Red_Buttons_Polar()
-    {
+    public void Close_Red_Buttons_CV_new_PID() throws InterruptedException {
+        tele.addData("before PID", " done");
+        PID_move_new(squares_to_Encoder(3.1 * 57.0 /72), 0, 1, false);// , 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(46, 0.03);//turn(-23, 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        //encoderTurn(45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        double heading = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(7 * Math.sqrt(2) * 57.0 /72), heading, 1, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
+        tele.addData("pre: ", String.format("gyro yaw: %.2f", getGyroYaw()));
+        turn(38, 0.03);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("post: ", String.format("gyro yaw: %.2f", getGyroYaw()));
+        //encoderTurn(-45, 1);
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        // .31, .38: 9.9
 
+        double head = getGyroYaw() + find_Beacon();
+        tele.addData("head: ", head);
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
+        target_heading = head;
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 1700);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        reverse_red();
+        if(blue_left_cnt > red_left_cnt)
+        {
+            push_Left();
+        }
+        else if(red_left_cnt > blue_left_cnt)
+        {
+            push_Right();
+        }
+    }
+    public void Close_Red_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
+        PID_move_new(squares_to_Encoder(3 * 57.0 /72), 0, 1, false);// , 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(46, 0.04);//turn(-23, 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        //encoderTurn(45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        double heading = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(6.8 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
+        tele.addData("pre: ", String.format("gyro yaw: %.2f", getGyroYaw()));
+        turn(38, 0.04);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("post: ", String.format("gyro yaw: %.2f", getGyroYaw()));
+        //encoderTurn(-45, 1);
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        // .31, .38: 9.9
+
+        double head = getGyroYaw() + find_Beacon();
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
+        target_heading = head;
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 3000);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        //dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        if(blue_left_cnt > red_left_cnt)
+        {
+            push_Left();
+        }
+        else if(red_left_cnt > blue_left_cnt)
+        {
+            push_Right();
+        }
     }
     public void Close_Blue_Buttons_Cartesian() throws InterruptedException {
         double speed = 0.6;
@@ -1020,27 +1466,28 @@ public class AutonomousSegments extends LinearOpModeCV {
         turn(-22, speed - 0.2);//turn(-23, 1);
         //PID_turn(-22, 2);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         PID_move_displacement_polar(squares_to_Encoder(long_encoderB + 1 * Math.sqrt(2)), heading, speed);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         turn(-20, speed - 0.2);
         tele.addData(" ", String.format("gyro yaw: %.2f", getGyroYaw()));
-        tele.addData("Before the move into the beacon" , " ");
+        tele.addData("Before the move into the beacon", " ");
         resetStartTime();
-        while(getRuntime() < 8) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 8) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         DbgLog.error(String.format("%.2f", getGyroYaw()));
-        PID_move(squares_to_Encoder(2.5), getGyroYaw(), speed, true, 4000);// , 0.5);
+        PID_move(squares_to_Encoder(2.5), getGyroYaw(), speed, true, 2500);// , 0.5);
         resetStartTime();
         halt();
         dump_Climbers();
         halt(); halt(); halt();
+        reverse_red();
         if(beacon.getAnalysis().isLeftKnown() && beacon.getAnalysis().isLeftBlue())
         {
             push_Right();
@@ -1050,32 +1497,141 @@ public class AutonomousSegments extends LinearOpModeCV {
             push_Left();
         }
     }
-    public void reverse() throws InterruptedException
+    public void reverse_red() throws InterruptedException
     {
-        PID_move(-squares_to_Encoder(0.3), getGyroYaw(), 0.5, false);
-        turn(-170, 0.8);
-        PID_move(-squares_to_Encoder(0.3), getGyroYaw(), 0.5, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        double currentEncoder = 0;
+        int currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        int currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        int currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
+        resetStartTime();
+        while(Math.abs(currentEncoder) < Math.abs(1100) && parent_op.opModeIsActive() && System.currentTimeMillis() < global_timeout && getRuntime() < 1)
+        {
+            setLeftPower(-.8);
+            setRightPower(-.8);
+            currentEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorBR.getCurrentPosition() - currentBRPosition, motorBR.getCurrentPosition() - currentBRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
+        }
+        halt();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        if(!parent_op.opModeIsActive())
+            return;
+        turn(-165, 0.2);
+        if(!parent_op.opModeIsActive())
+            return;
+        resetStartTime();
+        currentEncoder = 0;
+        currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
+        while(Math.abs(currentEncoder) < Math.abs(200) && parent_op.opModeIsActive() && System.currentTimeMillis() < global_timeout && getRuntime() < 0.4)
+        {
+            setLeftPower(-.8);
+            setRightPower(-.8);
+            currentEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorBR.getCurrentPosition() - currentBRPosition, motorBR.getCurrentPosition() - currentBRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
+        }
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        resetStartTime();
+        while(getRuntime() < 1.5)
+            parent_op.waitOneFullHardwareCycle();
+    }
+    public void reverse_blue() throws InterruptedException
+    {
+        double speed = -0.8;
+        if(!parent_op.opModeIsActive())
+            return;
+        double currentEncoder = 0;
+        int currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        int currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        int currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        int currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
+        resetStartTime();
+        while(Math.abs(currentEncoder) < Math.abs(1500) && parent_op.opModeIsActive() && System.currentTimeMillis() < global_timeout && getRuntime() < 1.3)
+        {
+            DbgLog.error("current Encoder: " + currentEncoder);
+            setLeftPower(speed, speed / 3.0);
+            setRightPower(speed, speed / 3.0);
+            currentEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorBR.getCurrentPosition() - currentBRPosition, motorBR.getCurrentPosition() - currentBRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
+        }
+        halt();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        if(!parent_op.opModeIsActive())
+            return;
+        timed_turn(155, 0.19, 5, 5);
+        if(!parent_op.opModeIsActive())
+            return;
+        currentFLPosition = motorFL.getCurrentPosition();                            //measures current encoder value
+        currentFRPosition = motorFR.getCurrentPosition();                            //measures current encoder value
+        currentBLPosition = motorBL.getCurrentPosition();                            //measures current encoder value
+        currentBRPosition = motorBR.getCurrentPosition();                            //measures current encoder value*/
+        resetStartTime();
+        DbgLog.error("current Encoder: " + currentEncoder);
+        currentEncoder = 0;
+        while(Math.abs(currentEncoder) < Math.abs(500) && parent_op.opModeIsActive() && System.currentTimeMillis() < global_timeout && getRuntime() < .4)
+        {
+            DbgLog.error("current Encoder: " + currentEncoder);
+            setLeftPower(speed, speed / 3.0);
+            setRightPower(speed, speed / 3.0);
+            currentEncoder = mid2(motorBL.getCurrentPosition() - currentBLPosition, motorFL.getCurrentPosition() - currentFLPosition, motorBR.getCurrentPosition() - currentBRPosition, motorBR.getCurrentPosition() - currentBRPosition /*motorBR.getCurrentPosition() - 0 currentBRPosition*/);
+        }
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        resetStartTime();
+        while(getRuntime() < 1.5)
+            parent_op.waitOneFullHardwareCycle();
     }
     public void push_Left() throws InterruptedException
     {
-        reverse();
+        if(!parent_op.opModeIsActive())
+            return;
+        resetStartTime();
+        servoButtonL.setPosition(0);
+        while (parent_op.opModeIsActive() && getRuntime() < 5)
+        {
+            parent_op.waitOneFullHardwareCycle();
+        }
+        if(!parent_op.opModeIsActive())
+            return;
         resetStartTime();
         servoButtonL.setPosition(1);
-        while (getRuntime() < 5)
+        while (parent_op.opModeIsActive() && getRuntime() < 5)
         {
             parent_op.waitOneFullHardwareCycle();
         }
+        if(!parent_op.opModeIsActive())
+            return;
         servoButtonL.setPosition(0.5);
     }
+
     public void push_Right() throws InterruptedException
     {
-        reverse();
+        if(!parent_op.opModeIsActive())
+            return;
         resetStartTime();
-        servoButtonR.setPosition(1);
-        while (getRuntime() < 5)
+        servoButtonR.setPosition(0);
+        while (parent_op.opModeIsActive() && getRuntime() < 5)
         {
             parent_op.waitOneFullHardwareCycle();
         }
+        if(!parent_op.opModeIsActive())
+            return;
+        servoButtonR.setPosition(1);
+        resetStartTime();
+        while (parent_op.opModeIsActive() && getRuntime() < 5)
+        {
+            parent_op.waitOneFullHardwareCycle();
+        }
+        if(!parent_op.opModeIsActive())
+            return;
         servoButtonR.setPosition(0.5);
     }
 
@@ -1087,22 +1643,22 @@ public class AutonomousSegments extends LinearOpModeCV {
 
         turn(-32.5, 0.75);//turn(-23, 1);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         PID_move(squares_to_Encoder(long_encoderB + 1 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
-        while(getRuntime() < 2) // wait 2 seconds*/
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
         turn(-59, 0.75);
         tele.addData(" ", String.format("gyro yaw: %.2f", getGyroYaw()));
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(-45, 1);
         DbgLog.error(String.format("%.2f", getGyroYaw()));
@@ -1119,22 +1675,22 @@ public class AutonomousSegments extends LinearOpModeCV {
 
         turn(32.5, 0.75);//turn(-23, 1);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         PID_move(squares_to_Encoder(long_encoderR + 1 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
-        while(getRuntime() < 2) // wait 2 seconds*/
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
         turn(46, 0.75);
         tele.addData(" ", String.format("gyro yaw: %.2f", getGyroYaw()));
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(-45, 1);
         DbgLog.error(String.format("%.2f", getGyroYaw()));
@@ -1152,22 +1708,22 @@ public class AutonomousSegments extends LinearOpModeCV {
         //ssleep(1000);
         turn(32.5, 0.75);//turn(-23, 1);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         PID_move(squares_to_Encoder(long_encoderR + 1 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
-        while(getRuntime() < 2) // wait 2 seconds*/
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
         turn(59, 0.75);
         tele.addData(" ", String.format("gyro yaw: %.2f", getGyroYaw()));
         resetStartTime();
-        while(getRuntime() < 1) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(-45, 1);
         DbgLog.error(String.format("%.2f", getGyroYaw()));
@@ -1181,13 +1737,15 @@ public class AutonomousSegments extends LinearOpModeCV {
     public void dump_Climbers() throws InterruptedException
     {
         parent_op.waitOneFullHardwareCycle();
-        servoClimberArm.setPosition(0.06);
+        servoClimberArm.setPosition(1);
         resetStartTime();
-        while(getRuntime() < 2) // wait 2 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 3.5) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
-        servoClimberArm.setPosition(0.17);
+        if(!parent_op.opModeIsActive())
+            return;
+        servoClimberArm.setPosition(0);
         resetStartTime();
-        while(getRuntime() < 1) // wait 1 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 1 seconds
             parent_op.waitOneFullHardwareCycle();
     }
     public void Far_Blue_Buttons() throws InterruptedException {
@@ -1232,23 +1790,23 @@ public class AutonomousSegments extends LinearOpModeCV {
     public void Regionals_Straight() throws InterruptedException
     {
         resetStartTime();
-        /*while(getRuntime() < 15)
+        /*while(parent_op.opModeIsActive() && getRuntime() < 15)
             waitOneFullHardwareCycle();*/
         halt();
         PID_move(squares_to_Encoder(1.75 * Math.sqrt(2)), 0, 1, false);// , 1);
         resetStartTime();
-        while(getRuntime() < 1)
+        while(parent_op.opModeIsActive() && getRuntime() < 1)
             parent_op.waitOneFullHardwareCycle();
         PID_move(squares_to_Encoder(-0.75 * Math.sqrt(2)), 0, 1, false);
         resetStartTime();
-        while(getRuntime() < 1)
+        while(parent_op.opModeIsActive() && getRuntime() < 1)
             parent_op.waitOneFullHardwareCycle();
         resetStartTime();
         turn(-70, 0.75);
-        while(getRuntime() < 1)
+        while(parent_op.opModeIsActive() && getRuntime() < 1)
             parent_op.waitOneFullHardwareCycle();
         resetStartTime();
-        while(getRuntime() < 2) {
+        while(parent_op.opModeIsActive() && getRuntime() < 2) {
             parent_op.waitOneFullHardwareCycle();
             setLeftPower(-1);
             setRightPower(-1);
@@ -1260,7 +1818,7 @@ public class AutonomousSegments extends LinearOpModeCV {
     {
         halt();
         resetStartTime();
-        /*while(getRuntime() < 17)
+        /*while(parent_op.opModeIsActive() && getRuntime() < 17)
             waitOneFullHardwareCycle();*/
         PID_move(squares_to_Encoder(0.75), 0, 1, false);// , 1);
         tele.addData("we made it: ", "yay");
@@ -1269,7 +1827,7 @@ public class AutonomousSegments extends LinearOpModeCV {
 
         turn(32.5, 0.75);//turn(-23, 1);
         resetStartTime();
-        while(getRuntime() < 0.5) // wait 0.5 seconds
+        while(parent_op.opModeIsActive() && getRuntime() < 0.5) // wait 0.5 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();

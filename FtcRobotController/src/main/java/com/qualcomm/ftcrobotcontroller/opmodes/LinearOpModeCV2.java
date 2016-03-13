@@ -13,8 +13,8 @@ import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 /**
  * Created by viperbots on 2/13/2016.
  */
-public abstract class LinearOpModeCV extends LinearVisionOpMode {
-    private LinearOpModeCV.a a = null;
+public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
+    private LinearOpModeCV2.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();
     private volatile boolean d = false;
@@ -107,7 +107,7 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         servoR.setPosition(1);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.44);
-        servoClimberArm.setPosition(0);
+        servoClimberArm.setPosition(0.06);
         servoAllClearL.setPosition(.5);
         servoAllClearR.setPosition(.5);
         servoButtonL.setPosition(0.5);

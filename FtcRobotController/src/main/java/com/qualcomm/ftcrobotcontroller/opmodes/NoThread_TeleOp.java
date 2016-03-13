@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.concurrent.TimeUnit;
 
 
-public class NoThread_TeleOp extends LinearOpModeCV {
+public class NoThread_TeleOp extends LinearOpModeCV2 {
 
     //TODO: implement PID control
 
@@ -22,13 +22,13 @@ public class NoThread_TeleOp extends LinearOpModeCV {
     //double yToggle = 1.0;
     boolean enableSOS = true;
     boolean PID_enabled = true;
-    AutonomousSegments auto = new AutonomousSegments(telemetry, this);
+    //AutonomousSegments auto = new AutonomousSegments(telemetry, this);
     //boolean SOSactive = false;
     //boolean rat360moved = false;
 
     //instantiate constants for easy access
-    double climberDump = 0.19;
-    double climberRetract = 0.06;
+    double climberDump = 1;
+    double climberRetract = 0;
     double deadzone = 0.1;
     double toggle_delay = 0.25;
 
@@ -134,14 +134,14 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 motorBL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
             }
             else if(up) {
-                PID_Offset = auto.get_PID();
+                PID_Offset = 0;//auto.get_PID();
                 motorFR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
                 motorFL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
                 motorBR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
                 motorBL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
             }
             else {
-                auto.resetPID();
+                //auto.resetPID();
                 motorFR.setPower(0);
                 motorFL.setPower(0);
                 motorBR.setPower(0);
@@ -198,9 +198,9 @@ public class NoThread_TeleOp extends LinearOpModeCV {
             {
                 rZipTimer = getRuntime() + toggle_delay;
                 if(RZipOut)
-                    servoR.setPosition(0);
-                else
                     servoR.setPosition(0.82);
+                else
+                    servoR.setPosition(0);
                 RZipOut = !RZipOut;
             }
             else if(gamepad2.x)
@@ -215,9 +215,9 @@ public class NoThread_TeleOp extends LinearOpModeCV {
             {
                 lZipTimer = getRuntime() + toggle_delay;
                 if(LZipOut)
-                    servoL.setPosition(1);
-                else
                     servoL.setPosition(0.25);
+                else
+                    servoL.setPosition(1);
                 LZipOut = !LZipOut;
             }
             else if(gamepad2.a)
@@ -241,11 +241,11 @@ public class NoThread_TeleOp extends LinearOpModeCV {
                 servoAllClearR.setPosition(.5);
             }
             if(left) {
-                servoButtonL.setPosition(1);
+                servoButtonL.setPosition(0);
                 servoButtonR.setPosition(0);
             }
             else if(right) {
-                servoButtonL.setPosition(0);
+                servoButtonL.setPosition(1);
                 servoButtonR.setPosition(1);
             }
             else {
