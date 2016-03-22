@@ -13,7 +13,7 @@ import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 /**
  * Created by viperbots on 2/13/2016.
  */
-public abstract class LinearOpModeCV extends LinearVisionOpMode {
+public abstract class LinearOpModeCV extends LinearVisionOpMode{
     private LinearOpModeCV.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();
@@ -73,7 +73,6 @@ public abstract class LinearOpModeCV extends LinearVisionOpMode {
         servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
-        //TODO: Add in left and right servos once they are attached
         servoAllClearL = hardwareMap.servo.get("servoAllClearL");
         servoAllClearR = hardwareMap.servo.get("servoAllClearR");
         servoButtonL = hardwareMap.servo.get("servoButtonL");

@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.lasarobotics.vision.ftc.resq.Beacon;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -508,6 +511,16 @@ public class AutonomousSegments extends LinearOpModeCV {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];
     }
+    public double getGyroPitch() throws InterruptedException{
+        if(!parent_op.opModeIsActive())
+            return -1;
+        if(IMU == null) {
+            DbgLog.error(" IMU is null");
+            return -1;
+        }
+        IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        return pitchAngle[0];
+    }
     public int squares_to_Encoder(double squares)
     {
         return (int)(squares / square_per_rot * 1120);
@@ -580,6 +593,103 @@ public class AutonomousSegments extends LinearOpModeCV {
     double dError;
     double time = getRuntime();
     double target_heading;
+    TreeMap<Double, Double> time_displacement = new TreeMap<Double, Double>();
+    public double tune_PID() throws InterruptedException
+    {
+        return tune_PID(10000);
+    }
+    public double tune_PID(double timeout) throws InterruptedException
+    {
+        long timer = (long) (timeout * Math.pow(10, 3)) + System.currentTimeMillis();
+        double time_per_run = 10;
+        double kP = 0.00005; // start value. It IS too small.
+        //double max;
+        target_heading = 10;
+        resetPID();
+        while(!isTuned(kP, time_per_run) && System.currentTimeMillis() < timer)
+        {
+            kP *= 2;
+            target_heading = (target_heading == 90? 0 : 90);
+        }
+        kP /= 2;
+        while(!isTuned(kP, time_per_run) && System.currentTimeMillis() < timer)
+        {
+            kP *= 1.1;
+            target_heading = (target_heading == 90? 0 : 90);
+        }
+        kP /= 1.1;
+        while(!isTuned(kP, time_per_run) && System.currentTimeMillis() < timer)
+        {
+            kP *= 1.01;
+            target_heading = (target_heading == 90? 0 : 90);
+        }
+        kP /= 1.01;
+        Iterator<Double> it = time_displacement.keySet().iterator();
+        double Tu = 0; // Tu is the period of the oscillation. T meaning period in physics.
+        double previous = it.next();
+        //finding the average period
+        //note: next-previous is one half period... so needs to be doubled at the end
+        while (it.hasNext()) {
+            double next = it.next();
+            Tu += next - previous;
+            previous = next;
+        }
+        Tu = Tu * 2 / (time_displacement.size() - 1); // calculate period based off of some number of half-periods
+        this.kP = 0.6 * kP;
+        this.kI = 2 * this.kP / Tu;
+        this.kD = this.kP * Tu / 8;
+        return time_displacement.get(previous); // returns the amplitude of the oscillations
+    }
+    public boolean isTuned(double kP, double timeout) throws InterruptedException
+    {
+        //TODO: add debug log info for debugging
+        time_displacement = new TreeMap<Double, Double>();
+        long timer = (long) (timeout * Math.pow(10, 3)) + System.currentTimeMillis();
+        resetStartTime();
+        double PID_change;
+        double right;
+        double left;
+        double new_yaw = getGyroYaw();
+        resetPID();
+        double sign = Math.signum(get_PID(kP, 0, 0));
+        while(System.currentTimeMillis() < timer)
+        {
+            while(new_yaw == getGyroYaw())
+            {
+                parent_op.waitOneFullHardwareCycle();
+            }
+            new_yaw = getGyroYaw();
+            PID_change = get_PID(new_yaw, kP, 0, 0);
+            if(sign != Math.signum(PID_change))
+            {
+                time_displacement.put(getRuntime(), error);
+                sign *= -1;
+            }
+            //keep the absolute value of the motors above 0.3 and less than 0.7
+            right = Range.clip(PID_change, -1, 1);
+            left = -right;
+            setRightPower(right);
+            setLeftPower(left);
+            DbgLog.error(String.format("k*error: %.2f, error: %.2f", kP * error, error));
+            DbgLog.error(String.format("gyro:%.2f, target:%.2f, PID (right):%.2f", getGyroYaw(), target_heading, PID_change));
+        }
+        DbgLog.error(String.format("time_displacement.size(): %d", time_displacement.size()));
+        DbgLog.error(time_displacement.toString());
+        if(time_displacement.size() < 3)
+            return false;
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+        Iterator<Double> it = time_displacement.keySet().iterator();
+        while(it.hasNext())
+        {
+            double next = Math.abs(time_displacement.get(it.next())); // measuring amplitude differentials.
+            max = Math.max(max, next);
+            min = Math.min(min, next);
+        }
+        if(max - min > 1) // amplitude still decreasing too much over time. needs to run again.
+            return false;
+        return true;
+    }
     public void PID_turn(double deg) throws InterruptedException
     {
         PID_turn(deg, 3.0, 10);
@@ -596,9 +706,9 @@ public class AutonomousSegments extends LinearOpModeCV {
     {
         DbgLog.error("PID_turn begin, deg: " + String.format("%.2f, gyro: %.2f",deg, getGyroYaw()));
         double safety_time = getRuntime() + timer;
-        double kP = 0.15;
-        double kI = 0.01;
-        double kD = 0.009;
+        double kP = 0.0009;
+        double kI = 0.00001;
+        double kD = 0.00009;
         double PID_change;
         double right;
         double left;
@@ -993,6 +1103,23 @@ public class AutonomousSegments extends LinearOpModeCV {
             error = target_heading - gyro + 360;
         else
             error = target_heading - gyro;
+        dError = (error - prevError) / dt;
+        //make this a reimann right sum if needed to improve speed at the cost of accuracy
+        iError = Range.clip(iError + 0.5 * (prevError + error) * dt, -125, 125) * 0.99; // a trapezoidal approximation of the integral.
+        return kP * error + kD * dError + kI * iError;
+    }
+    public double get_PID_Pitch(double target_pitch, double kP, double kI, double kD) throws InterruptedException
+    {
+        double gyro = getGyroPitch();
+        if(!parent_op.opModeIsActive())
+            return 0;
+        dt = getRuntime() - time;
+        time = getRuntime();
+        prevError = error;
+        if(Math.abs(target_pitch - gyro + 360) < Math.abs(target_pitch - gyro))
+            error = target_pitch - gyro + 360;
+        else
+            error = target_pitch - gyro;
         dError = (error - prevError) / dt;
         //make this a reimann right sum if needed to improve speed at the cost of accuracy
         iError = Range.clip(iError + 0.5 * (prevError + error) * dt, -125, 125) * 0.99; // a trapezoidal approximation of the integral.

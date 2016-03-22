@@ -42,11 +42,6 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
     boolean dump = false;
     double climberTimer = getRuntime();
 
-
-    public NoThread_TeleOp() {
-
-    }
-
     public double gyroTest() {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return yawAngle[0];

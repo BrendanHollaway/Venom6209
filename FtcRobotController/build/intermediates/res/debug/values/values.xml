@@ -92,11 +92,22 @@
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/FtcCommon-release/res/values/values.xml -->
     <eat-comment/>
     <string name="about_activity">About</string>
+    <string name="about_app_version">App Version</string>
+    <string name="about_library_version">Library Version</string>
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="about_menu_item">About</string>
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/FtcCommon-release/res/values/values.xml -->
     <eat-comment/>
+    <string name="about_network_protocol_version">Robot Wifi Protocol Version</string>
+    <string name="about_wifi_connected">Connected</string>
+    <string name="about_wifi_direct_info">Wifi Direct Config Information</string>
+    <string name="about_wifi_group_owner">Group Owner</string>
+    <string name="about_wifi_ip">IP Address</string>
+    <string name="about_wifi_is_group_owner">Group Owner: this phone</string>
+    <string name="about_wifi_name">Name</string>
+    <string name="about_wifi_no_info">No connection information</string>
+    <string name="about_wifi_passphrase">Passphrase</string>
     <string name="action_configuration">Configure Robot</string>
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/src/main/res/values/strings.xml -->
     <eat-comment/>
@@ -135,6 +146,11 @@
     <eat-comment/>
     <string name="configure_menu_item">Configure Robot</string>
     <string name="configure_settings">Configure</string>
+    <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/RobotCore-release/res/values/values.xml -->
+    <eat-comment/>
+    <string name="defaultOpModeName">Stop Robot</string>
+    <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/FtcCommon-release/res/values/values.xml -->
+    <eat-comment/>
     <string name="default_port">0</string>
     <string name="device_info">Device Info</string>
     <string name="device_type">Device Types</string>
@@ -151,6 +167,8 @@
     <string name="edit_motor_controller_menu_item">Edit Motor Controller</string>
     <string name="edit_pwm_devices_activity">Edit PWM Devices</string>
     <string name="edit_servo_controller_activity">Edit Servo Controller</string>
+    <string name="error_text_error">Error: %s</string>
+    <string name="error_text_warning">Warning: %s</string>
     <string name="file_activate_button">Activate</string>
     <string name="file_delete_button">Delete</string>
     <string name="file_edit_button">Edit</string>
@@ -176,6 +194,14 @@
     <string name="matrix_port6">3</string>
     <string name="matrix_port7">4</string>
     <string name="matrix_servo_title">Servos</string>
+    <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/Hardware-release/res/values/values.xml -->
+    <eat-comment/>
+    <string name="moduleDisplayNameCDIM">Modern Robotics USB Core Device Interface Module</string>
+    <string name="moduleDisplayNameLegacyModule">Modern Robotics USB Legacy Module</string>
+    <string name="moduleDisplayNameMotorController">Modern Robotics USB DC Motor Controller</string>
+    <string name="moduleDisplayNameServoController">Modern Robotics USB Servo Controller</string>
+    <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/FtcCommon-release/res/values/values.xml -->
+    <eat-comment/>
     <string name="motor_controller_name">Motor Controller</string>
     <string name="motor_controller_name_text">Enter the name for this motor controller here</string>
     <string name="motor_name">Enter motor name</string>
@@ -184,6 +210,7 @@
     <string name="motor_port2">2</string>
     <string name="name_prompt_text">Enter name</string>
     <string name="name_prompt_undertext">Device name</string>
+    <string name="noVoltageSensor">no voltage sensor</string>
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="ok">OK</string>
@@ -246,6 +273,10 @@
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="view_logs_menu_item">View logs</string>
+    <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/Hardware-release/res/values/values.xml -->
+    <eat-comment/>
+    <string name="warningProblemCommunicatingWithUSBDevice">problem communicating with %s</string>
+    <string name="warningUnableToOpen">unable to open %s</string>
     <!-- From: file:/C:/Users/Brendan%20Hollaway/Documents/GitHub/Venom6209/FtcRobotController/build/intermediates/exploded-aar/FtcCommon-release/res/values/values.xml -->
     <eat-comment/>
     <string name="wifi_direct_bad_device_name">
