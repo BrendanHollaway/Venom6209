@@ -28,7 +28,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
 
     //instantiate constants for easy access
     double climberDump = 1;
-    double climberRetract = 0;
+    double climberRetract = .5;
     double deadzone = 0.1;
     double toggle_delay = 0.25;
 
@@ -112,7 +112,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             boolean RB2 = gamepad2.right_bumper;
             boolean up2 = gamepad2.dpad_up;
             boolean down2 = gamepad2.dpad_down;
-
+            if(System.currentTimeMillis() % 2000  > 1000)
+                servoRatR.setPosition(1);
+            else
+                servoRatR.setPosition(0);
             //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
             {
@@ -147,12 +150,12 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             //Ratchet Controls
             if(LT > deadzone && RT > deadzone) {
                 servoRatL.setPosition(0);
-                servoRatR.setPosition(.58);
+                //servoRatR.setPosition(.58);
             }
             else
             {
                 servoRatL.setPosition(.5);
-                servoRatR.setPosition(.44);
+                //servoRatR.setPosition(.44);
             }
 
 

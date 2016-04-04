@@ -706,26 +706,30 @@ public class AutonomousSegments extends LinearOpModeCV {
     {
         DbgLog.error("PID_turn begin, deg: " + String.format("%.2f, gyro: %.2f",deg, getGyroYaw()));
         double safety_time = getRuntime() + timer;
-        double kP = 0.0009;
-        double kI = 0.00001;
-        double kD = 0.00009;
+        double kP = 0.009;
+        double kI = 0.0001;
+        double kD = 0.0009;
         double PID_change;
         double right;
         double left;
         //double max;
         double target = deg + getGyroYaw();
-        while(Math.abs(getGyroYaw() - target) > tolerance && parent_op.opModeIsActive() && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
+        target_heading = target;
+        while(Math.abs(getGyroYaw() - target_heading) > tolerance && parent_op.opModeIsActive() && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
         {
             PID_change = get_PID(kP, kI, kD);
             //keep the absolute value of the motors above 0.3 and less than 0.7
-            right = (Math.signum(PID_change) * Range.clip(Math.abs(PID_change), 0.3, 0.7) / speed_divisor);
+            right = (Math.signum(PID_change) * Range.clip(Math.abs(PID_change), -1, 1) / speed_divisor);
             left = -right;
             setRightPower(right);
             setLeftPower(left);
-            DbgLog.error(String.format("k*error: %.2f, k*dError: %.2f, k*iError: %.2f", kP * error, kD * dError, kI * iError));
+            DbgLog.error(String.format("k*error: %.5f, k*dError: %.5f, k*iError: %.5f", kP * error, kD * dError, kI * iError));
             DbgLog.error(String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
-            DbgLog.error(String.format("gyro:%.2f, target:%.2f, PID (right):%.2f", getGyroYaw(), target, PID_change));
+            DbgLog.error(String.format("gyro:%.2f, target:%.2f, right:%.5f", getGyroYaw(), target_heading, right));
+            tele.addData("gyro: ", getGyroYaw());
         }
+        tele.addData("done", " ");
+        DbgLog.error(String.format("gyro:%.2f, target:%.2f, right:%.5f", getGyroYaw(), target_heading, 0.0));
         if(!parent_op.opModeIsActive())
             return;
         halt();
@@ -1870,7 +1874,7 @@ public class AutonomousSegments extends LinearOpModeCV {
             parent_op.waitOneFullHardwareCycle();
         if(!parent_op.opModeIsActive())
             return;
-        servoClimberArm.setPosition(0);
+        servoClimberArm.setPosition(0.5);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 1 seconds
             parent_op.waitOneFullHardwareCycle();
