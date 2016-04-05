@@ -60,33 +60,29 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
     protected static Servo servoClimberHelper;
 
     protected void map() throws InterruptedException {
-        telemetry.addData("start ", "map");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorFL = hardwareMap.dcMotor.get("motorFL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorPL = hardwareMap.dcMotor.get("motorPR");
-        telemetry.addData("line 5 ", "map");
         motorPR = hardwareMap.dcMotor.get("motorPL");
         motorM  = hardwareMap.dcMotor.get("motorM");
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoR");
-        telemetry.addData("line 10 ", "map");
-        servoClimberArm = hardwareMap.servo.get("servoArm");
+        servoClimberArm = null;//hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
         //TODO: Add in left and right servos once they are attached
-        servoAllClearL = hardwareMap.servo.get("servoAllClearL");
-        servoAllClearR = hardwareMap.servo.get("servoAllClearR");
-        telemetry.addData("line 15 ", "map");
-        servoButtonL = hardwareMap.servo.get("servoButtonL");
-        servoButtonR = hardwareMap.servo.get("servoButtonR");
+        servoAllClearL = null;//hardwareMap.servo.get("servoAllClearL");
+        servoAllClearR = null;//hardwareMap.servo.get("servoAllClearR");
+        servoButtonL = null;//hardwareMap.servo.get("servoButtonL");
+        servoButtonR = null;//hardwareMap.servo.get("servoButtonR");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
 
-        IMU = null;
+        //IMU = null;
         if(IMU == null) {
             try {
                 IMU = new AdafruitIMU(hardwareMap, "IMU"
@@ -111,12 +107,12 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         servoR.setPosition(1);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.44);
-        servoClimberArm.setPosition(0.06);
+        /*servoClimberArm.setPosition(0.06);
         servoAllClearL.setPosition(.5);
         servoAllClearR.setPosition(.5);
         servoButtonL.setPosition(0.5);
         servoButtonR.setPosition(0.5);
-        servoButtonR.setDirection(Servo.Direction.REVERSE);
+        servoButtonR.setDirection(Servo.Direction.REVERSE);*/
         motorPR.setDirection(DcMotor.Direction.REVERSE);
         motorS.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         telemetry.addData("Init is Complete: ", "true");

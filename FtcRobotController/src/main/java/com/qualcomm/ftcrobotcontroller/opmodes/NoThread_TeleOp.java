@@ -60,7 +60,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
 
     @Override
     public void runOpMode() throws InterruptedException{
-        super.map();
+        super.force_map();
         motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
@@ -112,10 +112,46 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             boolean RB2 = gamepad2.right_bumper;
             boolean up2 = gamepad2.dpad_up;
             boolean down2 = gamepad2.dpad_down;
-            if(System.currentTimeMillis() % 2000  > 1000)
+            /*if(System.currentTimeMillis() % 20000  < 1000)
+            {
+                servoRatL.setPosition(1);
+                telemetry.addData("servoRatL: ", 1);
+            }
+            else if(System.currentTimeMillis() % 20000  < 2000)
+            {
+                servoRatL.setPosition(0);
+                telemetry.addData("servoRatL: ", 0);
+            }
+            else if(System.currentTimeMillis() % 20000  < 3000)
+            {
+                servoL.setPosition(1);
+                telemetry.addData("servoL: ", 1);
+            }
+            else if(System.currentTimeMillis() % 20000  < 4000)
+            {
+                servoL.setPosition(0);
+                telemetry.addData("servoL: ", 0);
+            }
+            else if(System.currentTimeMillis() % 20000  < 5000)
+            {
+                servoR.setPosition(1);
+                telemetry.addData("servoR: ", 1);
+            }
+            else if(System.currentTimeMillis() % 20000  < 6000)
+            {
+                servoR.setPosition(0);
+                telemetry.addData("servoR ", 0);
+            }
+            else if(System.currentTimeMillis() % 20000  < 7000)
+            {
                 servoRatR.setPosition(1);
-            else
+                telemetry.addData("servoRatR: ", 1);
+            }
+            else if(System.currentTimeMillis() % 20000  < 8000)
+            {
                 servoRatR.setPosition(0);
+                telemetry.addData("servoRatR: ", 0);
+            }*/
             //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
             {
@@ -150,12 +186,12 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             //Ratchet Controls
             if(LT > deadzone && RT > deadzone) {
                 servoRatL.setPosition(0);
-                //servoRatR.setPosition(.58);
+                servoRatR.setPosition(.58);
             }
             else
             {
                 servoRatL.setPosition(.5);
-                //servoRatR.setPosition(.44);
+                servoRatR.setPosition(.44);
             }
 
 
@@ -203,11 +239,11 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
             else if(gamepad2.x)
             {
-                servoR.setPosition(Range.clip(servoR.getPosition() + 0.01, 0, 1));
+                servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
             }
             else if(gamepad2.y)
             {
-                servoR.setPosition(Range.clip(servoR.getPosition() - 0.01, 0, 1));
+                servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01, 0, 1));
             }
             if(getRuntime() > lZipTimer && LB2)
             {
@@ -220,13 +256,13 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
             else if(gamepad2.a)
             {
-                servoL.setPosition(Range.clip(servoL.getPosition() + 0.01, 0, 1));
+                servoRatL.setPosition(Range.clip(servoRatL.getPosition() + 0.01, 0, 1));
             }
             else if(gamepad2.b)
             {
-                servoL.setPosition(Range.clip(servoL.getPosition() - 0.01, 0, 1));
+                servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
             }
-            if(A) {
+            /*if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);
             }
@@ -249,10 +285,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             else {
                 servoButtonL.setPosition(.5);
                 servoButtonR.setPosition(.5);
-            }
+            }*/
             telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
-            telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
+            telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), 0.0)); //servoClimberArm.getPosition()));
             telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));
             telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());

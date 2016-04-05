@@ -521,6 +521,16 @@ public class AutonomousSegments extends LinearOpModeCV {
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         return pitchAngle[0];
     }
+    public double getGyroRoll() throws InterruptedException{
+        if(!parent_op.opModeIsActive())
+            return -1;
+        if(IMU == null) {
+            DbgLog.error(" IMU is null");
+            return -1;
+        }
+        IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
+        return rollAngle[0];
+    }
     public int squares_to_Encoder(double squares)
     {
         return (int)(squares / square_per_rot * 1120);
@@ -715,7 +725,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         //double max;
         double target = deg + getGyroYaw();
         target_heading = target;
-        while(Math.abs(getGyroYaw() - target_heading) > tolerance && parent_op.opModeIsActive() && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
+        while(/*Math.abs(getGyroYaw() - target_heading) > tolerance*/ parent_op.opModeIsActive() && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
         {
             PID_change = get_PID(kP, kI, kD);
             //keep the absolute value of the motors above 0.3 and less than 0.7
