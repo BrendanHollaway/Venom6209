@@ -262,6 +262,17 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             {
                 servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
             }
+
+
+            if (A) {
+                motorM.setPower(.5);
+            }
+            else if (B) {
+                motorM.setPower(-.5);
+            }
+            else {
+                motorM.setPower(0);
+            }
             /*if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);

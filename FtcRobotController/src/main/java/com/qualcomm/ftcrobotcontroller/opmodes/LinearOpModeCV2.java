@@ -103,10 +103,10 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
             telemetry.addData("IMU already init:", " true");
         }
         IMU.startIMU();
-        servoL.setPosition(0);
-        servoR.setPosition(1);
-        servoRatL.setPosition(.5);
-        servoRatR.setPosition(.44);
+        servoL.setPosition(1);
+        //servoR.setPosition(1);
+        //servoRatL.setPosition(.5);
+        //servoRatR.setPosition(.44);
         /*servoClimberArm.setPosition(0.06);
         servoAllClearL.setPosition(.5);
         servoAllClearR.setPosition(.5);
