@@ -8,16 +8,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by Brendan Hollaway on 3/13/2016.
+ * Created by Brendan Hollaway and Bo Deng on 3/13/2016.
  */
 public class SegwayBot extends OpMode {
     DcMotor motorL;
     DcMotor motorR;
     AdafruitIMU IMU;
     double PID_change;
-    private final double kP = 0.05;
-    private final double kI = 0;
-    private final double kD = 0.005;
+    private final double kP = 0.03;
+    private final double kI = 0.0;
+    private final double kD = .65;
 
     @Override
     public void init() {
@@ -33,10 +33,11 @@ public class SegwayBot extends OpMode {
                     , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
                     //addressing
                     , (byte) AdafruitIMU.OPERATION_MODE_IMU);
-            telemetry.addData("IMU IS ALIVE: ", "NO ERRORS!");
+            telemetry.addData("IMU IS ALIVE: ", "GOOOOOOOOOOOOD!");
         } catch (RobotCoreException e) {
             telemetry.addData("IMU IS DEAD: ", "IT THREW AN ERROR");
         }
+
         IMU.startIMU();
         IMU.getIMUGyroAngles(rollAngle, pitchAngle, yawAngle);
         telemetry.addData("IMU Initialized? ", IMU.offsetsInitialized);
@@ -55,8 +56,10 @@ public class SegwayBot extends OpMode {
                 PID_change = Range.clip(get_PID_Pitch(-5, kP, kI, kD), -1, 1);
             else
                 PID_change = Range.clip(get_PID_Pitch(0, kP, kI, kD), -1, 1);
-            motorL.setPower(PID_change);
-            motorR.setPower(PID_change);
+            if (Math.abs(getGyroPitch()) >= 2.5) {
+                motorL.setPower(PID_change);
+                motorR.setPower(PID_change);
+            }
             DbgLog.error("PID Change: " + PID_change);
         }
 
