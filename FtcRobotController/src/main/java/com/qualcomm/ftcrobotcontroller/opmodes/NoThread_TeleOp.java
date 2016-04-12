@@ -182,7 +182,12 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 motorBL.setPower(0);
 
             }
-
+            if(LT > deadzone)
+                motorM.setPower(LT);
+            else if(RT > deadzone)
+                motorM.setPower(-RT);
+            else
+                motorM.setPower(0);
             //Ratchet Controls
             if(LT > deadzone && RT > deadzone) {
                 servoRatL.setPosition(0);
@@ -205,6 +210,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                     servoClimberArm.setPosition(climberDump);
                 dump = !dump;
             }
+
 
 
             //Shield controls
