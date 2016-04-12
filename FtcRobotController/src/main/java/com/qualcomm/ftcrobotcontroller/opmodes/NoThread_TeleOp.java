@@ -265,13 +265,29 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
 
 
             if (A) {
-                motorM.setPower(.5);
+                //motorM.setPower(.5);
             }
             else if (B) {
                 motorM.setPower(-.5);
             }
             else {
                 motorM.setPower(0);
+            }
+
+            if (left) {
+                servoYB5.setPosition(1);
+                servoYB6.setPosition(1);
+                servoVD6.setPosition(1);
+            }
+            else if (right) {
+                servoYB5.setPosition(0);
+                servoYB6.setPosition(0);
+                servoVD6.setPosition(0);
+            }
+            else {
+                servoYB5.setPosition(.5);
+                servoYB6.setPosition(.5);
+                servoVD6.setPosition(.5);
             }
             /*if(A) {
                 servoAllClearL.setPosition(1);
@@ -300,7 +316,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
             telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), 0.0)); //servoClimberArm.getPosition()));
-            telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));
+            telemetry.addData("VD6: ", String.format("%.2f", servoVD6.getPosition()));
             telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());

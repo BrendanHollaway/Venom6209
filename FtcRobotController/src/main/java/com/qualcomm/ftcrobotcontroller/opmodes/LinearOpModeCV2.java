@@ -24,7 +24,7 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
 
     //Motors
     protected static DcMotor motorFR;
-    protected static DcMotor motorFL;
+    protected static DcMotor motorFL; 
     protected static DcMotor motorBR;
     protected static DcMotor motorBL;
     protected static DcMotor motorPR;
@@ -47,7 +47,9 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
     protected static Servo servoUpperR;
     protected static Servo servoPushL;
     protected static Servo servoPushR;
-
+    protected static Servo servoYB5;
+    protected static Servo servoYB6;
+    protected static Servo servoVD6;
     //Other
     protected static AdafruitIMU IMU;
     protected static volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
@@ -70,6 +72,9 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoR");
+        servoYB5 = hardwareMap.servo.get("servoYB5");
+        servoYB6 = hardwareMap.servo.get("servoYB6");
+        servoVD6 = hardwareMap.servo.get("servoVD6");
         servoClimberArm = null;//hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
@@ -104,7 +109,7 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         }
         IMU.startIMU();
         servoL.setPosition(1);
-        //servoR.setPosition(1);
+        servoR.setPosition(1);
         //servoRatL.setPosition(.5);
         //servoRatR.setPosition(.44);
         /*servoClimberArm.setPosition(0.06);

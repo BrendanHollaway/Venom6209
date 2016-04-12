@@ -17,7 +17,7 @@ public class SegwayBot extends OpMode {
     double PID_change;
     private final double kP = 0.03;
     private final double kI = 0.0;
-    private final double kD = .65;
+    private final double kD = 0.0;//.65;
 
     @Override
     public void init() {
