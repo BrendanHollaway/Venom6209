@@ -112,6 +112,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             boolean RB2 = gamepad2.right_bumper;
             boolean up2 = gamepad2.dpad_up;
             boolean down2 = gamepad2.dpad_down;
+            boolean left2 = gamepad2.dpad_left;
+            boolean right2 = gamepad2.dpad_right;
+            double LT2 = gamepad2.left_trigger;
+            double RT2 = gamepad2.right_trigger;
             /*if(System.currentTimeMillis() % 20000  < 1000)
             {
                 servoRatL.setPosition(1);
@@ -262,6 +266,46 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             {
                 servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
             }
+
+            if (A) {
+                motorM.setPower(1);
+            }
+            else if (B) {
+                motorM.setPower(-1);
+            }
+            else {
+                motorM.setPower(0);
+            }
+
+            if(left2) {
+                servoButtPush.setPosition(0);
+            }
+            else if (right2) {
+                servoButtPush.setPosition(1);
+            }
+
+            if (left) {
+                servoVD6.setPosition(1);
+            }
+            else if (right) {
+                servoVD6.setPosition(0);
+            }
+            else {
+                servoVD6.setPosition(.5);
+            }
+
+            if (LT2 > .1) {
+                servoYB5.setPosition(1);
+                servoYB6.setPosition(1);
+            }
+            else if (RT2 > .1) {
+                servoYB5.setPosition(0);
+                servoYB6.setPosition(0);
+            }
+            else {
+                servoYB5.setPosition(.5);
+                servoYB6.setPosition(.5);
+            }
             /*if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);
@@ -289,7 +333,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
             telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), 0.0)); //servoClimberArm.getPosition()));
-            telemetry.addData("ratR: ", String.format("%.2f", servoRatR.getPosition()));
+            telemetry.addData("VD6: ", String.format("%.2f", servoVD6.getPosition()));
             telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
