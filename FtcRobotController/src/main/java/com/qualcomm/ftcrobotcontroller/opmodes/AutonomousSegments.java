@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Venom6209 on 10/5/2015.
  */
-public class AutonomousSegments extends LinearOpModeCV {
+public class AutonomousSegments extends LinearOpModeCV2 {
 
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
@@ -1431,7 +1431,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
         target_heading = head;
         tele.addData("head: ", head);
-        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 1700);// , 0.5);
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 / 72), head, 1, true, 1700);// , 0.5);
         if(!parent_op.opModeIsActive())
             return;
         halt();
@@ -1441,12 +1441,17 @@ public class AutonomousSegments extends LinearOpModeCV {
         halt();
         if(!(blue_left_cnt > red_left_cnt))
         {
-            push_Right();
+            servoButtPush.setPosition(1);
         }
         else if(!(red_left_cnt > blue_left_cnt)) // if they are equal, neither will run
         {
-            push_Left();
+            servoButtPush.setPosition(0);
         }
+        while (Math.abs(servoButtPush.getPosition() - 0.5) < 0.4) {
+            parent_op.waitOneFullHardwareCycle();
+        }
+        PID_move(squares_to_Encoder(1.3),getGyroYaw(),0.5,false,3000);
+        halt();
     }
     public void Close_Blue_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
         PID_move_new(squares_to_Encoder(3 * 57.0 /72), 0, 1, false);// , 1);

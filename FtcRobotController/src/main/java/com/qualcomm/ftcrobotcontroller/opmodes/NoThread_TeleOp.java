@@ -31,12 +31,14 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
     double climberRetract = .5;
     double deadzone = 0.1;
     double toggle_delay = 0.25;
+    double belt_delay = 0.05;
 
     //Toggle for Zipliners
     boolean RZipOut = false;
     boolean LZipOut = false;
     double rZipTimer = getRuntime();
     double lZipTimer = getRuntime();
+    double belt_timer = getRuntime();
 
     //Toggle for Climbers
     boolean dump = false;
@@ -116,45 +118,27 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             boolean right2 = gamepad2.dpad_right;
             double LT2 = gamepad2.left_trigger;
             double RT2 = gamepad2.right_trigger;
-            /*if(System.currentTimeMillis() % 20000  < 1000)
+            boolean X2 = gamepad2.x;
+            boolean Y2 = gamepad2.y;
+            /*if(System.currentTimeMillis() % 20000  < 10000)
             {
-                servoRatL.setPosition(1);
-                telemetry.addData("servoRatL: ", 1);
+                servoYB5.setPosition(1);
+                telemetry.addData("servoYB5: ", 1);
             }
-            else if(System.currentTimeMillis() % 20000  < 2000)
+            else if(System.currentTimeMillis() % 20000  < 12000)
             {
-                servoRatL.setPosition(0);
-                telemetry.addData("servoRatL: ", 0);
+                servoYB5.setPosition(0);
+                telemetry.addData("servoYB5: ", 0);
             }
-            else if(System.currentTimeMillis() % 20000  < 3000)
+            else if(System.currentTimeMillis() % 20000  < 14000)
             {
-                servoL.setPosition(1);
-                telemetry.addData("servoL: ", 1);
+                servoYB4.setPosition(1);
+                telemetry.addData("servoYB4: ", 1);
             }
-            else if(System.currentTimeMillis() % 20000  < 4000)
+            else if(System.currentTimeMillis() % 20000  < 16000)
             {
-                servoL.setPosition(0);
-                telemetry.addData("servoL: ", 0);
-            }
-            else if(System.currentTimeMillis() % 20000  < 5000)
-            {
-                servoR.setPosition(1);
-                telemetry.addData("servoR: ", 1);
-            }
-            else if(System.currentTimeMillis() % 20000  < 6000)
-            {
-                servoR.setPosition(0);
-                telemetry.addData("servoR ", 0);
-            }
-            else if(System.currentTimeMillis() % 20000  < 7000)
-            {
-                servoRatR.setPosition(1);
-                telemetry.addData("servoRatR: ", 1);
-            }
-            else if(System.currentTimeMillis() % 20000  < 8000)
-            {
-                servoRatR.setPosition(0);
-                telemetry.addData("servoRatR: ", 0);
+                servoYB4.setPosition(0);
+                telemetry.addData("servoYB4: ", 0);
             }*/
             //Base Driving Controls
             if(enableSOS && gyroPitch() > 50)
@@ -273,7 +257,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
             }*/
 
-            if (A) {
+            /*if (A) {
                 motorM.setPower(1);
             }
             else if (B) {
@@ -281,20 +265,28 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
             else {
                 motorM.setPower(0);
-            }
+            }*/
 
-            if(left2) {
+            if (X2) {
+               servoYB5.setPosition(Range.clip(servoYB5.getPosition() + .01, 0, 1));
+            }
+            else if (Y2) {
+                servoYB5.setPosition(Range.clip(servoYB5.getPosition() - .01, 0, 1));
+            }
+            if(left) {
                 servoButtPush.setPosition(0);
             }
-            else if (right2) {
+            else if (right) {
                 servoButtPush.setPosition(1);
             }
 
-            if (left) {
-                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .001, 0, 1));
+            if (left2 && getRuntime() > belt_timer) {
+                belt_timer = getRuntime() + belt_delay;
+                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
             }
-            else if (right) {
-                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .001, 0, 1));
+            else if (right2) {
+                belt_timer = getRuntime() + belt_delay;
+                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
             }
 
             if (LT2 > .1) {
