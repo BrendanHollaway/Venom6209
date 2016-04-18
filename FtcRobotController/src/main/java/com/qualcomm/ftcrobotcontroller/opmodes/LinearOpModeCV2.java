@@ -41,13 +41,14 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
     protected static Servo servoRatR;
     protected static Servo servoAllClearL; // all clear left
     protected static Servo servoAllClearR; // all clear right
-    protected static Servo servoButtonL;
-    protected static Servo servoButtonR;
+    //protected static Servo servoButtonL;
+    //protected static Servo servoButtonR;
     protected static Servo servoUpperL;
     protected static Servo servoUpperR;
-    protected static Servo servoPushL;
-    protected static Servo servoPushR;
-
+    protected static Servo servoButtPush;
+    protected static Servo servoYB5;
+    protected static Servo servoBasketAngle;
+    protected static Servo servoBasketBelt;
     //Other
     protected static AdafruitIMU IMU;
     protected static volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
@@ -70,14 +71,18 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoR");
-        servoClimberArm = null;//hardwareMap.servo.get("servoArm");
+        servoYB5 = hardwareMap.servo.get("servoYB5");
+        servoBasketAngle = hardwareMap.servo.get("servoYB6");
+        servoBasketBelt = hardwareMap.servo.get("servoVD6");
+        servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoRRat");
+        servoButtPush = hardwareMap.servo.get("servoButtPush");
         //TODO: Add in left and right servos once they are attached
         servoAllClearL = null;//hardwareMap.servo.get("servoAllClearL");
         servoAllClearR = null;//hardwareMap.servo.get("servoAllClearR");
-        servoButtonL = null;//hardwareMap.servo.get("servoButtonL");
-        servoButtonR = null;//hardwareMap.servo.get("servoButtonR");
+        //servoButtonL = null;//hardwareMap.servo.get("servoButtonL");
+        //servoButtonR = null;//hardwareMap.servo.get("servoButtonR");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");
@@ -103,10 +108,13 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
             telemetry.addData("IMU already init:", " true");
         }
         IMU.startIMU();
-        servoL.setPosition(0);
-        servoR.setPosition(1);
+        servoL.setPosition(.5);
+        servoR.setPosition(.5);
+        servoYB5.setPosition(.5);
+        servoBasketAngle.setPosition(.5);
+        servoBasketBelt.setPosition(.5);
         servoRatL.setPosition(.5);
-        servoRatR.setPosition(.44);
+        servoRatR.setPosition(.46);
         /*servoClimberArm.setPosition(0.06);
         servoAllClearL.setPosition(.5);
         servoAllClearR.setPosition(.5);

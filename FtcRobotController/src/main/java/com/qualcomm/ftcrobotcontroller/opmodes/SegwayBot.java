@@ -15,9 +15,9 @@ public class SegwayBot extends OpMode {
     DcMotor motorR;
     AdafruitIMU IMU;
     double PID_change;
-    private final double kP = 0.03;
+    private final double kP = 0.075;
     private final double kI = 0.0;
-    private final double kD = .65;
+    private final double kD = 0.05;
 
     @Override
     public void init() {
@@ -33,7 +33,7 @@ public class SegwayBot extends OpMode {
                     , (byte) (AdafruitIMU.BNO055_ADDRESS_A * 2)//By convention the FTC SDK always does 8-bit I2C bus
                     //addressing
                     , (byte) AdafruitIMU.OPERATION_MODE_IMU);
-            telemetry.addData("IMU IS ALIVE: ", "GOOOOOOOOOOOOD!");
+            telemetry.addData("IMU IS ALIVE: ", "Alex was here!!!!!!");
         } catch (RobotCoreException e) {
             telemetry.addData("IMU IS DEAD: ", "IT THREW AN ERROR");
         }
@@ -56,11 +56,12 @@ public class SegwayBot extends OpMode {
                 PID_change = Range.clip(get_PID_Pitch(-5, kP, kI, kD), -1, 1);
             else
                 PID_change = Range.clip(get_PID_Pitch(0, kP, kI, kD), -1, 1);
-            if (Math.abs(getGyroPitch()) >= 2.5) {
+
                 motorL.setPower(PID_change);
                 motorR.setPower(PID_change);
-            }
+
             DbgLog.error("PID Change: " + PID_change);
+            telemetry.addData("PID Change: ", PID_change);
         }
 
 
