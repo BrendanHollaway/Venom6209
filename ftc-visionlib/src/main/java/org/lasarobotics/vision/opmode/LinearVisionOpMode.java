@@ -6,11 +6,12 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+
 /**
  * Linear version of the Vision OpMode
  * This includes code from the FIRST library (C) Qualcomm as of 1/23/2016
  */
-public abstract class LinearVisionOpMode extends VisionOpMode{
+public abstract class LinearVisionOpMode extends VisionOpMode {
     private final ElapsedTime timer = new ElapsedTime();
     private Threader threader = null;
     private Thread thread = null;
@@ -18,7 +19,6 @@ public abstract class LinearVisionOpMode extends VisionOpMode{
     private Mat rgba;
     private Mat gray;
     private boolean hasNewFrame = false;
-
 
     public LinearVisionOpMode() {
 
@@ -52,6 +52,10 @@ public abstract class LinearVisionOpMode extends VisionOpMode{
     public abstract void runOpMode() throws InterruptedException;
 
     public final void waitForVisionStart() throws InterruptedException {
+        //Give some status info
+        telemetry.addData("Vision Status", "Initializing...\r\n" +
+                "Please wait, do not stop the OpMode.");
+
         while (!this.isInitialized()) {
             synchronized (this) {
                 this.wait();

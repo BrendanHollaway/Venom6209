@@ -1351,7 +1351,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         halt();
     }
     public void Close_Blue_Buttons_CV_new_PID() throws InterruptedException {
-        PID_move_new(squares_to_Encoder(3.1 * 57.0 /72), 0, 1, false);// , 1);
+        PID_move_new(squares_to_Encoder(3.1 * 57.0 / 72), 0, 1, false);// , 1);
         if(!parent_op.opModeIsActive())
             return;
         tele.addData("we made it: ", "yay");
@@ -1365,13 +1365,63 @@ public class AutonomousSegments extends LinearOpModeCV {
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
-        PID_move_new(squares_to_Encoder(7.5 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        PID_move_new(squares_to_Encoder(7.5 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
         if(!parent_op.opModeIsActive())
             return;
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
         turn(-38, 0.04);
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        double head = getGyroYaw() + find_Beacon();
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
+        target_heading = head;
+        tele.addData("head: ", head);
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 / 72), head, 1, true, 1700);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        reverse_blue();
+        if(!(blue_left_cnt > red_left_cnt))
+        {
+            push_Right();
+        }
+        else if(!(red_left_cnt > blue_left_cnt)) // if they are equal, neither will run
+        {
+            push_Left();
+        }
+    }
+    public void Close_Blue_Buttons_CV_New_PID_Worlds() throws InterruptedException
+    {
+        PID_move_new(squares_to_Encoder(3.1 * 57.0 /72), 0, 1, false);// , 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        PID_turn(-54, 0.04);//turn(-23, 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        //encoderTurn(45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        double heading = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(7.5 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
+        PID_turn(-38, 0.04);
         if(!parent_op.opModeIsActive())
             return;
         DbgLog.error(String.format("%.2f", getGyroYaw()));
@@ -1389,7 +1439,6 @@ public class AutonomousSegments extends LinearOpModeCV {
         if(!parent_op.opModeIsActive())
             return;
         halt();
-        reverse_blue();
         if(!(blue_left_cnt > red_left_cnt))
         {
             push_Right();

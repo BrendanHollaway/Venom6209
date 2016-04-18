@@ -74,7 +74,7 @@ public class Reverse_Test extends LinearOpModeCV {
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        //rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
 
         //Set the beacon analysis method
         //Try them all and see what works!

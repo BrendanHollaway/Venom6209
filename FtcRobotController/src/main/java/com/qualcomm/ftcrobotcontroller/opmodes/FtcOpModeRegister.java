@@ -83,7 +83,6 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("DetectColor", DetectColor.class);
       //manager.register("LinearDetectColor", LinearDetectColor.class);
       //manager.register("NullOp", com.qualcomm.ftcrobotcontroller.NullOp.class);
-      manager.register("Basic Vision Sample", BasicVisionSample.class);
       manager.register("IMUtest", IMUtest.class);
       /*manager.register("BLUE AUTO NO DUMP", BlueNoDumpAuto.class);
       manager.register("RED AUTO NO DUMP", RedNoDumpAuto.class);

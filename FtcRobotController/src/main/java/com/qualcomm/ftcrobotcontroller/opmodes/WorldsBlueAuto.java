@@ -16,7 +16,7 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class ActualBlueAutoPolar extends LinearOpModeCV {
+public class WorldsBlueAuto extends LinearOpModeCV {
     AutonomousSegments auto;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,42 +31,21 @@ public class ActualBlueAutoPolar extends LinearOpModeCV {
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
         this.setFrameSize(new Size(900, 900));
 
-        /**
-         * Enable extensions. Use what you need.
-         * If you turn on the BEACON extension, it's best to turn on ROTATION too.
-         */
-        enableExtension(Extensions.BEACON);         //Beacon detection
-        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
-        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
+        //Enable extensions. Use what you need.
+        enableExtension(Extensions.BEACON);     //Beacon detection
+        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
-        /**
-         * Set the beacon analysis method
-         * Try them all and see what works!
-         */
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+        //or when you rotate the phone, sometimes the colors swap
+        //rotation.setRotationInversion(true);
 
-        /**
-         * Set color tolerances
-         * 0 is default, -1 is minimum and 1 is maximum tolerance
-         */
-        beacon.setColorToleranceRed(0);
-        beacon.setColorToleranceBlue(0);
+        //You can do this for certain phones which switch red and blue
+        //It will rotate the display and detection by 180 degrees, making it upright
+        //(ScreenOrientation.PORTRAIT);
 
-        /**
-         * Set the rotation parameters of the screen
-         *
-         * First, tell the extension whether you are using a secondary camera
-         * (or in some devices, a front-facing camera that reverses some colors).
-         *
-         * For TestableVisionOpModes, changing other settings may break the app. See other examples
-         * for normal OpModes.
-         */
-        rotation.setIsUsingSecondaryCamera(false);
-        rotation.disableAutoRotate();
-        rotation.setActivityOrientationFixed(ScreenOrientation.LANDSCAPE);
         //Set the beacon analysis method
         //Try them all and see what works!
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         IMU.offsetsInitialized = false;
         //Wait for the match to begin
         waitForStart();
@@ -74,11 +53,10 @@ public class ActualBlueAutoPolar extends LinearOpModeCV {
         resetStartTime();
         /*while(getRuntime() < 8)
             waitOneFullHardwareCycle();*/
+        //Main loop
+        //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
+        //This loop will exit once the opmode is closed
         auto.Close_Blue_Buttons_Polar();
-
-
-
-
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());

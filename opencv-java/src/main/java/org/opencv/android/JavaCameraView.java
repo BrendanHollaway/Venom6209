@@ -51,6 +51,11 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         return mFrameHeight;
     }
 
+    public Camera getCamera()
+    {
+        return mCamera;
+    }
+
     public static class JavaCameraSizeAccessor implements ListItemAccessor {
 
         @Override
