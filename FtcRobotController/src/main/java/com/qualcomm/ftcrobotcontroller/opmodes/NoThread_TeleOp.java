@@ -285,26 +285,26 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
 
             if (left) {
-                servoYB6.setPosition(1);
                 servoVD6.setPosition(1);
             }
             else if (right) {
-                servoYB6.setPosition(0);
                 servoVD6.setPosition(0);
             }
             else {
-                servoYB6.setPosition(.5);
                 servoVD6.setPosition(.5);
             }
 
             if (LT2 > .1) {
                 servoYB5.setPosition(1);
+                servoYB6.setPosition(1);
             }
             else if (RT2 > .1) {
                 servoYB5.setPosition(0);
+                servoYB6.setPosition(0);
             }
             else {
                 servoYB5.setPosition(.5);
+                servoYB6.setPosition(.5);
             }
             /*if(A) {
                 servoAllClearL.setPosition(1);
