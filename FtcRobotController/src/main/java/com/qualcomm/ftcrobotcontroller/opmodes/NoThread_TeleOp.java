@@ -112,6 +112,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             boolean RB2 = gamepad2.right_bumper;
             boolean up2 = gamepad2.dpad_up;
             boolean down2 = gamepad2.dpad_down;
+            boolean left2 = gamepad2.dpad_left;
+            boolean right2 = gamepad2.dpad_right;
+            double LT2 = gamepad2.left_trigger;
+            double RT2 = gamepad2.right_trigger;
             /*if(System.currentTimeMillis() % 20000  < 1000)
             {
                 servoRatL.setPosition(1);
@@ -263,31 +267,44 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
             }
 
-
             if (A) {
-                //motorM.setPower(.5);
+                motorM.setPower(1);
             }
             else if (B) {
-                motorM.setPower(-.5);
+                motorM.setPower(-1);
             }
             else {
                 motorM.setPower(0);
             }
 
+            if(left2) {
+                servoButtPush.setPosition(0);
+            }
+            else if (right2) {
+                servoButtPush.setPosition(1);
+            }
+
             if (left) {
-                servoYB5.setPosition(1);
                 servoYB6.setPosition(1);
                 servoVD6.setPosition(1);
             }
             else if (right) {
-                servoYB5.setPosition(0);
                 servoYB6.setPosition(0);
                 servoVD6.setPosition(0);
             }
             else {
-                servoYB5.setPosition(.5);
                 servoYB6.setPosition(.5);
                 servoVD6.setPosition(.5);
+            }
+
+            if (LT2 > .1) {
+                servoYB5.setPosition(1);
+            }
+            else if (RT2 > .1) {
+                servoYB5.setPosition(0);
+            }
+            else {
+                servoYB5.setPosition(.5);
             }
             /*if(A) {
                 servoAllClearL.setPosition(1);
