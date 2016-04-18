@@ -195,7 +195,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             else
             {
                 servoRatL.setPosition(.5);
-                servoRatR.setPosition(.44);
+                servoRatR.setPosition(.46);
             }
 
 
@@ -241,14 +241,14 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                     servoR.setPosition(0);
                 RZipOut = !RZipOut;
             }
-            else if(gamepad2.x)
+            /*else if(gamepad2.x)
             {
                 servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
             }
             else if(gamepad2.y)
             {
                 servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01, 0, 1));
-            }
+            }*/
             if(getRuntime() > lZipTimer && LB2)
             {
                 lZipTimer = getRuntime() + toggle_delay;
@@ -258,14 +258,14 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                     servoL.setPosition(1);
                 LZipOut = !LZipOut;
             }
-            else if(gamepad2.a)
+            /*else if(gamepad2.a)
             {
                 servoRatL.setPosition(Range.clip(servoRatL.getPosition() + 0.01, 0, 1));
             }
             else if(gamepad2.b)
             {
                 servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
-            }
+            }*/
 
             if (A) {
                 motorM.setPower(1);
@@ -285,26 +285,19 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
 
             if (left) {
-                servoVD6.setPosition(1);
+                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .001, 0, 1));
             }
             else if (right) {
-                servoVD6.setPosition(0);
-            }
-            else {
-                servoVD6.setPosition(.5);
+                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .001, 0, 1));
             }
 
             if (LT2 > .1) {
-                servoYB5.setPosition(1);
-                servoYB6.setPosition(1);
+
+                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() + .01, 0, 1));
             }
             else if (RT2 > .1) {
-                servoYB5.setPosition(0);
-                servoYB6.setPosition(0);
-            }
-            else {
-                servoYB5.setPosition(.5);
-                servoYB6.setPosition(.5);
+
+                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - .01, 0, 1));
             }
             /*if(A) {
                 servoAllClearL.setPosition(1);
@@ -333,7 +326,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
             telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), 0.0)); //servoClimberArm.getPosition()));
-            telemetry.addData("VD6: ", String.format("%.2f", servoVD6.getPosition()));
+            telemetry.addData("BasketBelt: ", String.format("%.2f Angle: %.2f", servoBasketBelt.getPosition(), servoBasketAngle.getPosition()));
             telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
