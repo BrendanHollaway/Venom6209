@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 
 /**
  * Created by viperbots on 2/13/2016.
@@ -41,14 +42,15 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
     protected static Servo servoRatR;
     protected static Servo servoAllClearL; // all clear left
     protected static Servo servoAllClearR; // all clear right
-    //protected static Servo servoButtonL;
-    //protected static Servo servoButtonR;
+    protected static Servo servoButtonL;
+    protected static Servo servoButtonR;
     protected static Servo servoUpperL;
     protected static Servo servoUpperR;
     protected static Servo servoButtPush;
     protected static Servo servoYB5;
     protected static Servo servoBasketAngle;
     protected static Servo servoBasketBelt;
+    //protected static Servo servoYB4;
     //Other
     protected static AdafruitIMU IMU;
     protected static volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
@@ -70,19 +72,20 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         motorM  = hardwareMap.dcMotor.get("motorM");
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
-        servoRatR = hardwareMap.servo.get("servoR");
+        servoRatR = hardwareMap.servo.get("servoRRat");
         servoYB5 = hardwareMap.servo.get("servoYB5");
+        //servoYB4 = hardwareMap.servo.get("servoYB4");
         servoBasketAngle = hardwareMap.servo.get("servoYB6");
         servoBasketBelt = hardwareMap.servo.get("servoVD6");
         servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
-        servoR = hardwareMap.servo.get("servoRRat");
+        servoR = hardwareMap.servo.get("servoR");
         servoButtPush = hardwareMap.servo.get("servoButtPush");
         //TODO: Add in left and right servos once they are attached
         servoAllClearL = null;//hardwareMap.servo.get("servoAllClearL");
         servoAllClearR = null;//hardwareMap.servo.get("servoAllClearR");
-        //servoButtonL = null;//hardwareMap.servo.get("servoButtonL");
-        //servoButtonR = null;//hardwareMap.servo.get("servoButtonR");
+        servoButtonL = null;//hardwareMap.servo.get("servoButtonL");
+        servoButtonR = null;//hardwareMap.servo.get("servoButtonR");
         //servoBasketL = hardwareMap.servo.get("servoBaskL");
         //servoBasketR = hardwareMap.servo.get("servoBaskR");
         //servoTread = hardwareMap.servo.get("servoTread");

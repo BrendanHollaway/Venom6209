@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Venom6209 on 10/5/2015.
  */
-public class AutonomousSegments extends LinearOpModeCV {
+public class AutonomousSegments extends LinearOpModeCV2 {
 
     UltrasonicSensor ultra;
     UltrasonicSensor frontUltra;
@@ -1401,13 +1401,13 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public void Close_Blue_Buttons_CV_New_PID_Worlds() throws InterruptedException
     {
-        PID_move_new(squares_to_Encoder(3.1 * 57.0 /72), 0, 1, false);// , 1);
+        PID_move_new(squares_to_Encoder(-3.1 * 57.0 /72), 0, 1, false);// , 1);
         if(!parent_op.opModeIsActive())
             return;
         tele.addData("we made it: ", "yay");
         //halt();
         //ssleep(1000);
-        PID_turn(-54, 0.04);//turn(-23, 1);
+        PID_turn(54, 0.04);//turn(-23, 1);
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
@@ -1415,13 +1415,13 @@ public class AutonomousSegments extends LinearOpModeCV {
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
-        PID_move_new(squares_to_Encoder(7.5 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        PID_move_new(squares_to_Encoder(-7.5 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
         if(!parent_op.opModeIsActive())
             return;
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
-        PID_turn(-38, 0.04);
+        PID_turn(38, 0.04);
         if(!parent_op.opModeIsActive())
             return;
         DbgLog.error(String.format("%.2f", getGyroYaw()));
@@ -1431,7 +1431,7 @@ public class AutonomousSegments extends LinearOpModeCV {
         DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
         target_heading = head;
         tele.addData("head: ", head);
-        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 1700);// , 0.5);
+        PID_move_new(squares_to_Encoder(-5.5 * 57.0 / 72), head, 1, true, 1700);// , 0.5);
         if(!parent_op.opModeIsActive())
             return;
         halt();
@@ -1441,12 +1441,17 @@ public class AutonomousSegments extends LinearOpModeCV {
         halt();
         if(!(blue_left_cnt > red_left_cnt))
         {
-            push_Right();
+            servoButtPush.setPosition(1);
         }
         else if(!(red_left_cnt > blue_left_cnt)) // if they are equal, neither will run
         {
-            push_Left();
+            servoButtPush.setPosition(0);
         }
+        while (Math.abs(servoButtPush.getPosition() - 0.5) < 0.4) {
+            parent_op.waitOneFullHardwareCycle();
+        }
+        PID_move(squares_to_Encoder(-1.3), getGyroYaw(), 0.5, false, 3000);
+        halt();
     }
     public void Close_Blue_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
         PID_move_new(squares_to_Encoder(3 * 57.0 /72), 0, 1, false);// , 1);
@@ -1542,7 +1547,7 @@ public class AutonomousSegments extends LinearOpModeCV {
     }
     public void Close_Red_Buttons_CV_new_PID() throws InterruptedException {
         tele.addData("before PID", " done");
-        PID_move_new(squares_to_Encoder(3.1 * 57.0 /72), 0, 1, false);// , 1);
+        PID_move_new(squares_to_Encoder(3.1 * 57.0 / 72), 0, 1, false);// , 1);
         if(!parent_op.opModeIsActive())
             return;
         tele.addData("we made it: ", "yay");
@@ -1577,7 +1582,7 @@ public class AutonomousSegments extends LinearOpModeCV {
             return;
         DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
         target_heading = head;
-        PID_move_new(squares_to_Encoder(5.5 * 57.0 /72), head, 1, true, 1700);// , 0.5);
+        PID_move_new(squares_to_Encoder(5.5 * 57.0 / 72), head, 1, true, 1700);// , 0.5);
         if(!parent_op.opModeIsActive())
             return;
         halt();
@@ -1594,6 +1599,66 @@ public class AutonomousSegments extends LinearOpModeCV {
         {
             push_Right();
         }
+    }
+    public void Close_Red_Buttons_CV_New_PID_Worlds() throws InterruptedException {
+        tele.addData("before PID", " done");
+        PID_move_new(squares_to_Encoder(-3.1 * 57.0 /72), 0, 1, false);// , 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        //halt();
+        //ssleep(1000);
+        turn(-46, 0.03);//turn(-23, 1);
+        if(!parent_op.opModeIsActive())
+            return;
+        //encoderTurn(45, 1);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        double heading = getGyroYaw();
+        if(!parent_op.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(-7 * Math.sqrt(2) * 57.0 /72), heading, 1, false);
+        if(!parent_op.opModeIsActive())
+            return;
+        /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
+        resetStartTime();
+        while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
+        tele.addData("pre: ", String.format("gyro yaw: %.2f", getGyroYaw()));
+        turn(-38, 0.03);
+        if(!parent_op.opModeIsActive())
+            return;
+        tele.addData("post: ", String.format("gyro yaw: %.2f", getGyroYaw()));
+        //encoderTurn(-45, 1);
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        // .31, .38: 9.9
+
+        double head = getGyroYaw() + find_Beacon();
+        tele.addData("head: ", head);
+        if(!parent_op.opModeIsActive())
+            return;
+        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
+        target_heading = head;
+        PID_move_new(squares_to_Encoder(-5.5 * 57.0 / 72), head, 1, true, 1700);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        reverse_red();
+        if((blue_left_cnt > red_left_cnt))
+        {
+            servoButtPush.setPosition(1);
+        }
+        else if((red_left_cnt > blue_left_cnt)) // if they are equal, neither will run
+        {
+            servoButtPush.setPosition(0);
+        }
+        while (Math.abs(servoButtPush.getPosition() - 0.5) < 0.4) {
+            parent_op.waitOneFullHardwareCycle();
+        }
+        PID_move(squares_to_Encoder(-1.3), getGyroYaw(), 0.5, false, 3000);
+        halt();
     }
     public void Close_Red_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
         PID_move_new(squares_to_Encoder(3 * 57.0 /72), 0, 1, false);// , 1);
