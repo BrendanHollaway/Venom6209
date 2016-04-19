@@ -92,8 +92,8 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
         while(!opModeIsActive());
         while(opModeIsActive()) {
             // DRIVE CONTROL - Controller 1
-            double LeftY = gamepad1.left_stick_y;
-            double RightY = gamepad1.right_stick_y;
+            double LeftY = -gamepad1.left_stick_y;
+            double RightY = -gamepad1.right_stick_y;
             double LT = gamepad1.left_trigger;
             double RT = gamepad1.right_trigger;
             boolean Y = gamepad1.y;
@@ -148,12 +148,20 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 motorBR.setPower(1);
                 motorBL.setPower(1);
             }
-            else if (Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone)
+            else if((Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone) && Math.signum(RightY) == Math.signum(LeftY))
             {
                 motorFR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
                 motorFL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
                 motorBR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
                 motorBL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
+            }
+            else if((Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone))
+            {
+                motorFR.setPower(Math.abs(RightY) > deadzone ? RightY : 0);
+                motorFL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                motorBR.setPower(Math.abs(RightY) > deadzone ? RightY : 0);
+                motorBL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
+                telemetry.addData("Turn", "ing");
             }
             else if(up) {
                 PID_Offset = 0;//auto.get_PID();
@@ -208,10 +216,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 motorS.setPower(1);
             else if(RB && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
                 motorS.setPower(-1);
-            else if(down2 && (!encoder_enabled || motorS.getCurrentPosition() < 500))
-                motorS.setPower(1);
-            else if(up2 && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
-                motorS.setPower(-1);
+            //else if(down2 && (!encoder_enabled || motorS.getCurrentPosition() < 500))
+                //motorS.setPower(1);
+            //else if(up2 && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
+                //motorS.setPower(-1);
             else
                 motorS.setPower(0);
             telemetry.addData("motorS position: ", motorS.getCurrentPosition());
@@ -274,7 +282,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 servoYB5.setPosition(Range.clip(servoYB5.getPosition() - .01, 0, 1));
             }
             if(left) {
-                servoButtPush.setPosition(0);
+                servoButtPush.setPosition(0.5);
             }
             else if (right) {
                 servoButtPush.setPosition(1);
@@ -289,13 +297,13 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
             }
 
-            if (LT2 > .1) {
+            if (up2) {
 
-                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() + .01, 0, 1));
+                servoBasketAngle.setPosition(0.93);
             }
-            else if (RT2 > .1) {
+            else if (down2) {
 
-                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - .01, 0, 1));
+                servoBasketAngle.setPosition(0.5);
             }
             /*if(A) {
                 servoAllClearL.setPosition(1);
