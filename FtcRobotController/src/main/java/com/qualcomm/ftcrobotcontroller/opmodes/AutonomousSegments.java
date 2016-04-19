@@ -603,6 +603,8 @@ public class AutonomousSegments extends LinearOpModeCV2 {
     double dError;
     double time = getRuntime();
     double target_heading;
+    double prevGyro = 1000;
+    double prevPID = 1000;
     TreeMap<Double, Double> time_displacement = new TreeMap<Double, Double>();
     public double tune_PID() throws InterruptedException
     {
@@ -749,6 +751,58 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         DbgLog.error(String.format("gyro: %.2f, target: %.2f, tolerance: %.2f", gyro, target, tolerance));
         if((Math.abs(gyro - target) > tolerance) && System.currentTimeMillis() < safety_time)
             PID_turn(target - gyro, tolerance, safety_time - getRuntime(), speed_divisor * 1.11);
+    }
+    public double PID_turn_time(double deg, double timer) throws InterruptedException
+    {
+        DbgLog.error("PID_turn begin, deg: " + String.format("%.2f, gyro: %.2f",deg, getGyroYaw()));
+        double safety_time = getRuntime() + timer;
+        double kP = 0.04;
+        double kI = 0.0015;
+        double kD = 0.0015;
+        double PID_change;
+        double right;
+        double left;
+        //double max;
+        double target = deg + getGyroYaw();
+        target_heading = target;
+        while(parent_op.opModeIsActive() && getRuntime() < safety_time / 1.5 && System.currentTimeMillis() < global_timeout)
+        {
+            PID_change = get_PID(kP, kI, kD);
+            //keep the absolute value of the motors above 0.3 and less than 0.7
+            right = Range.clip(PID_change, -1, 1);
+            left = -right;
+            setRightPower(right);
+            setLeftPower(left);
+            DbgLog.error(String.format("k*error: %.5f, k*dError: %.5f, k*iError: %.5f", kP * error, kD * dError, kI * iError));
+            DbgLog.error(String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
+            DbgLog.error(String.format("gyro:%.2f, target:%.2f, right:%.5f", getGyroYaw(), target_heading, right));
+            tele.addData("gyro: ", getGyroYaw());
+            tele.addData("PID: ", String.format("k*error: %.5f, k*dError: %.5f, k*iError: %.5f", kP * error, kD * dError, kI * iError));
+            tele.addData("speed: ", right);
+        }
+        kP = 0.08;
+        kI = 0.04;
+        kD = 0.01;
+        while(parent_op.opModeIsActive() && getRuntime() < safety_time && System.currentTimeMillis() < global_timeout)
+        {
+            PID_change = get_PID(kP, kI, kD);
+            //keep the absolute value of the motors above 0.3 and less than 0.7
+            right = Range.clip(PID_change, -1, 1);
+            left = -right;
+            setRightPower(right);
+            setLeftPower(left);
+            DbgLog.error(String.format("k*error: %.5f, k*dError: %.5f, k*iError: %.5f", kP * error, kD * dError, kI * iError));
+            DbgLog.error(String.format("error: %.2f, dError: %.2f, iError: %.2f", error, dError, iError));
+            DbgLog.error(String.format("gyro:%.2f, target:%.2f, right:%.5f", getGyroYaw(), target_heading, right));
+            tele.addData("gyro: ", getGyroYaw());
+            tele.addData("PID: ", String.format("k*error: %.5f, k*dError: %.5f, k*iError: %.5f", kP * error, kD * dError, kI * iError));
+            tele.addData("speed: ", right);
+        }
+        halt();
+        halt();
+        halt();
+        tele.addData("done", " ");
+        return target - getGyroYaw();
     }
     //Polar-written movement. Useful for converting old methods to new format
     public void PID_move_displacement_polar(double r, double theta, double speed) throws InterruptedException {
@@ -1108,8 +1162,9 @@ public class AutonomousSegments extends LinearOpModeCV2 {
     }
     public double get_PID(double gyro, double kP, double kI, double kD) throws InterruptedException
     {
-        if(!parent_op.opModeIsActive())
-            return 0;
+        if(gyro == prevGyro || !parent_op.opModeIsActive())
+            return prevPID;
+        gyro = prevGyro;
         dt = getRuntime() - time;
         time = getRuntime();
         prevError = error;
@@ -1120,7 +1175,8 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         dError = (error - prevError) / dt;
         //make this a reimann right sum if needed to improve speed at the cost of accuracy
         iError = Range.clip(iError + 0.5 * (prevError + error) * dt, -125, 125) * 0.99; // a trapezoidal approximation of the integral.
-        return kP * error + kD * dError + kI * iError;
+        prevPID = kP * error + kD * dError + kI * iError;
+        return prevPID;
     }
     public double get_PID_Pitch(double target_pitch, double kP, double kI, double kD) throws InterruptedException
     {
@@ -1407,7 +1463,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         tele.addData("we made it: ", "yay");
         //halt();
         //ssleep(1000);
-        PID_turn(54, 0.04);//turn(-23, 1);
+        PID_turn_time(54, 8);//turn(-23, 1);
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
@@ -1421,7 +1477,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 2) // wait 2 seconds*/
-        PID_turn(38, 0.04);
+        PID_turn_time(38, 8);
         if(!parent_op.opModeIsActive())
             return;
         DbgLog.error(String.format("%.2f", getGyroYaw()));
