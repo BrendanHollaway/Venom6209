@@ -999,7 +999,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             //END DEBUG LOGGING
 
             parent_op.waitOneFullHardwareCycle();
-            /*if(enableCamera && beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
+            /*if(enableCamera && beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.FAST))
             {
                 DbgLog.error("Beacon Color" + beacon.getAnalysis().getColorString());
                 DbgLog.error("Beacon Confidence" + beacon.getAnalysis().getConfidenceString());
@@ -1120,7 +1120,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             //END DEBUG LOGGING
 
             parent_op.waitOneFullHardwareCycle();
-            /*if(enableCamera && beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
+            /*if(enableCamera && beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.FAST))
             {
                 DbgLog.error("Beacon Color" + beacon.getAnalysis().getColorString());
                 DbgLog.error("Beacon Confidence" + beacon.getAnalysis().getConfidenceString());
@@ -1278,7 +1278,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         double gyro_yaw;
         while(parent_op.opModeIsActive() && getRuntime() < 5)
         {
-            if(beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.COMPLEX))
+            if(beacon.getAnalysisMethod().equals(Beacon.AnalysisMethod.FAST))
             {
                 gyro_yaw = getGyroYaw();
                 if(beacon.getAnalysis().getConfidence() > 0.1) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
@@ -1384,7 +1384,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         PID_move(squares_to_Encoder(8 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
@@ -1417,7 +1417,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
@@ -1455,7 +1455,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             push_Left();
         }
     }
-    public void Close_Blue_Buttons_CV_New_PID_Worlds() throws InterruptedException
+    public void Worlds_Align_Beacon_Blue() throws InterruptedException
     {
         PID_move_new(squares_to_Encoder(-3.1 * 57.0 /72), 0, 1, false);// , 1);
         if(!parent_op.opModeIsActive())
@@ -1467,11 +1467,11 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
-        PID_move_new(squares_to_Encoder(-7.5 * 57.0 /72 * Math.sqrt(2)), heading, 1, false);
+        PID_move_new(squares_to_Encoder(-7.5 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
         if(!parent_op.opModeIsActive())
             return;
         /*PID_move(squares_to_Encoder(1 * (Math.sqrt(2))), heading, 1, true);
@@ -1481,32 +1481,35 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         DbgLog.error(String.format("%.2f", getGyroYaw()));
-        double head = getGyroYaw() + find_Beacon();
+        double new_heading = find_Beacon();
+        PID_turn_time(new_heading, 2);
+    }
+    public void Worlds_Blue_Buttons() throws InterruptedException
+    {
         if(!parent_op.opModeIsActive())
             return;
-        DbgLog.error("you about to be movin, heading: " + String.format("%.2f", head));
-        target_heading = head;
-        tele.addData("head: ", head);
-        PID_move_new(squares_to_Encoder(-5.5 * 57.0 / 72), head, 1, true, 1700);// , 0.5);
-        if(!parent_op.opModeIsActive())
-            return;
-        halt();
-        dump_Climbers();
-        if(!parent_op.opModeIsActive())
-            return;
-        halt();
         if(!(blue_left_cnt > red_left_cnt))
         {
             servoButtPush.setPosition(1);
         }
-        else if(!(red_left_cnt > blue_left_cnt)) // if they are equal, neither will run
+        else if(!(red_left_cnt > blue_left_cnt))
         {
             servoButtPush.setPosition(0);
         }
         while (Math.abs(servoButtPush.getPosition() - 0.5) < 0.4) {
             parent_op.waitOneFullHardwareCycle();
         }
-        PID_move(squares_to_Encoder(-1.3), getGyroYaw(), 0.5, false, 3000);
+        halt();
+    }
+    public void Worlds_Blue_Climbers() throws InterruptedException
+    {
+        PID_move_new(squares_to_Encoder(-5.5 * 57.0 / 72), target_heading, 1, true, 1700);// , 0.5);
+        if(!parent_op.opModeIsActive())
+            return;
+        halt();
+        dump_Climbers();
+        if(!parent_op.opModeIsActive())
+            return;
         halt();
     }
     public void Close_Blue_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
@@ -1520,7 +1523,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
@@ -1570,7 +1573,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         PID_move_displacement_cartesian(1500, -1800, speed, 10);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
@@ -1613,7 +1616,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
@@ -1668,7 +1671,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
@@ -1727,7 +1730,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!parent_op.opModeIsActive())
             return;
         //encoderTurn(45, 1);
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!parent_op.opModeIsActive())
             return;
@@ -1781,7 +1784,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         PID_move_displacement_polar(squares_to_Encoder(long_encoderB + 1 * Math.sqrt(2)), heading, speed);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
@@ -1958,7 +1961,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         PID_move(squares_to_Encoder(long_encoderB + 1 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
@@ -1990,7 +1993,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         PID_move(squares_to_Encoder(long_encoderR + 1 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
@@ -2023,7 +2026,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         PID_move(squares_to_Encoder(long_encoderR + 1 * Math.sqrt(2)), heading, 1, false);
         resetStartTime();
         while(parent_op.opModeIsActive() && getRuntime() < 1) // wait 2 seconds
@@ -2142,7 +2145,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             parent_op.waitOneFullHardwareCycle();
         //encoderTurn(45, 1);
         double heading = getGyroYaw();
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         PID_move(squares_to_Encoder(0.85), heading, 1, false);
         turn(78, 0.75);
         PID_move(squares_to_Encoder(1.75), getGyroYaw(), 1, false, 3000);// , 1);
