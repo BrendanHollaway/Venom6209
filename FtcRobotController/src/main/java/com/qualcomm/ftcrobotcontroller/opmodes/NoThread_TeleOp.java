@@ -31,7 +31,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
     double climberRetract = .5;
     double deadzone = 0.1;
     double toggle_delay = 0.25;
-    double belt_delay = 0.05;
+    double belt_delay = 0.12;
 
     //Toggle for Zipliners
     boolean RZipOut = false;
@@ -298,13 +298,15 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
 
             if (up2) {
-
-                servoBasketAngle.setPosition(0.93);
+                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() + 0.005, 0 ,1));
             }
             else if (down2) {
-
-                servoBasketAngle.setPosition(0.5);
+                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - 0.005, 0 ,1));
             }
+            else if(gamepad2.back)
+                servoBasketAngle.setPosition(0.475);
+            else if(gamepad2.start)
+                servoBasketAngle.setPosition(0.525);
             /*if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);

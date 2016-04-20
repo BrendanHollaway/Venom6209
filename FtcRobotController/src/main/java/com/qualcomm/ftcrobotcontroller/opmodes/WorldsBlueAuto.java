@@ -44,7 +44,7 @@ public class WorldsBlueAuto extends LinearOpModeCV {
         //(ScreenOrientation.PORTRAIT);
 
         //Set the beacon analysis method
-        //Try them all and see what works!
+        //Try them all and see what works!;
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
         IMU.offsetsInitialized = false;
         //Wait for the match to begin
