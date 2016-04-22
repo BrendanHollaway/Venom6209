@@ -1,34 +1,3 @@
-/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted (subject to the limitations in the disclaimer below) provided that
-the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list
-of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-Neither the name of Qualcomm Technologies Inc nor the names of its contributors
-may be used to endorse or promote products derived from this software without
-specific prior written permission.
-
-NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
-LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.ftccommon.DbgLog;
@@ -36,9 +5,13 @@ import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
 
 /**
@@ -46,11 +19,10 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class BeaconTeset extends AutonomousSegments {
-
+public class WorldsRedAuto extends AutonomousSegments {
     @Override
     public void runOpMode() throws InterruptedException {
-
+        //Wait for vision to initialize - this should be the first thing you do
         waitForVisionStart();
         super.force_map();
         /**
@@ -93,7 +65,7 @@ public class BeaconTeset extends AutonomousSegments {
          * Enable this only if you're running test app - otherwise, you should turn it off
          * (Although it doesn't harm anything if you leave it on, only slows down image processing)
          */
-        beacon.enableDebug();
+        //beacon.enableDebug();
 
         /**
          * Set the rotation parameters of the screen
@@ -109,7 +81,7 @@ public class BeaconTeset extends AutonomousSegments {
         rotation.setIsUsingSecondaryCamera(false);
         rotation.disableAutoRotate();
         rotation.setActivityOrientationFixed(ScreenOrientation.PORTRAIT);
-        rotation.setZeroOrientation(ScreenOrientation.PORTRAIT);
+        beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width, 300));
 
         /**
          * Set camera control extension preferences
@@ -119,28 +91,33 @@ public class BeaconTeset extends AutonomousSegments {
          */
         cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.K8000_SHADE);
         cameraControl.setAutoExposureCompensation();
-        //Set the beacon analysis method
-        //Try them all and see what works!;
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         IMU.offsetsInitialized = false;
         //Wait for the match to begin
         waitForStart();
         global_timeout = 29 * (long) Math.pow(10, 3) + System.currentTimeMillis(); // 29 seconds
         resetStartTime();
-        /*while(getRuntime() < 8)
-            waitOneFullHardwareCycle();*/
+        /*while(getRuntime() < 2) {
+            waitOneFullHardwareCycle();
+            motorPR.setPower(1);
+            motorPL.setPower(1);
+        }
+        motorPR.setPower(0);
+        motorPL.setPower(0);*/
 
-        adjust_heading();
-        Worlds_Blue_Buttons();
-        Worlds_Blue_Climbers();
+        motorM.setPower(1);
+
+        Worlds_Align_Beacon_Red();
+        Worlds_Red_Buttons();
+        Worlds_Climbers();
+        motorM.setPower(0);
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
             telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
             telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-            telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)));
-            telemetry.addData("Relative ", String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().y / height, beacon.getAnalysis().getCenter().x / width));
+            telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().x, beacon.getAnalysis().getCenter().y)));
+            telemetry.addData("Relative ", String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().x / width, beacon.getAnalysis().getCenter().y / height));
             //telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
             //telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
             telemetry.addData("Frame Size", "Width: " + width + " Height: " + height); // width = 864, height = 480

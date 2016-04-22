@@ -65,6 +65,7 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("ServoTest", test_servos.class);
       manager.register("BeaconTest", BeaconTeset.class);
       manager.register("Blue Auto", WorldsBlueAuto.class);
+      manager.register("Red Auto", WorldsRedAuto.class);
      // manager.register("Temp", tempTele.class);
       //manager.register("SquareTest", squareTest.class);
       //manager.register("IMUout", IMUoutput.class);
@@ -74,7 +75,7 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("LEGIT RED AUTO", REGIONALBLUEAUTO.class);
       //manager.register("Blue Polar Auto", ActualBlueAutoPolar.class);
       //manager.register("Straight_Auto", Straight_Auto.class);
-      manager.register("Segway Bot", SegwayBot.class);
+      //manager.register("Segway Bot", SegwayBot.class);
       /*manager.register("New_PID Blue auto", New_PID_Blue.class);
       manager.register("New_PID Blue No Dump auto", New_PID_Blue_No_Dump.class);
       manager.register("New_PID Red auto", New_PID_Red.class);

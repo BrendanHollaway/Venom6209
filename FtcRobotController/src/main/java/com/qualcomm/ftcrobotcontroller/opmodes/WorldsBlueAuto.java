@@ -97,12 +97,20 @@ public class WorldsBlueAuto extends AutonomousSegments {
         waitForStart();
         global_timeout = 29 * (long) Math.pow(10, 3) + System.currentTimeMillis(); // 29 seconds
         resetStartTime();
-        /*while(getRuntime() < 8)
-            waitOneFullHardwareCycle();*/
+        /*while(getRuntime() < 2) {
+            waitOneFullHardwareCycle();
+            motorPR.setPower(1);
+            motorPL.setPower(1);
+        }
+        motorPR.setPower(0);
+        motorPL.setPower(0);*/
+
+        motorM.setPower(1);
 
         Worlds_Align_Beacon_Blue();
         Worlds_Blue_Buttons();
-        Worlds_Blue_Climbers();
+        Worlds_Climbers();
+        motorM.setPower(0);
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());

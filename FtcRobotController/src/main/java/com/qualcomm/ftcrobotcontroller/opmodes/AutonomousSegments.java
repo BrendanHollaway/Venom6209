@@ -28,7 +28,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
     UltrasonicSensor frontUltra;
     //protected AdafruitIMU IMU;
     protected AdafruitIMU IMU2;
-    Telemetry tele;
+    Telemetry tele = telemetry;
     LinearOpModeCV parent_op;
 
     double cm_rotation = 4*Math.PI*2.54;
@@ -775,6 +775,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         //double max;
         double target = deg + getGyroYaw();
         target_heading = target;
+        resetPID();
         while(!only_fine && this.opModeIsActive() && getRuntime() < safety_time / 1.5 && System.currentTimeMillis() < global_timeout)
         {
             tele.addData("driving: ", "turning");
@@ -811,6 +812,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             tele.addData("PID: ", String.format("k*error: %.5f, k*dError: %.5f, k*iError: %.5f", kP * error, kD * dError, kI * iError));
             tele.addData("speed: ", right);
         }
+        resetPID();
         halt();
         halt();
         halt();
@@ -1096,6 +1098,11 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             right *= speed;
             left /= max;
             left *= speed;
+            /*if(Math.abs(currentEncoder) > 5000)
+            {
+                right /= 1.8;
+                left /= 1.8;
+            }*/
             if(encoder < 0) {
                 setRightPower(-right);
                 setLeftPower(-left);
@@ -1146,7 +1153,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             return;
         DbgLog.error("Done with drive forward");
         halt();
-        this.waitOneFullHardwareCycle();
+        waitOneFullHardwareCycle();
         halt();
         halt();
     }
@@ -1236,7 +1243,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         double width_inches = depth_inches * ratio; // 13.64
         //double width_deg = Math.atan(ratio) * 2; // field of view of the camera, in degrees
         double center_x = center.x;
-        double x_offset_pix = center_x - (width_pixels / 2); // in pixels
+        double x_offset_pix = center_x - (width_pixels / 2) + 20; // in pixels
         double x_offset_inches = (x_offset_pix * width_inches / width_pixels); // phone is one inch from center
         double deg_offset = Math.toDegrees(Math.atan(x_offset_inches*2 / depth_inches)); // difference between current heading and target
         DbgLog.error(String.format("head: %.2f, x_off_in: %.2f, depth_in: %.2f, x_off_pix: %.2f",deg_offset, x_offset_inches, depth_inches, x_offset_pix));
@@ -1287,7 +1294,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
             {
                 gyro_yaw = getGyroYaw();
                 DbgLog.error("finding beacon...");
-                if(beacon.getAnalysis().getConfidence() > 0) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
+                if(beacon.getAnalysis().getConfidence() > 0.3) { // beacon.getAnalysis().getConfidence() > 0.1 && <--- use this if COMPLEX analysis is on
                     if(!this.opModeIsActive())
                         return -1;
                     tele.addData("beacon: ", String.format("change: %.2f", getHeading()));
@@ -1468,17 +1475,19 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorFL.setDirection(DcMotor.Direction.FORWARD);
         PID_move_new(squares_to_Encoder(-3.4 * 57.0 /72), 0, 1, false);// , 1);
+        halt();
         if(!this.opModeIsActive())
             return;
         tele.addData("we made it: ", "yay");
         PID_turn_time(-41, 4);//turn(-23, 1);
+
         if(!this.opModeIsActive())
             return;
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
         double heading = getGyroYaw();
         if(!this.opModeIsActive())
             return;
-        PID_move_new(squares_to_Encoder(-8.9 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
+        PID_move_new(squares_to_Encoder(-8.35 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
         if(!this.opModeIsActive())
             return;
         PID_turn_time(-42, 4);
@@ -1490,26 +1499,29 @@ public class AutonomousSegments extends LinearOpModeCV2 {
     public void adjust_heading() throws InterruptedException
     {
         double new_heading = find_Beacon();
-        PID_turn_time(new_heading, 2);
+        PID_turn_time(new_heading, 4);
     }
     public void Worlds_Blue_Buttons() throws InterruptedException
     {
         if(!this.opModeIsActive())
             return;
-        if(!(blue_left_cnt > red_left_cnt))
+        if((blue_left_cnt > red_left_cnt))
+        {
+            DbgLog.error("target is: left");
+            servoButtPush.setPosition(0);
+
+        }
+        else if((red_left_cnt > blue_left_cnt))
         {
             servoButtPush.setPosition(1);
-        }
-        else if(!(red_left_cnt > blue_left_cnt))
-        {
-            servoButtPush.setPosition(0);
+            DbgLog.error("target is: right(");
         }
         while (Math.abs(servoButtPush.getPosition() - 0.5) < 0.4) {
             this.waitOneFullHardwareCycle();
         }
         halt();
     }
-    public void Worlds_Blue_Climbers() throws InterruptedException
+    public void Worlds_Climbers() throws InterruptedException
     {
         PID_move_new(squares_to_Encoder(-5.5 * 57.0 / 72), target_heading, 1, true, 1700);// , 0.5);
         if(!this.opModeIsActive())
@@ -1518,6 +1530,52 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         dump_Climbers();
         if(!this.opModeIsActive())
             return;
+        halt();
+    }
+    public void Worlds_Align_Beacon_Red() throws InterruptedException
+    {
+        motorBL.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.FORWARD);
+        PID_move_new(squares_to_Encoder(-3.4 * 57.0 / 72), 0, 1, false);// , 1);
+        halt();
+        if(!this.opModeIsActive())
+            return;
+        tele.addData("we made it: ", "yay");
+        PID_turn_time(41, 4);//turn(-23, 1);
+
+        if(!this.opModeIsActive())
+            return;
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        double heading = getGyroYaw();
+        if(!this.opModeIsActive())
+            return;
+        PID_move_new(squares_to_Encoder(-8.35 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
+        if(!this.opModeIsActive())
+            return;
+        PID_turn_time(42, 4);
+        if(!this.opModeIsActive())
+            return;
+        DbgLog.error(String.format("%.2f", getGyroYaw()));
+        adjust_heading();
+    }
+    public void Worlds_Red_Buttons() throws InterruptedException
+    {
+        if(!this.opModeIsActive())
+            return;
+        if((red_left_cnt > blue_left_cnt))
+        {
+            DbgLog.error("target is: left");
+            servoButtPush.setPosition(0);
+
+        }
+        else if((blue_left_cnt > red_left_cnt))
+        {
+            servoButtPush.setPosition(1);
+            DbgLog.error("target is: right(");
+        }
+        while (Math.abs(servoButtPush.getPosition() - 0.5) < 0.4) {
+            this.waitOneFullHardwareCycle();
+        }
         halt();
     }
     public void Close_Blue_Buttons_CV_new_PID_No_Dump() throws InterruptedException {
