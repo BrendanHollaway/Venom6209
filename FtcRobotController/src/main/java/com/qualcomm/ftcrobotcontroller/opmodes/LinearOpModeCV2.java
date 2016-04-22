@@ -14,7 +14,7 @@ import org.lasarobotics.vision.util.ScreenOrientation;
 /**
  * Created by viperbots on 2/13/2016.
  */
-public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
+public abstract class LinearOpModeCV2 extends LinearOpModeCV {
     private LinearOpModeCV2.a a = null;
     private Thread b = null;
     private ElapsedTime c = new ElapsedTime();
@@ -113,7 +113,7 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         IMU.startIMU();
         servoL.setPosition(.5);
         servoR.setPosition(.5);
-        servoYB5.setPosition(.5);
+        servoYB5.setPosition(0);
         servoBasketAngle.setPosition(.5);
         servoBasketBelt.setPosition(.5);
         servoRatL.setPosition(.5);

@@ -5,11 +5,13 @@ import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
 
 /**
@@ -17,14 +19,12 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class WorldsBlueAuto extends LinearOpModeCV {
-    AutonomousSegments auto;
+public class WorldsBlueAuto extends AutonomousSegments {
     @Override
     public void runOpMode() throws InterruptedException {
         //Wait for vision to initialize - this should be the first thing you do
-        super.force_map();
         waitForVisionStart();
-        auto = new AutonomousSegments(telemetry, this);
+        super.force_map();
         /**
          * Set the camera used for detection
          * PRIMARY = Front-facing, larger camera
@@ -65,7 +65,7 @@ public class WorldsBlueAuto extends LinearOpModeCV {
          * Enable this only if you're running test app - otherwise, you should turn it off
          * (Although it doesn't harm anything if you leave it on, only slows down image processing)
          */
-        beacon.enableDebug();
+        //beacon.enableDebug();
 
         /**
          * Set the rotation parameters of the screen
@@ -81,7 +81,7 @@ public class WorldsBlueAuto extends LinearOpModeCV {
         rotation.setIsUsingSecondaryCamera(false);
         rotation.disableAutoRotate();
         rotation.setActivityOrientationFixed(ScreenOrientation.PORTRAIT);
-        rotation.setZeroOrientation(ScreenOrientation.PORTRAIT);
+        beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width, 300));
 
         /**
          * Set camera control extension preferences
@@ -91,9 +91,6 @@ public class WorldsBlueAuto extends LinearOpModeCV {
          */
         cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.K8000_SHADE);
         cameraControl.setAutoExposureCompensation();
-        //Set the beacon analysis method
-        //Try them all and see what works!;
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         IMU.offsetsInitialized = false;
         //Wait for the match to begin
@@ -103,16 +100,16 @@ public class WorldsBlueAuto extends LinearOpModeCV {
         /*while(getRuntime() < 8)
             waitOneFullHardwareCycle();*/
 
-        auto.Worlds_Align_Beacon_Blue();
-        auto.Worlds_Blue_Buttons();
-        auto.Worlds_Blue_Climbers();
+        Worlds_Align_Beacon_Blue();
+        Worlds_Blue_Buttons();
+        Worlds_Blue_Climbers();
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
             telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
             telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-            telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().y, beacon.getAnalysis().getCenter().x)));
-            telemetry.addData("Relative ", String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().y / height, beacon.getAnalysis().getCenter().x / width));
+            telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().x, beacon.getAnalysis().getCenter().y)));
+            telemetry.addData("Relative ", String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().x / width, beacon.getAnalysis().getCenter().y / height));
             //telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
             //telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
             telemetry.addData("Frame Size", "Width: " + width + " Height: " + height); // width = 864, height = 480

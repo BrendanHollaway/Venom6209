@@ -276,10 +276,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }*/
 
             if (X2) {
-               servoYB5.setPosition(Range.clip(servoYB5.getPosition() + .01, 0, 1));
+               servoYB5.setPosition(1);
             }
             else if (Y2) {
-                servoYB5.setPosition(Range.clip(servoYB5.getPosition() - .01, 0, 1));
+                servoYB5.setPosition(0);
             }
             if(left) {
                 servoButtPush.setPosition(0.5);
@@ -292,21 +292,29 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 belt_timer = getRuntime() + belt_delay;
                 servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
             }
-            else if (right2) {
+            else if (right2 && getRuntime() > belt_timer) {
                 belt_timer = getRuntime() + belt_delay;
                 servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
             }
 
-            if (up2) {
+            /*if (gamepad2.back) {
                 servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() + 0.005, 0 ,1));
             }
-            else if (down2) {
+            else if (gamepad2.start) {
                 servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - 0.005, 0 ,1));
+            }*/
+            if(up2) {
+                while (servoBasketAngle.getPosition() > 0.42) {
+                    servoBasketAngle.setPosition(0);
+                    waitOneFullHardwareCycle();
+                }
+                servoBasketAngle.setPosition(0.46); //.485
             }
-            else if(gamepad2.back)
-                servoBasketAngle.setPosition(0.475);
-            else if(gamepad2.start)
-                servoBasketAngle.setPosition(0.525);
+            else if(down2){/*
+                while (servoBasketAngle.getPosition() < .525)
+                    servoBasketAngle.setPosition(1);*/
+                servoBasketAngle.setPosition(.525);
+            }
             /*if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);

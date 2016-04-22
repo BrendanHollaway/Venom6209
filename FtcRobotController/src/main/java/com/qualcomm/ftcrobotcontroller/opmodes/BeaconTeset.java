@@ -37,6 +37,7 @@ import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Size;
 
@@ -45,55 +46,97 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class BeaconTeset extends LinearOpModeCV {
+public class BeaconTeset extends LinearOpModeCV2 {
     AutonomousSegments auto;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //Wait for vision to initialize - this should be the first thing you do
-        //super.force_map();
+
         waitForVisionStart();
-        DbgLog.error("Ready to start");
+        super.init();
+        super.force_map();
         auto = new AutonomousSegments(telemetry, this);
-        //Set the camera used for detection
+        /**
+         * Set the camera used for detection
+         * PRIMARY = Front-facing, larger camera
+         * SECONDARY = Screen-facing, "selfie" camera :D
+         **/
         this.setCamera(Cameras.PRIMARY);
-        //Set the frame size
-        //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this might make the image appear small - it might be best not to use this
+
+        /**
+         * Set the maximum frame size
+         * Larger = sometimes more accurate, but also much slower
+         * After this method runs, it will set the "width" and "height" of the frame
+         **/
         this.setFrameSize(new Size(900, 900));
 
-        //Enable extensions. Use what you need.
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        /**
+         * Enable extensions. Use what you need.
+         * If you turn on the BEACON extension, it's best to turn on ROTATION too.
+         */
+        enableExtension(Extensions.BEACON);         //Beacon detection
+        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
+        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
-        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
-        //or when you rotate the phone, sometimes the colors swap
-        //rotation.setRotationInversion(true);
+        /**
+         * Set the beacon analysis method
+         * Try them all and see what works!
+         */
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
-        //You can do this for certain phones which switch red and blue
-        //It will rotate the display and detection by 180 degrees, making it upright
-        //rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        /**
+         * Set color tolerances
+         * 0 is default, -1 is minimum and 1 is maximum tolerance
+         */
+        beacon.setColorToleranceRed(0);
+        beacon.setColorToleranceBlue(0);
 
+        /**
+         * Debug drawing
+         * Enable this only if you're running test app - otherwise, you should turn it off
+         * (Although it doesn't harm anything if you leave it on, only slows down image processing)
+         */
+        beacon.enableDebug();
+
+        /**
+         * Set the rotation parameters of the screen
+         *
+         * First, tell the extension whether you are using a secondary camera
+         * (or in some devices, a front-facing camera that reverses some colors).
+         *
+         * If you have a weird phone, you can set the "zero" orientation here as well.
+         *
+         * For TestableVisionOpModes, changing other settings may break the app. See other examples
+         * for normal OpModes.
+         */
+        rotation.setIsUsingSecondaryCamera(false);
+        rotation.disableAutoRotate();
+        rotation.setActivityOrientationFixed(ScreenOrientation.PORTRAIT);
+        rotation.setZeroOrientation(ScreenOrientation.PORTRAIT);
+
+        /**
+         * Set camera control extension preferences
+         *
+         * Enabling manual settings will improve analysis rate and may lead to better results under
+         * tested conditions. If the environment changes, expect to change these values.
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.K8000_SHADE);
+        cameraControl.setAutoExposureCompensation();
         //Set the beacon analysis method
-        //Try them all and see what works!
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        //Try them all and see what works!;
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
+        IMU.offsetsInitialized = false;
         //Wait for the match to begin
         waitForStart();
+        global_timeout = 29 * (long) Math.pow(10, 3) + System.currentTimeMillis(); // 29 seconds
         resetStartTime();
         /*while(getRuntime() < 8)
             waitOneFullHardwareCycle();*/
-        //Main loop
-        //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
-        //This loop will exit once the opmode is closed'
-        double head = auto.find_Beacon();
-        DbgLog.error("why you not movin, heading: " + String.format("%.2f", head));
-        resetStartTime();
-        while(getRuntime() < 1)
-            waitOneFullHardwareCycle();
-        auto.target_heading = head;
-        auto.resetPID();
-        auto.PID_move_new(auto.squares_to_Encoder(5.5), head, 0.6, true, 6000);
+
+        auto.adjust_heading();
+        auto.Worlds_Blue_Buttons();
+        auto.Worlds_Blue_Climbers();
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());

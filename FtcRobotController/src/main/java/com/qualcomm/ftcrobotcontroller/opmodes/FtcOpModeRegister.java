@@ -60,6 +60,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      *
      * If two or more op modes are registered with the same name, the app will display an error.
      */
+      manager.register("LinearVisionSample", LinearVisionSample.class);
       manager.register("TeleOp", NoThread_TeleOp.class);
       //manager.register("ServoTest", test_servos.class);
       manager.register("BeaconTest", BeaconTeset.class);
