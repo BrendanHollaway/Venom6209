@@ -1541,7 +1541,7 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         if(!this.opModeIsActive())
             return;
         tele.addData("we made it: ", "yay");
-        PID_turn_time(41, 4);//turn(-23, 1);
+        PID_turn_time(50, 4);//turn(-23, 1);
 
         if(!this.opModeIsActive())
             return;
@@ -1549,10 +1549,10 @@ public class AutonomousSegments extends LinearOpModeCV2 {
         double heading = getGyroYaw();
         if(!this.opModeIsActive())
             return;
-        PID_move_new(squares_to_Encoder(-8.35 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
+        PID_move_new(squares_to_Encoder(-7.4 * 57.0 / 72 * Math.sqrt(2)), heading, 1, false);
         if(!this.opModeIsActive())
             return;
-        PID_turn_time(42, 4);
+        PID_turn_time(45, 5);
         if(!this.opModeIsActive())
             return;
         DbgLog.error(String.format("%.2f", getGyroYaw()));

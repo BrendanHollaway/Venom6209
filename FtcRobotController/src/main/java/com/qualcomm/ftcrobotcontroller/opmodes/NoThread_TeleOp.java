@@ -36,6 +36,8 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
     //Toggle for Zipliners
     boolean RZipOut = false;
     boolean LZipOut = false;
+    boolean blue_side = false;
+    double blue_side_timer = getRuntime();
     double rZipTimer = getRuntime();
     double lZipTimer = getRuntime();
     double belt_timer = getRuntime();
@@ -120,6 +122,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             double RT2 = gamepad2.right_trigger;
             boolean X2 = gamepad2.x;
             boolean Y2 = gamepad2.y;
+            boolean A2 = gamepad2.a;
             /*if(System.currentTimeMillis() % 20000  < 10000)
             {
                 servoYB5.setPosition(1);
@@ -303,17 +306,30 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             else if (gamepad2.start) {
                 servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - 0.005, 0 ,1));
             }*/
-            if(up2) {
-                while (servoBasketAngle.getPosition() > 0.42) {
+            if(A2 && getRuntime() > blue_side_timer)
+            {
+                blue_side_timer = getRuntime() + toggle_delay;
+                blue_side = !blue_side;
+            }
+            if(up2 && !blue_side) {
+                /*while (servoBasketAngle.getPosition() > 0.42) {
                     servoBasketAngle.setPosition(0);
                     waitOneFullHardwareCycle();
-                }
-                servoBasketAngle.setPosition(0.46); //.485
+                }*/
+                servoBasketAngle.setPosition(0.27); //.485
             }
-            else if(down2){/*
+            else if(down2 && !blue_side){/*
                 while (servoBasketAngle.getPosition() < .525)
                     servoBasketAngle.setPosition(1);*/
-                servoBasketAngle.setPosition(.525);
+                servoBasketAngle.setPosition(0.8);
+            }
+            else if(up2 && blue_side)
+            {
+                servoBasketAngle.setPosition(.9);
+            }
+            else if(down2 && blue_side)
+            {
+                servoBasketAngle.setPosition(0.5);
             }
             /*if(A) {
                 servoAllClearL.setPosition(1);

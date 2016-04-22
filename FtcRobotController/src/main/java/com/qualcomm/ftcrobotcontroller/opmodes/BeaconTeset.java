@@ -133,7 +133,7 @@ public class BeaconTeset extends AutonomousSegments {
 
         adjust_heading();
         Worlds_Blue_Buttons();
-        Worlds_Blue_Climbers();
+        Worlds_Climbers();
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());

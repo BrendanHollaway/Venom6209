@@ -105,7 +105,7 @@ public class WorldsRedAuto extends AutonomousSegments {
         motorPR.setPower(0);
         motorPL.setPower(0);*/
 
-        motorM.setPower(1);
+        //motorM.setPower(1);
 
         Worlds_Align_Beacon_Red();
         Worlds_Red_Buttons();
