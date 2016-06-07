@@ -111,10 +111,10 @@ public abstract class LinearOpModeCV2 extends LinearOpModeCV {
             telemetry.addData("IMU already init:", " true");
         }
         IMU.startIMU();
-        servoL.setPosition(.5);
-        servoR.setPosition(.5);
+        servoL.setPosition(.19);
+        servoR.setPosition(.87);
         servoYB5.setPosition(0);
-        servoBasketAngle.setPosition(.5);
+        servoBasketAngle.setPosition(.33);
         servoBasketBelt.setPosition(.5);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.46);
@@ -124,6 +124,8 @@ public abstract class LinearOpModeCV2 extends LinearOpModeCV {
         servoButtonL.setPosition(0.5);
         servoButtonR.setPosition(0.5);
         servoButtonR.setDirection(Servo.Direction.REVERSE);*/
+        servoClimberArm.setPosition(0);
+        servoButtPush.setPosition(0.5);
         motorPR.setDirection(DcMotor.Direction.REVERSE);
         motorS.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         telemetry.addData("Init is Complete: ", "true");
@@ -133,6 +135,11 @@ public abstract class LinearOpModeCV2 extends LinearOpModeCV {
     {
         IMU = null;
         map();
+    }
+    protected void post_start_init()
+    {
+        servoL.setPosition(.27);
+        servoR.setPosition(.8);
     }
     public static boolean isInit()
     {

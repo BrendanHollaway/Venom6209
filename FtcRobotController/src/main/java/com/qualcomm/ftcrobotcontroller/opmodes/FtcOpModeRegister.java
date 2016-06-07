@@ -65,30 +65,11 @@ public class FtcOpModeRegister implements OpModeRegister {
       //manager.register("ServoTest", test_servos.class);
       manager.register("BeaconTest", BeaconTeset.class);
       manager.register("Blue Auto", WorldsBlueAuto.class);
+      manager.register("Blue Auto Wait 5", WorldsBlueAutoWait5.class);
+      manager.register("Blue Auto Wait 10", WorldsBlueAutoWait10.class);
       manager.register("Red Auto", WorldsRedAuto.class);
-     // manager.register("Temp", tempTele.class);
-      //manager.register("SquareTest", squareTest.class);
-      //manager.register("IMUout", IMUoutput.class);
-      //manager.register("IMUtest", IMUtest.class);
-      //manager.register("redAuto", blue_auto.class); // #dealwithit
-      //manager.register("LEGIT BLUE AUTO", Auto_Red_CV.class);
-      //manager.register("LEGIT RED AUTO", REGIONALBLUEAUTO.class);
-      //manager.register("Blue Polar Auto", ActualBlueAutoPolar.class);
-      //manager.register("Straight_Auto", Straight_Auto.class);
-      //manager.register("Segway Bot", SegwayBot.class);
-      /*manager.register("New_PID Blue auto", New_PID_Blue.class);
-      manager.register("New_PID Blue No Dump auto", New_PID_Blue_No_Dump.class);
-      manager.register("New_PID Red auto", New_PID_Red.class);
-      manager.register("New_PID Red No Dump auto", New_PID_Red_No_Dump.class);
-      manager.register("Reverse_Test", Reverse_Test.class);
-      manager.register("Turn Test", TurnTest.class);*/
-      //manager.register("sostest", sostest.class);
-      //manager.register("DetectColor", DetectColor.class);
-      //manager.register("LinearDetectColor", LinearDetectColor.class);
-      //manager.register("NullOp", com.qualcomm.ftcrobotcontroller.NullOp.class);
+      manager.register("Red Auto Wait 5", WorldsRedAutoWait5.class);
+      manager.register("Red Auto Wait 10", WorldsRedAutoWait10.class);
       manager.register("IMUtest", IMUtest.class);
-      /*manager.register("BLUE AUTO NO DUMP", BlueNoDumpAuto.class);
-      manager.register("RED AUTO NO DUMP", RedNoDumpAuto.class);
-      manager.register("RED AUTO RAMP", Red_Ramp.class);*/
   }
 }

@@ -16,7 +16,7 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class WorldsBlueAuto extends AutonomousSegments {
+public class WorldsBlueAutoWait10 extends AutonomousSegments {
     @Override
     public void runOpMode() throws InterruptedException {
         //Wait for vision to initialize - this should be the first thing you do
@@ -55,7 +55,7 @@ public class WorldsBlueAuto extends AutonomousSegments {
          * 0 is default, -1 is minimum and 1 is maximum tolerance
          */
         beacon.setColorToleranceRed(0);
-        beacon.setColorToleranceBlue(0.5);
+        beacon.setColorToleranceBlue(0);
 
         /**
          * Debug drawing
@@ -92,7 +92,6 @@ public class WorldsBlueAuto extends AutonomousSegments {
         IMU.offsetsInitialized = false;
         //Wait for the match to begin
         waitForStart();
-        post_start_init();
         global_timeout = 29 * (long) Math.pow(10, 3) + System.currentTimeMillis(); // 29 seconds
         resetStartTime();
         /*while(getRuntime() < 2) {
@@ -101,9 +100,10 @@ public class WorldsBlueAuto extends AutonomousSegments {
             motorPL.setPower(1);
         }
         motorPR.setPower(0);
-        motorPL.setPower(0);
-
-        motorM.setPower(1);*/
+        motorPL.setPower(0);*/
+        while(getRuntime() < 10)
+            waitOneFullHardwareCycle();
+        motorM.setPower(1);
 
         Worlds_Align_Beacon_Blue();
         Worlds_Set_Up_Blue_Buttons();
@@ -111,6 +111,29 @@ public class WorldsBlueAuto extends AutonomousSegments {
         Worlds_Press_Blue_Buttons();
         motorM.setPower(0);
         while (opModeIsActive()) {
+            //Log a few things
+            telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
+            telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
+            telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+            telemetry.addData("New Heading", NewRobotics.calculate_heading(new DPoint(beacon.getAnalysis().getCenter().x, beacon.getAnalysis().getCenter().y)));
+            telemetry.addData("Relative ", String.format("x: %.2f y: %.2f", beacon.getAnalysis().getCenter().x / width, beacon.getAnalysis().getCenter().y / height));
+            //telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
+            //telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
+            telemetry.addData("Frame Size", "Width: " + width + " Height: " + height); // width = 864, height = 480
+
+            //You can access the most recent frame data and modify it here using getFrameRgba() or getFrameGray()
+            //Vision will run asynchronously (parallel) to any user code so your programs won't hang
+            //You can use hasNewFrame() to test whether vision processed a new frame
+            //Once you copy the frame, discard it immediately with discardFrame()
+            if (hasNewFrame()) {
+                //Get the frame
+                //Mat rgba = getFrameRgba();
+                //Mat gray = getFrameGray();
+
+                //Discard the current frame to allow for the next one to render
+                discardFrame();
+            }
+
             //Wait for a hardware cycle to allow other processes to run
             waitOneFullHardwareCycle();
         }

@@ -10,11 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.concurrent.TimeUnit;
 
 
-public class NoThread_TeleOp extends LinearOpModeCV2 {
-
-    //TODO: implement PID control
-
-
+public class NoThread_TeleOp extends AutonomousSegments {
     //Variables for PID Control
     double PID_Offset;
     volatile double[] rollAngle = new double[2], pitchAngle = new double[2], yawAngle = new double[2];
@@ -27,16 +23,17 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
     //boolean rat360moved = false;
 
     //instantiate constants for easy access
-    double climberDump = 1;
-    double climberRetract = .5;
+    double climberDump = 0.085;
+    double climberRetract = 0.04;
     double deadzone = 0.1;
     double toggle_delay = 0.25;
-    double belt_delay = 0.12;
+    double belt_delay = 0.1;
 
     //Toggle for Zipliners
     boolean RZipOut = false;
     boolean LZipOut = false;
     boolean blue_side = false;
+    double SOS_timer = getRuntime();
     double blue_side_timer = getRuntime();
     double rZipTimer = getRuntime();
     double lZipTimer = getRuntime();
@@ -90,7 +87,6 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             Right Bumper = zipliner right toggle
 
      */
-        boolean encoder_enabled = true;
         while(!opModeIsActive());
         while(opModeIsActive()) {
             // DRIVE CONTROL - Controller 1
@@ -123,27 +119,12 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             boolean X2 = gamepad2.x;
             boolean Y2 = gamepad2.y;
             boolean A2 = gamepad2.a;
-            /*if(System.currentTimeMillis() % 20000  < 10000)
-            {
-                servoYB5.setPosition(1);
-                telemetry.addData("servoYB5: ", 1);
-            }
-            else if(System.currentTimeMillis() % 20000  < 12000)
-            {
-                servoYB5.setPosition(0);
-                telemetry.addData("servoYB5: ", 0);
-            }
-            else if(System.currentTimeMillis() % 20000  < 14000)
-            {
-                servoYB4.setPosition(1);
-                telemetry.addData("servoYB4: ", 1);
-            }
-            else if(System.currentTimeMillis() % 20000  < 16000)
-            {
-                servoYB4.setPosition(0);
-                telemetry.addData("servoYB4: ", 0);
-            }*/
             //Base Driving Controls
+            if(A && getRuntime() < SOS_timer)
+            {
+                enableSOS = !enableSOS;
+                SOS_timer = getRuntime() + toggle_delay;
+            }
             if(enableSOS && gyroPitch() > 50)
             {
                 motorFR.setPower(1);
@@ -167,14 +148,14 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 telemetry.addData("Turn", "ing");
             }
             else if(up) {
-                PID_Offset = 0;//auto.get_PID();
+                PID_Offset = get_PID();
                 motorFR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
                 motorFL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
                 motorBR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
                 motorBL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
             }
             else {
-                //auto.resetPID();
+                resetPID();
                 motorFR.setPower(0);
                 motorFL.setPower(0);
                 motorBR.setPower(0);
@@ -188,7 +169,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             else
                 motorM.setPower(0);
             //Ratchet Controls
-            if(LT > deadzone && RT > deadzone) {
+            if(B && X) {
                 servoRatL.setPosition(0);
                 servoRatR.setPosition(.58);
             }
@@ -211,18 +192,11 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             }
 
 
-
             //Shield controls
-            if(gamepad1.back)
-                encoder_enabled = false;
-            if(LB && (!encoder_enabled || motorS.getCurrentPosition() < 500))
+            if(LB)
                 motorS.setPower(1);
-            else if(RB && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
+            else if(RB)
                 motorS.setPower(-1);
-            //else if(down2 && (!encoder_enabled || motorS.getCurrentPosition() < 500))
-                //motorS.setPower(1);
-            //else if(up2 && (!encoder_enabled || motorS.getCurrentPosition() > -20000))
-                //motorS.setPower(-1);
             else
                 motorS.setPower(0);
             telemetry.addData("motorS position: ", motorS.getCurrentPosition());
@@ -242,14 +216,6 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                     servoR.setPosition(0);
                 RZipOut = !RZipOut;
             }
-            /*else if(gamepad2.x)
-            {
-                servoRatR.setPosition(Range.clip(servoRatR.getPosition() + 0.01, 0, 1));
-            }
-            else if(gamepad2.y)
-            {
-                servoRatR.setPosition(Range.clip(servoRatR.getPosition() - 0.01, 0, 1));
-            }*/
             if(getRuntime() > lZipTimer && LB2)
             {
                 lZipTimer = getRuntime() + toggle_delay;
@@ -259,33 +225,14 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                     servoL.setPosition(1);
                 LZipOut = !LZipOut;
             }
-            /*else if(gamepad2.a)
-            {
-                servoRatL.setPosition(Range.clip(servoRatL.getPosition() + 0.01, 0, 1));
-            }
-            else if(gamepad2.b)
-            {
-                servoRatL.setPosition(Range.clip(servoRatL.getPosition() - 0.01, 0, 1));
-            }*/
-
-            /*if (A) {
-                motorM.setPower(1);
-            }
-            else if (B) {
-                motorM.setPower(-1);
-            }
-            else {
-                motorM.setPower(0);
-            }*/
-
             if (X2) {
-               servoYB5.setPosition(1);
+               servoYB5.setPosition(0.3);
             }
             else if (Y2) {
                 servoYB5.setPosition(0);
             }
             if(left) {
-                servoButtPush.setPosition(0.5);
+                servoButtPush.setPosition(0);
             }
             else if (right) {
                 servoButtPush.setPosition(1);
@@ -293,35 +240,18 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
 
             if (left2 && getRuntime() > belt_timer) {
                 belt_timer = getRuntime() + belt_delay;
-                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
+                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .015, 0, 1));
             }
             else if (right2 && getRuntime() > belt_timer) {
                 belt_timer = getRuntime() + belt_delay;
-                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
+                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .015, 0, 1));
             }
 
-            /*if (gamepad2.back) {
-                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() + 0.005, 0 ,1));
-            }
-            else if (gamepad2.start) {
-                servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - 0.005, 0 ,1));
-            }*/
-            if(A2 && getRuntime() > blue_side_timer)
-            {
-                blue_side_timer = getRuntime() + toggle_delay;
-                blue_side = !blue_side;
-            }
             if(up2 && !blue_side) {
-                /*while (servoBasketAngle.getPosition() > 0.42) {
-                    servoBasketAngle.setPosition(0);
-                    waitOneFullHardwareCycle();
-                }*/
-                servoBasketAngle.setPosition(0.27); //.485
+                servoBasketAngle.setPosition(0.86);
             }
-            else if(down2 && !blue_side){/*
-                while (servoBasketAngle.getPosition() < .525)
-                    servoBasketAngle.setPosition(1);*/
-                servoBasketAngle.setPosition(0.8);
+            else if(down2 && !blue_side){
+                servoBasketAngle.setPosition(0.27);
             }
             else if(up2 && blue_side)
             {
@@ -331,56 +261,16 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             {
                 servoBasketAngle.setPosition(0.5);
             }
-            /*if(A) {
-                servoAllClearL.setPosition(1);
-                servoAllClearR.setPosition(1);
-            }
-            else if(B) {
-                servoAllClearL.setPosition(0);
-                servoAllClearR.setPosition(0);
-            }
-            else {
-                servoAllClearL.setPosition(.5);
-                servoAllClearR.setPosition(.5);
-            }
-            if(left) {
-                servoButtonL.setPosition(0);
-                servoButtonR.setPosition(0);
-            }
-            else if(right) {
-                servoButtonL.setPosition(1);
-                servoButtonR.setPosition(1);
-            }
-            else {
-                servoButtonL.setPosition(.5);
-                servoButtonR.setPosition(.5);
-            }*/
             telemetry.addData("x acc: ",String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
             telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
-            telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), 0.0)); //servoClimberArm.getPosition()));
+            telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), servoClimberArm.getPosition()));
             telemetry.addData("BasketBelt: ", String.format("%.2f Angle: %.2f", servoBasketBelt.getPosition(), servoBasketAngle.getPosition()));
             telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
             //telemetry.addData("gyro yaw; ", gyroTest());
             telemetry.addData("gyro pitch: ", gyroPitch());
             waitOneFullHardwareCycle();
         }
-        telemetry.addData("Program complete", "hi");
     }
-/*
-    void SOScheck() {
-        if (gyroPitch() < -55 ) {
-            SOSactive = true;
-            motorBL.setPower(-1);
-            motorBR.setPower(1);
-            motorFL.setPower(-1);
-            motorFR.setPower(1);
-            //If the robot is flipping over, then driver control is
-            //motorFL.setPower(0);
-            //motorFR.setPower(0);
-        }
-        else
-            SOSactive = false;
-    }*/
 }
 
 

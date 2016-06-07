@@ -31,7 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
@@ -132,8 +131,9 @@ public class BeaconTeset extends AutonomousSegments {
             waitOneFullHardwareCycle();*/
 
         adjust_heading();
-        Worlds_Blue_Buttons();
+        Worlds_Set_Up_Blue_Buttons();
         Worlds_Climbers();
+        Worlds_Press_Blue_Buttons();
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());

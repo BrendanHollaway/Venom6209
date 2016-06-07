@@ -1,16 +1,13 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.DPoint;
 import com.qualcomm.ftcrobotcontroller.NewRobotics;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
-import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 
@@ -58,7 +55,7 @@ public class WorldsRedAuto extends AutonomousSegments {
          * 0 is default, -1 is minimum and 1 is maximum tolerance
          */
         beacon.setColorToleranceRed(0);
-        beacon.setColorToleranceBlue(0);
+        beacon.setColorToleranceBlue(0.5);
 
         /**
          * Debug drawing
@@ -95,12 +92,14 @@ public class WorldsRedAuto extends AutonomousSegments {
         IMU.offsetsInitialized = false;
         //Wait for the match to begin
         waitForStart();
+        post_start_init();
         global_timeout = 29 * (long) Math.pow(10, 3) + System.currentTimeMillis(); // 29 seconds
         resetStartTime();
-        /*while(getRuntime() < 2) {
+        /*servoClimberArm.setPosition(0.025);
+        while(getRuntime() < 2) {
             waitOneFullHardwareCycle();
-            motorPR.setPower(1);
-            motorPL.setPower(1);
+            motorPR.setPower(-1);
+            motorPL.setPower(-1);
         }
         motorPR.setPower(0);
         motorPL.setPower(0);*/
@@ -108,8 +107,9 @@ public class WorldsRedAuto extends AutonomousSegments {
         //motorM.setPower(1);
 
         Worlds_Align_Beacon_Red();
-        Worlds_Red_Buttons();
+        Worlds_Set_Up_Red_Buttons();
         Worlds_Climbers();
+        Worlds_Press_Red_Buttons();
         motorM.setPower(0);
         while (opModeIsActive()) {
             //Log a few things

@@ -2620,8 +2620,8 @@ public class Imgproc {
     {
         Mat points_mat = points;
         RotatedRect retVal = new RotatedRect(fitEllipse_0(points_mat.nativeObj));
-        
-        return retVal;
+
+            return retVal;
     }
 
 
