@@ -15,7 +15,7 @@ public class SegwayBot extends OpMode {
     DcMotor motorR;
     AdafruitIMU IMU;
     double PID_change;
-    private final double kP = 0.075;
+    private final double kP = 0.025;
     private final double kI = 0.0;
     private final double kD = 0.05;
 

@@ -47,9 +47,9 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
     protected static Servo servoUpperL;
     protected static Servo servoUpperR;
     protected static Servo servoButtPush;
-    protected static Servo servoYB5;
-    protected static Servo servoBasketAngle;
-    protected static Servo servoBasketBelt;
+    //protected static Servo servoYB5;
+    //protected static Servo servoBasketAngle;
+    //protected static Servo servoBasketBelt;
     //protected static Servo servoYB4;
     //Other
     protected static AdafruitIMU IMU;
@@ -73,10 +73,10 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         motorS  = hardwareMap.dcMotor.get("motorS");
         servoRatL = hardwareMap.servo.get("servoLRat");
         servoRatR = hardwareMap.servo.get("servoRRat");
-        servoYB5 = hardwareMap.servo.get("servoYB5");
+        //servoYB5 = hardwareMap.servo.get("servoYB5");
         //servoYB4 = hardwareMap.servo.get("servoYB4");
-        servoBasketAngle = hardwareMap.servo.get("servoYB6");
-        servoBasketBelt = hardwareMap.servo.get("servoVD6");
+        //servoBasketAngle = hardwareMap.servo.get("servoYB6");
+        //servoBasketBelt = hardwareMap.servo.get("servoVD6");
         servoClimberArm = hardwareMap.servo.get("servoArm");
         servoL = hardwareMap.servo.get("servoL"); //yes this is correct
         servoR = hardwareMap.servo.get("servoR");
@@ -113,9 +113,9 @@ public abstract class LinearOpModeCV2 extends LinearVisionOpMode {
         IMU.startIMU();
         servoL.setPosition(.5);
         servoR.setPosition(.5);
-        servoYB5.setPosition(.5);
-        servoBasketAngle.setPosition(.5);
-        servoBasketBelt.setPosition(.5);
+        //servoYB5.setPosition(.5);
+        //servoBasketAngle.setPosition(.5);
+        //servoBasketBelt.setPosition(.5);
         servoRatL.setPosition(.5);
         servoRatR.setPosition(.46);
         /*servoClimberArm.setPosition(0.06);

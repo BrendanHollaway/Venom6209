@@ -148,11 +148,6 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 motorFL.setPower(1);
                 motorBR.setPower(1);
                 motorBL.setPower(1);
-            } else if ((Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone) && Math.signum(RightY) == Math.signum(LeftY)) {
-                motorFR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
-                motorFL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
-                motorBR.setPower(Math.abs(RightY) > deadzone ? -RightY : 0);
-                motorBL.setPower(Math.abs(LeftY) > deadzone ? -LeftY : 0);
             } else if ((Math.abs(LeftY) > deadzone || Math.abs(RightY) > deadzone)) {
                 motorFR.setPower(Math.abs(RightY) > deadzone ? RightY : 0);
                 motorFL.setPower(Math.abs(LeftY) > deadzone ? LeftY : 0);
@@ -161,10 +156,10 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 telemetry.addData("Turn", "ing");
             } else if (up) {
                 PID_Offset = 0;//auto.get_PID();
-                motorFR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
-                motorFL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
-                motorBR.setPower(Range.clip(-0.75 - PID_Offset, -1, 0));
-                motorBL.setPower(Range.clip(-0.75 + PID_Offset, -1, 0));
+                motorFR.setPower(-Range.clip(-0.75 - PID_Offset, -1, 0));
+                motorFL.setPower(-Range.clip(-0.75 + PID_Offset, -1, 0));
+                motorBR.setPower(-Range.clip(-0.75 - PID_Offset, -1, 0));
+                motorBL.setPower(-Range.clip(-0.75 + PID_Offset, -1, 0));
             } else {
                 //auto.resetPID();
                 motorFR.setPower(0);
@@ -269,9 +264,9 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 servoButtPush.setPosition(0.5);
             }
             if (X2) {
-                servoYB5.setPosition(Range.clip(servoYB5.getPosition() + .01, 0, 1));
+                //servoYB5.setPosition(Range.clip(servoYB5.getPosition() + .01, 0, 1));
             } else if (Y2) {
-                servoYB5.setPosition(Range.clip(servoYB5.getPosition() - .01, 0, 1));
+                //servoYB5.setPosition(Range.clip(servoYB5.getPosition() - .01, 0, 1));
             }
             if (left) {
                 servoButtPush.setPosition(0.5);
@@ -281,36 +276,30 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
 
             if (left2 && getRuntime() > belt_timer) {
                 belt_timer = getRuntime() + belt_delay;
-                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
+                //servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
             } else if (right2) {
                 belt_timer = getRuntime() + belt_delay;
-                servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
+                //servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
             }
 
             if (down2) {
 
-                servoBasketAngle.setPosition(0.5);//Range.clip(servoBasketAngle.getPosition() + .01, 0, 1));
-                servoYB5.setPosition(0);
+                //servoBasketAngle.setPosition(.485);
+                //servoYB5.setPosition(1);
 
             } else if (up2) {
 
-                servoBasketAngle.setPosition(0.93);//Range.clip(servoBasketAngle.getPosition() - .01, 0, 1));
-                servoYB5.setPosition(1);
-                if (left2 && getRuntime() > belt_timer) {
+                //servoBasketAngle.setPosition(Range.clip(servoBasketAngle.getPosition() - .005, 0, 1));
+                //servoYB5.setPosition(0);
+            }
+
+            if (left2 && getRuntime() > belt_timer) {
                     belt_timer = getRuntime() + belt_delay;
-                    servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
-                } else if (right2) {
+                    //servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() + .01, 0, 1));
+            } else if (right2) {
                     belt_timer = getRuntime() + belt_delay;
-                    servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
-                }
-
-                if (up2) {
-
-                    servoBasketAngle.setPosition(0.93);
-                } else if (down2) {
-
-                    servoBasketAngle.setPosition(0.5);
-                }
+                    //servoBasketBelt.setPosition(Range.clip(servoBasketBelt.getPosition() - .01, 0, 1));
+            }
             /*if(A) {
                 servoAllClearL.setPosition(1);
                 servoAllClearR.setPosition(1);
@@ -338,7 +327,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
                 telemetry.addData("x acc: ", String.format("%.2f, y acc: %.2f, z acc: %.2f", accel[0], accel[1], accel[2]));
                 telemetry.addData("left: ", String.format("%.2f, right: %.2f", servoL.getPosition(), servoR.getPosition()));
                 telemetry.addData("ratL: ", String.format("%.2f, climber: %.2f", servoRatL.getPosition(), 0.0)); //servoClimberArm.getPosition()));
-                telemetry.addData("BasketBelt: ", String.format("%.2f Angle: %.2f", servoBasketBelt.getPosition(), servoBasketAngle.getPosition()));
+                //telemetry.addData("BasketBelt: ", String.format("%.2f Angle: %.2f", servoBasketBelt.getPosition(), servoBasketAngle.getPosition()));
                 telemetry.addData("encoders: ", String.format("BR: %d + FR: %d + BL: %d + FL: %d", motorBR.getCurrentPosition(), motorFR.getCurrentPosition(), motorBL.getCurrentPosition(), motorFL.getCurrentPosition()));
                 //telemetry.addData("gyro yaw; ", gyroTest());
                 telemetry.addData("gyro pitch: ", gyroPitch());
@@ -362,7 +351,7 @@ public class NoThread_TeleOp extends LinearOpModeCV2 {
             SOSactive = false;
     }*/
     }
-}
+
 
 
 
